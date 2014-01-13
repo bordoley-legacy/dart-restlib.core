@@ -3,7 +3,7 @@ part of restlib.core.http;
 abstract class RequestPreferences {
   static const RequestPreferences NONE = const _RequestPreferencesNone();
   
-  factory RequestPreferences.wrapHeaders(final Associative<String, String> headers) =>
+  factory RequestPreferences.wrapHeaders(Iterable<String> headers(Header header)) =>
       new _HeadersRequestPreferencesImpl(headers);
 
   ImmutableSet<Preference<Charset>> get acceptedCharsets;
@@ -170,7 +170,7 @@ class _HeadersRequestPreferencesImpl
       RequestPreferencesWith_,
       _Parseable
     implements RequestPreferences {
-  final Associative<String,String> headers;
+  final _HeaderFunc headers;
   ImmutableSet<Preference<Charset>> _acceptedCharsets;
   ImmutableSet<Preference<ContentEncoding>> _acceptedEncodings;
   ImmutableSet<Preference<Language>> _acceptedLanguages;

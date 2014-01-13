@@ -25,7 +25,7 @@ preferenceTests() {
       Preference result = prefParser.parse(testCase).value;
       expect(result.value, equals(expectedValue));
       expect(result.qualityFactor, equals(expectedQualityFactor));
-      expect(result.parameters, expectedParameters);
+      expect(result.parameters, equals(expectedParameters));
     });
 
   doTestParse("UTF-8", Charset.UTF_8, 1000, Persistent.EMPTY_SEQUENCE_MULTIMAP);

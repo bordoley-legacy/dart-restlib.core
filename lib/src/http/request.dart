@@ -1,7 +1,7 @@
 part of restlib.core.http;
 
 abstract class Request<T> {  
-  factory Request.wrapHeaders(final Associative<String, String> headers, final Method method, final Uri requestUri) =>
+  factory Request.wrapHeaders(Iterable<String> headers(Header header), final Method method, final Uri requestUri) =>
       new _HeadersRequestWrapper(headers, method, requestUri);
   
   Option<ChallengeMessage> get authorizationCredentials;
@@ -277,7 +277,7 @@ class _HeadersRequestWrapper
   ImmutableSet<CacheDirective> _cacheDirectives;
   ContentInfo _contentInfo;
   ImmutableSet<Expectation> _expectations;
-  final Associative<String,String> headers;
+  final _HeaderFunc headers;
   final Option entity = Option.NONE;
   final Method method;
   
@@ -357,7 +357,7 @@ class _HeadersRequestWrapper
 
   Option<Uri> get referer =>
       computeIfNull(_referer, () {
-        _referer = firstWhere(headers[Header.REFERER.toString()], (final String uri) => true)
+        _referer = firstWhere(headers(Header.REFERER), (final String uri) => true)
             .flatMap(_parseUri);
         return _referer;
       });

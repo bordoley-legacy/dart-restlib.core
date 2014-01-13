@@ -20,6 +20,8 @@ part "src/http/request_preferences.dart";
 part "src/http/response.dart";
 part "src/http/status.dart";
 
+typedef Iterable<String> _HeaderFunc(Header header);
+
 Option<Uri> _parseUri(final String uri) {
   checkNotNull(uri);
 
@@ -33,9 +35,9 @@ Option<Uri> _parseUri(final String uri) {
 }
 
 abstract class _Parseable {
-  Associative<String,String> headers;
+  _HeaderFunc headers;
   
   Option _parse(final Parser parser, final Header header) =>
       // FIXME: verify the join is correct
-      parser.parse(headers[header.toString()].join(","));
+      parser.parse(headers(header).join(","));
 }

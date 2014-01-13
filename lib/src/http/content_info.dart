@@ -3,7 +3,7 @@ part of restlib.core.http;
 abstract class ContentInfo {
   static const ContentInfo NONE = const _ContentInfoNone();
   
-  factory ContentInfo.wrapHeaders(final Associative<String, String> headers) =>
+  factory ContentInfo.wrapHeaders(Iterable<String> headers(Header header)) =>
       new _HeadersContentInfoImpl(headers);
       
   // The encodings applied to the content in order.
@@ -233,7 +233,7 @@ class _HeadersContentInfoImpl
       ContentInfoWith_,
       _Parseable
     implements ContentInfo {
-  final Associative<String,String> headers;
+  final _HeaderFunc headers;
   ImmutableSequence<ContentEncoding> _encodings;
   ImmutableSet<Language> _languages;
   Option<int> _length;
@@ -273,7 +273,7 @@ class _HeadersContentInfoImpl
   
   Option<Uri> get location =>
       computeIfNull(_location, () {     
-        _location = firstWhere(headers[Header.CONTENT_LOCATION.toString()], (final String uri) => true)
+        _location = firstWhere(headers(Header.CONTENT_LOCATION), (final String uri) => true)
             .flatMap(_parseUri);
         return _location;
       });
