@@ -19,3 +19,23 @@ part "src/http/request_preconditions.dart";
 part "src/http/request_preferences.dart";
 part "src/http/response.dart";
 part "src/http/status.dart";
+
+Option<Uri> _parseUri(final String uri) {
+  checkNotNull(uri);
+
+  if (uri.isEmpty) {
+    return Option.NONE;
+  } else {
+    // FIXME: Try catch for exceptions.
+    final Uri result = Uri.parse(uri);
+    return new Option(result);
+  }
+}
+
+abstract class _Parseable {
+  Associative<String,String> headers;
+  
+  Option _parse(final Parser parser, final Header header) =>
+      // FIXME: verify the join is correct
+      parser.parse(headers[header.toString()].join(","));
+}

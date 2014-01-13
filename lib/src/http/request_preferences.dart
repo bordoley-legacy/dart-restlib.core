@@ -2,6 +2,9 @@ part of restlib.core.http;
 
 abstract class RequestPreferences {
   static const RequestPreferences NONE = const _RequestPreferencesNone();
+  
+  factory RequestPreferences.wrapHeaders(final Associative<String, String> headers) =>
+      new _HeadersRequestPreferencesImpl(headers);
 
   ImmutableSet<Preference<Charset>> get acceptedCharsets;
   
@@ -159,4 +162,68 @@ abstract class RequestPreferencesWith_ implements RequestPreferences {
             acceptedLanguages: acceptedLanguages, 
             acceptedMediaRanges: acceptedMediaRanges, 
             range: range);
+}
+
+class _HeadersRequestPreferencesImpl 
+    extends Object 
+    with RequestPreferencesToString,
+      RequestPreferencesWith_,
+      _Parseable
+    implements RequestPreferences {
+  final Associative<String,String> headers;
+  ImmutableSet<Preference<Charset>> _acceptedCharsets;
+  ImmutableSet<Preference<ContentEncoding>> _acceptedEncodings;
+  ImmutableSet<Preference<Language>> _acceptedLanguages;
+  ImmutableSet<Preference<MediaRange>> _acceptedMediaRanges;
+  Option<Range> _range;
+  
+  _HeadersRequestPreferencesImpl(this.headers);
+  
+  ImmutableSet<Preference<Charset>> get acceptedCharsets =>
+      computeIfNull(_acceptedCharsets, () {
+        _acceptedCharsets = 
+            _parse(ACCEPT_CHARSET, Header.ACCEPT_CHARSET)
+              .map((final Iterable<Preference<Charset>> acceptedCharsets) => 
+                  Persistent.EMPTY_SET.addAll(acceptedCharsets))
+              .orElse(Persistent.EMPTY_SET);
+        return _acceptedCharsets;
+      });
+  
+  ImmutableSet<Preference<ContentEncoding>> get acceptedEncodings =>
+      computeIfNull(_acceptedEncodings, () {
+        _acceptedEncodings = 
+            _parse(ACCEPT_ENCODING, Header.ACCEPT_ENCODING)
+              .map((final Iterable<Preference<ContentEncoding>> acceptedEncodings) =>
+                  Persistent.EMPTY_SET.addAll(acceptedEncodings))
+              .orElse(Persistent.EMPTY_SET);
+        return _acceptedEncodings;
+      });
+  
+  ImmutableSet<Preference<Language>> get acceptedLanguages =>
+      computeIfNull(_acceptedLanguages, () {
+        _acceptedLanguages = 
+            _parse(ACCEPT_LANGUAGE, Header.ACCEPT_LANGUAGE)
+              .map((final Iterable<Preference<Language>> acceptedLanguages) =>
+                  Persistent.EMPTY_SET.addAll(acceptedLanguages))
+              .orElse(Persistent.EMPTY_SET);    
+            
+        return _acceptedLanguages;
+      });
+  
+  ImmutableSet<Preference<MediaRange>> get acceptedMediaRanges =>
+      computeIfNull(_acceptedMediaRanges, () {
+        _acceptedMediaRanges = 
+            _parse(ACCEPT, Header.ACCEPT)
+              .map((final Iterable<Preference<MediaRange>> acceptedMediaRanges) =>
+                  Persistent.EMPTY_SET.addAll(acceptedMediaRanges))
+              .orElse(Persistent.EMPTY_SET);
+        
+        return _acceptedMediaRanges;
+      });
+  
+  Option<Range> get range =>
+      computeIfNull(_range, () {
+        _range = _parse(RANGE, Header.RANGE);
+        return _range;
+      });
 }

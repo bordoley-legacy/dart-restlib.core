@@ -2,7 +2,10 @@ part of restlib.core.http;
 
 abstract class ContentInfo {
   static const ContentInfo NONE = const _ContentInfoNone();
-
+  
+  factory ContentInfo.wrapHeaders(final Associative<String, String> headers) =>
+      new _HeadersContentInfoImpl(headers);
+      
   // The encodings applied to the content in order.
   ImmutableSequence<ContentEncoding> get encodings;
   ImmutableSet<Language> get languages;
@@ -221,4 +224,69 @@ abstract class ContentInfoToString implements ContentInfo {
         ..write(Header.CONTENT_TYPE.write(mediaRange))
         ..write(Header.CONTENT_RANGE.write(range))
       ).toString();
+}
+
+
+class _HeadersContentInfoImpl 
+    extends Object 
+    with ContentInfoToString,
+      ContentInfoWith_,
+      _Parseable
+    implements ContentInfo {
+  final Associative<String,String> headers;
+  ImmutableSequence<ContentEncoding> _encodings;
+  ImmutableSet<Language> _languages;
+  Option<int> _length;
+  Option<Uri> _location;
+  Option<MediaRange> _mediaRange;
+  Option<ContentRange> _range;
+
+  _HeadersContentInfoImpl(this.headers);
+  
+  ImmutableSequence<ContentEncoding> get encodings =>
+      computeIfNull(_encodings, () {
+        _encodings = 
+            _parse(CONTENT_ENCODING_HEADER, Header.CONTENT_ENCODING)
+              .map((final Iterable<ContentEncoding> encodings) => 
+                  Persistent.EMPTY_SEQUENCE.addAll(encodings))
+              .orElse(Persistent.EMPTY_SEQUENCE);
+            
+        return _encodings;
+      });
+  
+  ImmutableSet<Language> get languages =>
+      computeIfNull(_languages, () {
+        _languages = 
+            _parse(CONTENT_LANGUAGE, Header.CONTENT_LANGUAGE)
+              .map((final Iterable<Language> languages) => 
+                  Persistent.EMPTY_SET.addAll(languages))
+              .orElse(Persistent.EMPTY_SET);    
+            
+        return _languages;
+      });
+ 
+  Option<int> get length =>
+      computeIfNull(_length, () {
+        _length = _parse(INTEGER, Header.CONTENT_LENGTH);
+        return _length;
+      });
+  
+  Option<Uri> get location =>
+      computeIfNull(_location, () {     
+        _location = firstWhere(headers[Header.CONTENT_LOCATION.toString()], (final String uri) => true)
+            .flatMap(_parseUri);
+        return _location;
+      });
+  
+  Option<MediaRange> get mediaRange =>
+      computeIfNull(_mediaRange, () {
+        _mediaRange = _parse(MEDIA_RANGE, Header.CONTENT_TYPE);
+        return _mediaRange;
+      });
+  
+  Option<ContentRange> get range =>
+      computeIfNull(_range, () {
+        _range = _parse(CONTENT_RANGE, Header.CONTENT_RANGE);
+        return _range;
+      });
 }

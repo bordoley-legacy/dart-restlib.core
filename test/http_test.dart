@@ -10,9 +10,11 @@ import "package:restlib_core/http.dart";
 import "package:restlib_parsing/parsing.dart";
 
 part "src/http/preference_test.dart";
+part "src/http/request_test.dart";
 
 httpTestGroups() {
   group("class Preference", preferenceTests);
+  group("class:Request", requestTests);
 }
 
 main() {

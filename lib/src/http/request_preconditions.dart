@@ -3,6 +3,9 @@ part of restlib.core.http;
 abstract class RequestPreconditions {
   static const RequestPreconditions NONE = const _RequestPreconditionsNone();
   
+  factory RequestPreconditions.wrapHeaders(final Associative<String, String> headers) =>
+      new _HeadersRequestPreconditionsImpl(headers);
+  
   ImmutableSet<EntityTag> get ifMatch;
   Option<DateTime> get ifModifiedSince;
   
@@ -149,4 +152,61 @@ abstract class RequestPreconditionsWith_ implements RequestPreconditions {
             ifNoneMatch: ifNoneMatch, 
             ifRange: ifRange, 
             ifUnmodifiedSince: ifUnmodifiedSince);
+}
+
+final Parser<Either<EntityTag,DateTime>> _ETAG_OR_DATETIME = ETAG ^ HTTP_DATE_TIME;
+
+class _HeadersRequestPreconditionsImpl 
+    extends Object 
+    with RequestPreconditionsToString,
+      RequestPreconditionsWith_,
+      _Parseable
+    implements RequestPreconditions {
+  final Associative<String, String> headers;
+  ImmutableSet<EntityTag> _ifMatch;
+  Option<DateTime> _ifModifiedSince;
+  ImmutableSet<EntityTag> _ifNoneMatch;
+  Option<Either<EntityTag,DateTime>> _ifRange;
+  Option<DateTime> _ifUnmodifiedSince;
+  
+  _HeadersRequestPreconditionsImpl(this.headers);
+  
+  ImmutableSet<EntityTag> get ifMatch =>
+      computeIfNull(_ifMatch, () {
+        _ifMatch = 
+            _parse(IF_MATCH, Header.IF_MATCH)
+              .map((final Iterable<EntityTag> ifMatch) =>
+                  Persistent.EMPTY_SET.addAll(ifMatch))
+              .orElse(Persistent.EMPTY_SET);
+        return _ifMatch;
+      });
+  
+  Option<DateTime> get ifModifiedSince =>
+      computeIfNull(_ifModifiedSince, () {
+        _ifModifiedSince = 
+            _parse(HTTP_DATE_TIME, Header.IF_MODIFIED_SINCE);
+        return _ifModifiedSince;
+      });
+  
+  ImmutableSet<EntityTag> get ifNoneMatch =>
+      computeIfNull(_ifNoneMatch, () {
+        _ifNoneMatch = 
+            _parse(IF_NONE_MATCH, Header.IF_NONE_MATCH)
+              .map((final Iterable<EntityTag> ifNoneMatch) => 
+                  Persistent.EMPTY_SET.addAll(ifNoneMatch))
+              .orElse(Persistent.EMPTY_SET);
+        return _ifNoneMatch;
+      });
+  
+  Option<Either<EntityTag,DateTime>> get ifRange =>
+      computeIfNull(_ifRange, () {
+        _ifRange = _parse(_ETAG_OR_DATETIME, Header.IF_RANGE);
+        return _ifRange;
+      });
+  
+  Option<DateTime> get ifUnmodifiedSince =>
+      computeIfNull(_ifUnmodifiedSince, () {
+        _ifUnmodifiedSince = _parse(HTTP_DATE_TIME, Header.IF_UNMODIFIED_SINCE);
+        return _ifUnmodifiedSince;
+      });
 }

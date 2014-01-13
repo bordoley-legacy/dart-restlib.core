@@ -1,6 +1,9 @@
 part of restlib.core.http;
 
 abstract class Request<T> {  
+  factory Request.wrapHeaders(final Associative<String, String> headers, final Method method, final Uri requestUri) =>
+      new _HeadersRequestWrapper(headers, method, requestUri);
+  
   Option<ChallengeMessage> get authorizationCredentials;
   ImmutableSet<CacheDirective> get cacheDirectives;
   ContentInfo get contentInfo;
@@ -262,5 +265,107 @@ class _RequestImpl<T>
       this.uri = firstNotNull(uri, delegate.uri),
       this.userAgent = computeIfEmpty(new Option(userAgent), () => delegate.userAgent);
       
+}
+    
+class _HeadersRequestWrapper
+    extends Object 
+    with RequestToString,
+      RequestWith_,
+      _Parseable
+    implements Request {
+  Option<ChallengeMessage> _authorizationCredentials;
+  ImmutableSet<CacheDirective> _cacheDirectives;
+  ContentInfo _contentInfo;
+  ImmutableSet<Expectation> _expectations;
+  final Associative<String,String> headers;
+  final Option entity = Option.NONE;
+  final Method method;
+  
+  ImmutableSet<CacheDirective> _pragmaCacheDirectives;
+  RequestPreconditions _preconditions;
+  RequestPreferences _preferences;
+  Option<ChallengeMessage> _proxyAuthorizationCredentials;
+  Option<Uri> _referer;
+  final Uri uri;
+  Option<UserAgent> _userAgent;
+
+  // FIXME: Should take a protocol argument so that the request URI
+  // gets the correct protocol
+  _HeadersRequestWrapper(this.headers, this.method, this.uri);
+
+  Option<ChallengeMessage> get authorizationCredentials =>
+      computeIfNull(_authorizationCredentials, () {
+        _authorizationCredentials = _parse(CHALLENGE_MESSAGE, Header.AUTHORIZATION);
+        return _authorizationCredentials;
+      });
+  
+  ImmutableSet<CacheDirective> get cacheDirectives =>
+      computeIfNull(_cacheDirectives, () {
+        _cacheDirectives = 
+            _parse(CACHE_CONTROL, Header.CACHE_CONTROL)
+              .map((final Iterable<CacheDirective> cacheDirectives) =>
+                  Persistent.EMPTY_SET.addAll(cacheDirectives))
+              .orElse(Persistent.EMPTY_SET);
+            
+        return _cacheDirectives;
+      });
+  
+  ContentInfo get contentInfo =>
+      computeIfNull(_contentInfo, () {
+        _contentInfo = new ContentInfo.wrapHeaders(headers);
+        return _contentInfo;
+      });
+  
+  ImmutableSet<Expectation> get expectations =>
+      computeIfNull(_expectations, () {
+        _expectations = 
+            _parse(EXPECT, Header.EXPECT)
+              .map((final Iterable<Expectation> expectations) =>
+                  Persistent.EMPTY_SET.addAll(expectations))
+              .orElse(Persistent.EMPTY_SET);
+            
+        return _expectations;
+      });
+  
+  ImmutableSet<CacheDirective> get pragmaCacheDirectives =>
+      computeIfNull(_pragmaCacheDirectives, () {
+        _pragmaCacheDirectives = 
+            _parse(PRAGMA, Header.PRAGMA)
+              .map((final Iterable<CacheDirective> pragmaCacheDirectives) =>
+                  Persistent.EMPTY_SET.addAll(pragmaCacheDirectives))
+              .orElse(Persistent.EMPTY_SET);
+        return _pragmaCacheDirectives;
+      });
+  
+  RequestPreconditions get preconditions =>
+      computeIfNull(_preconditions, () {
+        _preconditions = new RequestPreconditions.wrapHeaders(headers);
+        return _preconditions;
+      });
+  
+  RequestPreferences get preferences =>
+      computeIfNull(_preferences, () {
+        _preferences = new RequestPreferences.wrapHeaders(headers);
+        return _preferences;
+      });
+  
+  Option<ChallengeMessage> get proxyAuthorizationCredentials =>
+      computeIfNull(_proxyAuthorizationCredentials, () {
+        _proxyAuthorizationCredentials = _parse(CHALLENGE_MESSAGE, Header.PROXY_AUTHORIZATION);
+        return _proxyAuthorizationCredentials;
+      });
+
+  Option<Uri> get referer =>
+      computeIfNull(_referer, () {
+        _referer = firstWhere(headers[Header.REFERER.toString()], (final String uri) => true)
+            .flatMap(_parseUri);
+        return _referer;
+      });
+  
+  Option<UserAgent> get userAgent =>
+      computeIfNull(_userAgent, () {
+        _userAgent = _parse(USER_AGENT, Header.USER_AGENT);
+        return _userAgent;    
+      });
 }
 
