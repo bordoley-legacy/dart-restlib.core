@@ -53,24 +53,26 @@ abstract class PartContentInfo implements ContentInfo {
   
 }
 
+class _PartContentInfo 
+    extends Object
+    with ContentInfoToString, 
+      ContentInfoWith_,
+      ForwardingContentInfo
+    implements PartContentInfo {
+  final ContentInfo delegate;
+  
+  _PartContentInfo(this.delegate);
+}
+
 class Part<T> {
   final PartContentInfo contentInfo;
   final T entity;
   
   Part(final ContentInfo contentInfo, this.entity):
-  this.contentInfo = new _ForwardingPartContentInfo(contentInfo){
+  this.contentInfo = new _PartContentInfo(contentInfo){
     checkNotNull(contentInfo);
     checkNotNull(entity);
   }
-}
-
-class _ForwardingPartContentInfo 
-  extends Object
-  with ForwardingContentInfo 
-  implements PartContentInfo {
-  final ContentInfo delegate;
-  
-  _ForwardingPartContentInfo(this.delegate);
 }
 
 typedef Future<Part> PartParser(PartContentInfo contentInfo, final Stream<List<int>> msgStream);
