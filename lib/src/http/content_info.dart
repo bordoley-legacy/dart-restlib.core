@@ -81,7 +81,7 @@ abstract class ForwardingContentInfo implements Forwarder, ContentInfo {
       delegate.encodings;
   
   ImmutableSet<Language> get languages =>
-      delegate.langugages;
+      delegate.languages;
   
   Option<int> get length =>
       delegate.length;
