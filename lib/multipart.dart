@@ -21,7 +21,7 @@ abstract class Multipart<T> implements Iterable<Part<T>> {
   String get boundary;
 } 
 
-abstract class ByteStreamableMultipart<T extends ByteStreamable> implements Multipart<T> {
+abstract class ByteStreamableMultipart<T extends ByteStreamable> implements Multipart<T>, ByteStreamable {
   factory ByteStreamableMultipart(final String boundary, final Iterable<Part<T>> parts) =>
       new _ByteStreamableMultipart(boundary, parts);
 }
