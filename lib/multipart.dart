@@ -5,18 +5,13 @@ import "dart:convert";
 
 import "package:mime/mime.dart";
 
+import "package:restlib_common/async.dart";
 import "package:restlib_common/collections.dart";
-import "package:restlib_common/objects.dart";
 import "package:restlib_common/preconditions.dart";
 
 import "http.dart";
 
 part "src/multipart/multipart_impl.dart";
-
-// FIXME: Should go in restlib.core.async
-abstract class ByteStreamable {
-  Stream<List<int>> asByteStream();
-}
 
 abstract class Multipart<T> implements Iterable<Part<T>> {
   factory Multipart(final String boundary, final Iterable<Part<T>> parts) =>
@@ -25,26 +20,31 @@ abstract class Multipart<T> implements Iterable<Part<T>> {
   String get boundary;
 } 
 
-class ByteStreamableMultipart 
+abstract class ByteStreamableMultipart implements Multipart<ByteStreamable> {
+  factory ByteStreamableMultipart(final String boundary, final Iterable<Part<ByteStreamable>> parts) =>
+      new _ByteStreamableMultipart(boundary, parts);
+}
+
+class _ByteStreamableMultipart 
     extends Object
     with ForwardingIterable<Part<ByteStreamable>>
-    implements Multipart<ByteStreamable> {
+    implements ByteStreamableMultipart {
   final String boundary;
   final Iterable<Part<ByteStreamable>> delegate;
   
-  ByteStreamableMultipart(this.boundary, this.delegate);
+  _ByteStreamableMultipart(this.boundary, this.delegate);
   
   Stream<List<int>> asByteStream() {
     final ImmutableSequence<Stream<List<int>>> streams =
         this
           .fold(Persistent.EMPTY_SEQUENCE, (final ImmutableSequence sequence, final Part<ByteStreamable> part) =>
               sequence
-                .add(_ofValue(ASCII.encode("--$boundary\r\n")))
-                .add(_ofValue(ASCII.encode(part.contentInfo.toString())))
+                .add(valueAsStream(ASCII.encode("--$boundary\r\n")))
+                .add(valueAsStream(ASCII.encode(part.contentInfo.toString())))
                 .add(part.entity.asByteStream())
-                .add(_ofValue(ASCII.encode("\r\n\r\n"))))
-          .add(_ofValue(ASCII.encode("--$boundary--\r\n")));
-    return _concat(streams);
+                .add(valueAsStream(ASCII.encode("\r\n\r\n"))))
+          .add(valueAsStream(ASCII.encode("--$boundary--\r\n")));
+    return concatStreams(streams);
   }    
 }
 
@@ -53,23 +53,12 @@ abstract class PartContentInfo implements ContentInfo {
   
 }
 
-class _PartContentInfo 
-    extends Object
-    with ContentInfoToString, 
-      ContentInfoWith_,
-      ForwardingContentInfo
-    implements PartContentInfo {
-  final ContentInfo delegate;
-  
-  _PartContentInfo(this.delegate);
-}
-
 class Part<T> {
   final PartContentInfo contentInfo;
   final T entity;
   
   Part(final ContentInfo contentInfo, this.entity):
-  this.contentInfo = new _PartContentInfo(contentInfo){
+      this.contentInfo = new _PartContentInfo(contentInfo) {
     checkNotNull(contentInfo);
     checkNotNull(entity);
   }
