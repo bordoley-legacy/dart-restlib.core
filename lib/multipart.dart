@@ -7,6 +7,7 @@ import "package:mime/mime.dart";
 
 import "package:restlib_common/async.dart";
 import "package:restlib_common/collections.dart";
+import "package:restlib_common/io.dart";
 import "package:restlib_common/preconditions.dart";
 
 import "http.dart";
@@ -20,8 +21,8 @@ abstract class Multipart<T> implements Iterable<Part<T>> {
   String get boundary;
 } 
 
-abstract class ByteStreamableMultipart implements Multipart<ByteStreamable> {
-  factory ByteStreamableMultipart(final String boundary, final Iterable<Part<ByteStreamable>> parts) =>
+abstract class ByteStreamableMultipart<T extends ByteStreamable> implements Multipart<T> {
+  factory ByteStreamableMultipart(final String boundary, final Iterable<Part<T>> parts) =>
       new _ByteStreamableMultipart(boundary, parts);
 }
 
