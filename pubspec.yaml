@@ -1,6 +1,7 @@
 name: restlib_core
 description: A sample command-line application
 dependencies:
+  mime: any
   restlib_common:
     git: https://code.google.com/p/dart-restlib.common/
   restlib_parsing:

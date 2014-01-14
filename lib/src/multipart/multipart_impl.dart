@@ -1,6 +1,6 @@
 part of restlib.core.multipart;
 
-abstract class ByteRange extends Streamable {
+abstract class ByteRange extends ByteStreamable {
   Future<int> length();
   ByteRange subRange(int start, int end);
   
@@ -52,7 +52,7 @@ class _ByteRangeableSubRange implements ByteRange {
     return delegate.subRange(newStart, newEnd);
   }
   
-  Stream<List<int>> asStream() =>
+  Stream<List<int>> asByteStream() =>
       openRead();
 }
 
@@ -60,7 +60,35 @@ class _Multipart<T>
     extends Object
     with ForwardingIterable<Part<T>>
     implements Multipart<T> {
+  final String boundary;    
   final Iterable<Part<T>> delegate;
     
-  _Multipart(this.delegate);
+  _Multipart(this.boundary, this.delegate);
+}    
+
+// FIXME: Should go in restlib.core.async
+Stream _concat(final Iterable<Stream> streams) {
+  final StreamController controller = new StreamController();
+  final Iterator<Stream> streamItr = streams.iterator;
+  
+  void addNextStream() {
+    final Stream stream = streamItr.current;
+    stream.listen(controller.add)
+      ..onError(controller.addError)
+      ..onDone(() {
+        if(streamItr.moveNext()) {
+          addNextStream();
+        } else {
+          controller.close();
+        }
+      });
+  }
+  
+  if (streamItr.moveNext()) {
+    addNextStream();
+  } else {
+    controller.close();
+  }
+  
+  return controller.stream;
 }    
