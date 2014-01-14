@@ -65,6 +65,9 @@ class _Multipart<T>
     
   _Multipart(this.boundary, this.delegate);
 }    
+    
+Stream _ofValue(value) =>
+    new Stream.fromFuture(new Future.value(value));
 
 // FIXME: Should go in restlib.core.async
 Stream _concat(final Iterable<Stream> streams) {

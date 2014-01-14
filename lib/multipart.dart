@@ -39,11 +39,11 @@ class ByteStreamableMultipart
         this
           .fold(Persistent.EMPTY_SEQUENCE, (final ImmutableSequence sequence, final Part<ByteStreamable> part) =>
               sequence
-                .add(new Stream.fromIterable(ASCII.encode("--$boundary\r\n")))
-                .add(new Stream.fromIterable(ASCII.encode(part.contentInfo.toString())))
+                .add(_ofValue(ASCII.encode("--$boundary\r\n")))
+                .add(_ofValue(ASCII.encode(part.contentInfo.toString())))
                 .add(part.entity.asByteStream())
-                .add(new Stream.fromIterable(ASCII.encode("\r\n\r\n"))))
-          .add(new Stream.fromIterable(ASCII.encode("--$boundary--\r\n")));
+                .add(_ofValue(ASCII.encode("\r\n\r\n"))))
+          .add(_ofValue(ASCII.encode("--$boundary--\r\n")));
     return _concat(streams);
   }    
 }
