@@ -26,10 +26,10 @@ abstract class ByteStreamableMultipart<T extends ByteStreamable> implements Mult
       new _ByteStreamableMultipart(boundary, parts);
 }
 
-class _ByteStreamableMultipart 
+class _ByteStreamableMultipart<T extends ByteStreamable>
     extends Object
-    with ForwardingIterable<Part<ByteStreamable>>
-    implements ByteStreamableMultipart {
+    with ForwardingIterable<Part<T>>
+    implements ByteStreamableMultipart<T> {
   final String boundary;
   final Iterable<Part<ByteStreamable>> delegate;
   
