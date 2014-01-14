@@ -14,14 +14,12 @@ abstract class Streamable {
   Stream<List<int>> asStream();
 }
 
-abstract class MultipartOutput<T extends Streamable> implements Iterable<Part<T>>, Multipart<T> {
-  static MultipartOutput<ByteRange> byteRange(final Iterable<Part<ByteRange>> byteRanges) =>
-      new _MultipartOutput(byteRanges);
-}
-
 abstract class Multipart<T> implements Iterable<Part<T>> {
   factory Multipart(final Iterable<Part<T>> parts) =>
       new _Multipart(parts);
+  
+  static Multipart<ByteRange> byteRange(final Iterable<Part<ByteRange>> byteRanges) =>
+      new _Multipart(byteRanges);
 } 
 
 // Use this to include custom part headers
@@ -30,11 +28,23 @@ abstract class PartContentInfo implements ContentInfo{
 }
 
 class Part<T> {
-  final ContentInfo contentInfo;
+  final PartContentInfo contentInfo;
   final T entity;
   
-  Part(this.contentInfo, this.entity){
+  Part(final ContentInfo contentInfo, this.entity):
+  this.contentInfo = new _ForwardingPartContentInfo(contentInfo){
     checkNotNull(contentInfo);
     checkNotNull(entity);
   }
 }
+
+class _ForwardingPartContentInfo 
+  extends Object
+  with ForwardingContentInfo 
+  implements PartContentInfo {
+  final ContentInfo delegate;
+  
+  _ForwardingPartContentInfo(this.delegate);
+}
+
+

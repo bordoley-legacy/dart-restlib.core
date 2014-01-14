@@ -56,13 +56,6 @@ class _ByteRangeableSubRange implements ByteRange {
       openRead();
 }
 
-class _MultipartOutput<T extends Streamable> 
-    extends _Multipart<T>
-    implements MultipartOutput<T> {
-  
-  _MultipartOutput(final Iterable<Part<Streamable>> delegate) : super(delegate);
-}
-
 class _Multipart<T>
     extends Object
     with ForwardingIterable<Part<T>>
