@@ -50,7 +50,12 @@ class Header {
   static const Header WWW_AUTHENTICATE = const Header._internal("WWW-Authenticate");
   
   static String asHeaderValue(final value) {
-    if (value is Iterable) {
+    if (value is Option) {
+      value
+        .map((final value) =>
+            asHeaderValue(value))
+        .orElse("");
+    } else if (value is Iterable) {
       return (value.isEmpty) ? "" : value.join(", ");
     } else if (value is DateTime) {
       return toHttpDate(value);
