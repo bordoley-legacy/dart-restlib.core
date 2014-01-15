@@ -59,7 +59,7 @@ final Parser<Iterable> _TIME_OF_DAY =
 final Parser<Iterable> _DATE_1 =
   _2_DIGIT + SP + _MONTH + SP + _4_DIGIT;
 
-final Parser<HttpDateTime> _IMF_FIX_DATE = 
+final Parser<DateTime> _IMF_FIX_DATE = 
   (_DAY_NAME + SP + _DATE_1 + SP + _TIME_OF_DAY + SP + string("GMT")).map((final Iterable e) {
     final int year = e.elementAt(2).elementAt(4);
     final int month = e.elementAt(2).elementAt(2);
@@ -68,21 +68,75 @@ final Parser<HttpDateTime> _IMF_FIX_DATE =
     final int minute = e.elementAt(4).elementAt(2);
     final int second = e.elementAt(4).elementAt(4);
     
-    return new HttpDateTime._internal(new DateTime.utc(year, month, day, hour, minute, second));
+    return new DateTime.utc(year, month, day, hour, minute, second);
   });
 
-final Parser<HttpDateTime> HTTP_DATE_TIME = _IMF_FIX_DATE;
+final Parser<DateTime> HTTP_DATE_TIME = _IMF_FIX_DATE;
 
-class HttpDateTime extends NoSuchMethodForwarder implements DateTime {
-  factory HttpDateTime.now() {
-    return new HttpDateTime._internal(new DateTime.now().toUtc());
+
+String _twoDigit(final int number) {
+  checkArgument(number >=0 && number < 100);
+  
+  if (number > 9) {
+    return number.toString();
+  } else {
+    return "0$number";
   }
-  
-  HttpDateTime._internal(final DateTime delegate) : super(delegate);
-  
-  dynamic noSuchMethod(Invocation invocation) =>
-      super.noSuchMethod(invocation);
-  
-  // FIXME
-  String toString() => super.toString();
+}
+
+String _day(final DateTime date) {
+  switch(date.weekday) {
+    case DateTime.MONDAY:
+      return "Mon";
+    case DateTime.TUESDAY:
+      return "Tue";
+    case DateTime.WEDNESDAY:
+      return "Wed";
+    case DateTime.THURSDAY:
+      return "Thu";
+    case DateTime.FRIDAY:
+      return "Fri";  
+    case DateTime.SATURDAY:
+      return "Sat";    
+    case DateTime.SUNDAY:
+      return "Sun";  
+    default:
+      throw new ArgumentError("Not a weekday");
+   }
+}
+
+String _month(final DateTime date) {
+  switch(date.month) {
+    case DateTime.JANUARY:
+      return "Jan";
+    case DateTime.FEBRUARY:
+      return "Feb";
+    case DateTime.MARCH:
+      return "Mar";
+    case DateTime.APRIL:
+      return "Apr";
+    case DateTime.MAY:
+      return "May";
+    case DateTime.JUNE:
+      return "Jun";
+    case DateTime.JULY:
+      return "Jul";
+    case DateTime.AUGUST:
+      return "Aug";
+    case DateTime.SEPTEMBER:
+      return "Sep";
+    case DateTime.OCTOBER:
+      return "Oct";
+    case DateTime.NOVEMBER:
+      return "Nov";
+    case DateTime.DECEMBER:
+      return "Dec";
+    default:
+      throw new ArgumentError("Not a month");
+  }
+}
+
+String toHttpDate(final DateTime dateTime) {
+  final DateTime utc = dateTime.toUtc();
+  return "${_day(utc)}, ${_twoDigit(utc.day)} ${_month(utc)} ${utc.year} ${_twoDigit(utc.hour)}:${_twoDigit(utc.minute)}:${_twoDigit(utc.second)} GMT";
 }

@@ -52,6 +52,8 @@ class Header {
   static String asHeaderValue(final value) {
     if (value is Iterable) {
       return (value.isEmpty) ? "" : value.join(", ");
+    } else if (value is DateTime) {
+      return toHttpDate(value);
     } else {
       return value.toString();
     } 

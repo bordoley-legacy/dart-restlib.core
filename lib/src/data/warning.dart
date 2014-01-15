@@ -7,12 +7,12 @@ final Parser<int> _WARN_CODE =
 
 final Parser<Either<HostPort, String>> _WARN_AGENT = (_HOST_PORT ^ TOKEN);
 
-final Parser<HttpDateTime> _WARN_DATE =
+final Parser<DateTime> _WARN_DATE =
   (DQUOTE + HTTP_DATE_TIME + DQUOTE)
     .map((final Iterable e) =>
         e.elementAt(1));
 
-final Parser<Option<HttpDateTime>> _SP_WARN_DATE =
+final Parser<Option<DateTime>> _SP_WARN_DATE =
   (SP + _WARN_DATE).map((final Iterable e) =>
       e.elementAt(1)).optional();
 
@@ -24,10 +24,10 @@ final Parser<Warning> WARNING =
 class Warning {
   final Either<HostPort, String> warnAgent;
   final int warnCode;
-  final Option<HttpDateTime> warnDate;
+  final Option<DateTime> warnDate;
   final String warnText;
   
-  factory Warning.hostPort(final int warnCode, final HostPort warnAgent, final String warnText, [final HttpDateTime warnDate = null]) {
+  factory Warning.hostPort(final int warnCode, final HostPort warnAgent, final String warnText, [final DateTime warnDate = null]) {
     checkArgument(warnCode > 0);
     checkArgument(warnCode <= 999);
     checkArgument(QUOTABLE.matchesAllOf(warnText));
@@ -35,7 +35,7 @@ class Warning {
     return new Warning._internal(warnCode, new Either.leftValue(warnAgent), warnText, new Option(warnDate));
   }
   
-  factory Warning.synomynAgent(final int warnCode, final String warnAgent, final String warnText, [final HttpDateTime warnDate = null]) {
+  factory Warning.synomynAgent(final int warnCode, final String warnAgent, final String warnText, [final DateTime warnDate = null]) {
     checkArgument(warnCode > 0);
     checkArgument(warnCode <= 999);
     checkArgument(QUOTABLE.matchesAllOf(warnText));
@@ -62,7 +62,7 @@ class Warning {
   }
   
   String toString() =>
-      "$warnCode $warnAgent ${encodeQuotedString(warnText)}${warnDate.map((final HttpDateTime date) => " \"$date\"").orElse("")}";
+      "$warnCode $warnAgent ${encodeQuotedString(warnText)}${warnDate.map(toHttpDate).orElse("")}";
 }
 
 final Parser<HostPort> _HOST_PORT = NONE;
