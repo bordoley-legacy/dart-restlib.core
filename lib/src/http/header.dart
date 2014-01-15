@@ -51,7 +51,7 @@ class Header {
   
   static String asHeaderValue(final value) {
     if (value is Option) {
-      value
+      return value
         .map((final value) =>
             asHeaderValue(value))
         .orElse("");
