@@ -80,6 +80,9 @@ class HttpDateTime extends NoSuchMethodForwarder implements DateTime {
   
   HttpDateTime._internal(final DateTime delegate) : super(delegate);
   
+  dynamic noSuchMethod(Invocation invocation) =>
+      super.noSuchMethod(invocation);
+  
   // FIXME
   String toString() => super.toString();
 }
