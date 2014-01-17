@@ -1,7 +1,7 @@
 part of restlib.core.http;
 
 abstract class Request<T> {  
-  factory Request.wrapHeaders(Iterable<String> headers(Header header), final Method method, final Uri requestUri) =>
+  factory Request.wrapHeaders(final SequenceMultimap<Header, String> headers, final Method method, final Uri requestUri) =>
       new _HeadersRequestWrapper(headers, method, requestUri);
   
   Option<ChallengeMessage> get authorizationCredentials;
@@ -9,6 +9,9 @@ abstract class Request<T> {
   ContentInfo get contentInfo;
   Option<T> get entity;
   ImmutableSet<Expectation> get expectations;
+  
+  Dictionary<Header, dynamic> get customHeaders;
+  
   Method get method;
   ImmutableSet<CacheDirective> get pragmaCacheDirectives;
   RequestPreconditions get preconditions;
@@ -75,7 +78,33 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
       delegate.userAgent;
 }
 
-abstract class RequestWith_ implements Request {
+abstract class RequestMixin implements Request {
+  String toString() {
+    String requestLine = "${method} ${uri.path}${uri.query.isEmpty ? "" : uri.query}\r\n";
+    String host = "${uri.host}${uri.port > 0 ? ":${uri.port}" : ""}";
+    
+    final StringBuffer buffer = (new StringBuffer()
+      ..write(requestLine)
+      ..write(Header.HOST.write(host))
+      ..write(Header.AUTHORIZATION.write(authorizationCredentials))
+      ..write(Header.CACHE_CONTROL.write(this.cacheDirectives))
+      ..write(contentInfo)
+      ..write(Header.EXPECT.write(expectations))
+      ..write(Header.PRAGMA.write(pragmaCacheDirectives))
+      ..write(preconditions)
+      ..write(preferences)
+      ..write(Header.PROXY_AUTHORIZATION.write(proxyAuthorizationCredentials))
+      ..write(Header.REFERER.write(referer))
+      ..write(Header.USER_AGENT.write(userAgent))
+      ..write(entity.map((final entity) => 
+          "\r\n\r\n${entity.toString()}\r\n").orElse("")));
+    
+    this.customHeaders.forEach((final Pair<Header, dynamic> pair) =>
+        buffer.write(pair.fst.write(pair.snd)));
+    
+    return buffer.toString();
+  }
+  
   Request with_({
     final ChallengeMessage authorizationCredentials,
     final Iterable<CacheDirective> cacheDirectives,
@@ -104,30 +133,6 @@ abstract class RequestWith_ implements Request {
             referer: referer,
             uri: uri, 
             userAgent: userAgent);
-}
-
-abstract class RequestToString implements Request {    
-  String toString() {
-    String requestLine = "${method} ${uri.path}${uri.query.isEmpty ? "" : uri.query}\r\n";
-    String host = "${uri.host}${uri.port > 0 ? ":${uri.port}" : ""}";
-    
-    return (new StringBuffer()
-      ..write(requestLine)
-      ..write(Header.HOST.write(host))
-      ..write(Header.AUTHORIZATION.write(authorizationCredentials))
-      ..write(Header.CACHE_CONTROL.write(this.cacheDirectives))
-      ..write(contentInfo)
-      ..write(Header.EXPECT.write(expectations))
-      ..write(Header.PRAGMA.write(pragmaCacheDirectives))
-      ..write(preconditions)
-      ..write(preferences)
-      ..write(Header.PROXY_AUTHORIZATION.write(proxyAuthorizationCredentials))
-      ..write(Header.REFERER.write(referer))
-      ..write(Header.USER_AGENT.write(userAgent))
-      ..write(entity.map((final entity) => 
-          "\r\n\r\n${entity.toString()}\r\n").orElse(""))
-    ).toString();
-  }
 }
 
 class RequestBuilder<T> {
@@ -205,12 +210,12 @@ class RequestBuilder<T> {
 
 class _RequestImpl<T> 
     extends Object 
-    with RequestToString, 
-      RequestWith_
+    with RequestMixin
     implements Request {
   final Option<ChallengeMessage> authorizationCredentials;
   final ImmutableSet<CacheDirective> cacheDirectives;
   final ContentInfo contentInfo;
+  ImmutableDictionary<Header, dynamic> customHeaders;
   final Option<T> entity;
   final ImmutableSet<Expectation> expectations;
   final Method method;
@@ -269,15 +274,15 @@ class _RequestImpl<T>
     
 class _HeadersRequestWrapper
     extends Object 
-    with RequestToString,
-      RequestWith_,
+    with RequestMixin,
       _Parseable
     implements Request {
   Option<ChallengeMessage> _authorizationCredentials;
   ImmutableSet<CacheDirective> _cacheDirectives;
   ContentInfo _contentInfo;
   ImmutableSet<Expectation> _expectations;
-  final _HeaderFunc headers;
+  Dictionary<Header, dynamic> _customHeaders;
+  final SequenceMultimap<Header, String> headers;
   final Option entity = Option.NONE;
   final Method method;
   
@@ -314,6 +319,18 @@ class _HeadersRequestWrapper
       computeIfNull(_contentInfo, () {
         _contentInfo = new ContentInfo.wrapHeaders(headers);
         return _contentInfo;
+      });
+  
+  Dictionary<Header, dynamic> get customHeaders =>
+      computeIfNull(_customHeaders, () {
+        _customHeaders = 
+            headers.dictionary
+              .filterKeys((final Header header) => 
+                  !Header._standard.contains(header))
+              .mapValues((final Sequence<String> values) => 
+                // FIXME: Verify this is correct.
+                values.join(","));
+        return _customHeaders;
       });
   
   ImmutableSet<Expectation> get expectations =>
@@ -357,7 +374,7 @@ class _HeadersRequestWrapper
 
   Option<Uri> get referer =>
       computeIfNull(_referer, () {
-        _referer = firstWhere(headers(Header.REFERER), (final String uri) => true)
+        _referer = firstWhere(headers.call(Header.REFERER), (final String uri) => true)
             .flatMap(_parseUri);
         return _referer;
       });

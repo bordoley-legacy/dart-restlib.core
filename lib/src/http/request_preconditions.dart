@@ -3,7 +3,7 @@ part of restlib.core.http;
 abstract class RequestPreconditions {
   static const RequestPreconditions NONE = const _RequestPreconditionsNone();
   
-  factory RequestPreconditions.wrapHeaders(Iterable<String> headers(Header header)) =>
+  factory RequestPreconditions.wrapHeaders(final SequenceMultimap<Header, String> headers) =>
       new _HeadersRequestPreconditionsImpl(headers);
   
   ImmutableSet<EntityTag> get ifMatch;
@@ -162,7 +162,7 @@ class _HeadersRequestPreconditionsImpl
       RequestPreconditionsWith_,
       _Parseable
     implements RequestPreconditions {
-  final _HeaderFunc headers;
+  final SequenceMultimap<Header, String> headers;
   ImmutableSet<EntityTag> _ifMatch;
   Option<DateTime> _ifModifiedSince;
   ImmutableSet<EntityTag> _ifNoneMatch;

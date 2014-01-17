@@ -1,6 +1,8 @@
 library restlib.core.http;
 
 import "package:restlib_common/collections.dart";
+import "package:restlib_common/collections.immutable.dart";
+import "package:restlib_common/collections.mutable.dart";
 import "package:restlib_common/objects.dart";
 import "package:restlib_common/preconditions.dart";
 
@@ -20,8 +22,6 @@ part "src/http/request_preferences.dart";
 part "src/http/response.dart";
 part "src/http/status.dart";
 
-typedef Iterable<String> _HeaderFunc(Header header);
-
 Option<Uri> _parseUri(final String uri) {
   checkNotNull(uri);
 
@@ -35,9 +35,9 @@ Option<Uri> _parseUri(final String uri) {
 }
 
 abstract class _Parseable {
-  _HeaderFunc headers;
+  SequenceMultimap<Header, String> get headers;
   
   Option _parse(final Parser parser, final Header header) =>
       // FIXME: verify the join is correct
-      parser.parse(headers(header).join(","));
+      parser.parse(headers[header].join(","));
 }
