@@ -129,8 +129,8 @@ abstract class _ContentInfoMixin implements ContentInfo {
       _contentInfoToString(this);
   
   ContentInfo with_({
-    final Iterable<ContentEncoding> encodings : const [],
-    final Iterable<Language> languages : const [],
+    final Iterable<ContentEncoding> encodings,
+    final Iterable<Language> languages,
     final int length,
     final Uri location,
     final MediaRange mediaRange,
@@ -207,8 +207,8 @@ abstract class ForwardingContentInfo implements Forwarder, ContentInfo {
       _contentInfoToString(this);
   
   ContentInfo with_({
-    final Iterable<ContentEncoding> encodings : const[],
-    final Iterable<Language> languages : const[],
+    final Iterable<ContentEncoding> encodings,
+    final Iterable<Language> languages,
     final int length,
     final Uri location,
     final MediaRange mediaRange,

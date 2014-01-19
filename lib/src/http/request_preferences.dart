@@ -158,10 +158,10 @@ abstract class ForwardingRequestPreferences implements Forwarder, RequestPrefere
       _requestPreferencesToString(this);
   
   RequestPreferences with_({
-    final Iterable<Preference<Charset>> acceptedCharsets : const [],
-    final Iterable<Preference<ContentEncoding>> acceptedEncodings : const [],
-    final Iterable<Preference<Language>>  acceptedLanguages : const [],
-    final Iterable<Preference<MediaRange>> acceptedMediaRanges : const [],
+    final Iterable<Preference<Charset>> acceptedCharsets,
+    final Iterable<Preference<ContentEncoding>> acceptedEncodings,
+    final Iterable<Preference<Language>>  acceptedLanguages,
+    final Iterable<Preference<MediaRange>> acceptedMediaRanges,
     final Range range}) =>
         _requestPreferencesWith(
             this,
@@ -191,10 +191,10 @@ abstract class _RequestPreferencesMixin implements RequestPreferences{
       _requestPreferencesToString(this);
   
   RequestPreferences with_({
-    final Iterable<Preference<Charset>> acceptedCharsets : const [],
-    final Iterable<Preference<ContentEncoding>> acceptedEncodings : const [],
-    final Iterable<Preference<Language>>  acceptedLanguages : const [],
-    final Iterable<Preference<MediaRange>> acceptedMediaRanges : const [],
+    final Iterable<Preference<Charset>> acceptedCharsets,
+    final Iterable<Preference<ContentEncoding>> acceptedEncodings,
+    final Iterable<Preference<Language>>  acceptedLanguages,
+    final Iterable<Preference<MediaRange>> acceptedMediaRanges,
     final Range range}) =>
         _requestPreferencesWith(
             this,

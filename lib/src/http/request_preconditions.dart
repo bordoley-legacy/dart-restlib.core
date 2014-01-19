@@ -158,9 +158,9 @@ abstract class ForwardingRequestPreconditions implements Forwarder, RequestPreco
       _requestPreconditionsToString(this);
   
   RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch : const [],
+    final Iterable<EntityTag> ifMatch,
     final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch : const [],
+    final Iterable<EntityTag> ifNoneMatch,
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) =>
         _requestPreconditionsWith(
@@ -191,9 +191,9 @@ abstract class _RequestPreconditionsMixin implements RequestPreconditions {
       _requestPreconditionsToString(this);
   
   RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch : const [],
+    final Iterable<EntityTag> ifMatch,
     final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch : const [],
+    final Iterable<EntityTag> ifNoneMatch,
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) =>
         _requestPreconditionsWith(
