@@ -3,7 +3,7 @@ part of restlib.core.http;
 String _responseToString(final Response response) {
     final StringBuffer buffer = 
         (new StringBuffer()
-          ..write("$response.status\r\n")
+          ..write("${response.status}\r\n")
           ..write(Header.ACCEPT_RANGES.write(response.acceptedRangeUnits))
           ..write(Header.AGE.write(response.age))
           ..write(Header.ALLOW.write(response.allowedMethods))
