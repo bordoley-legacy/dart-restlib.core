@@ -1,9 +1,9 @@
 part of restlib.core.http_syntax;
 
-class _QuotedStringParser extends AbstractParser<String> {
-  final int _DQUOTE_CHAR = 34;
-  final int _ESCAPE_CHAR = 92;
-  
+const int _DQUOTE_CHAR = 34;
+const int _ESCAPE_CHAR = 92;
+
+class _QuotedStringParser extends AbstractParser<String> {  
   const _QuotedStringParser();
   
   Option<String> doParse(final StringIterator itr) {

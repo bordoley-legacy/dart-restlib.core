@@ -1,6 +1,5 @@
-part of restlib.core.data;
+part of restlib.core.http_syntax;
 
-// FIXME: Write a custom lexer to reduce memory
 final Parser<String> _DAY_NAME =
   string("Mon") | string("Tue") | string("Wed") | string("Thu") | string("Fri") | string("Sat") | string("Sun");
 

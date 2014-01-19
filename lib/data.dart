@@ -21,7 +21,6 @@ part "src/data/content_range.dart";
 part "src/data/entity_tag.dart";
 part "src/data/expectation.dart";
 part "src/data/form.dart";
-part "src/data/http_datetime.dart";
 part "src/data/key_value_pair.dart";
 part "src/data/language.dart";
 part "src/data/matcheable.dart";
