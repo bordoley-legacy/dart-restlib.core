@@ -60,12 +60,12 @@ final Parser<Iterable> _DATE_1 =
 
 final Parser<DateTime> _IMF_FIX_DATE = 
   (_DAY_NAME + COMMA + SP + _DATE_1 + SP + _TIME_OF_DAY + SP + string("GMT")).map((final Iterable e) {
-    final int year = e.elementAt(3).elementAt(4);
-    final int month = e.elementAt(3).elementAt(2);
-    final int day = e.elementAt(3).elementAt(0);
-    final int hour = e.elementAt(5).elementAt(0);
-    final int minute = e.elementAt(5).elementAt(2);
-    final int second = e.elementAt(5).elementAt(4);
+    final int year = e.elementAt(7);
+    final int month = e.elementAt(5);
+    final int day = e.elementAt(3);
+    final int hour = e.elementAt(9);
+    final int minute = e.elementAt(11);
+    final int second = e.elementAt(13);
     
     return new DateTime.utc(year, month, day, hour, minute, second);
   });
