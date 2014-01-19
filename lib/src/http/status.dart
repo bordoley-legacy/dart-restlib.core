@@ -559,10 +559,7 @@ class Status {
   }
   
   Response toResponse() {
-    return (new ResponseBuilder()
-            ..status = this
-            ..entity = this.reason
-            ).build();
+    return new Response(this, entity : this.reason);
   }
   
   String toString() {

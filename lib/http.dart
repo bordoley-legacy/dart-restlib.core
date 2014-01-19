@@ -35,9 +35,9 @@ Option<Uri> _parseUri(final String uri) {
 }
 
 abstract class _Parseable {
-  SequenceMultimap<Header, String> get headers;
+  SequenceMultimap<Header, String> get _headers;
   
   Option _parse(final Parser parser, final Header header) =>
       // FIXME: verify the join is correct
-      parser.parse(headers[header].join(","));
+      parser.parse(_headers[header].join(","));
 }

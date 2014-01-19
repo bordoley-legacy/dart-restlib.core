@@ -3,8 +3,8 @@ part of restlib.http_test;
 void requestTests() {
   group("factory:wrapHeaders()", () {
     test("with no headers present", () { 
-      final Dictionary<Header, String> headers =
-          Persistent.EMPTY_DICTIONARY.insert(Header.HOST, "example.com");
+      final SequenceMultimap<Header, String> headers =
+          Persistent.EMPTY_SEQUENCE_MULTIMAP.insert(Header.HOST, "example.com");
  
 
       final Request request = new Request.wrapHeaders(headers, Method.PUT, Uri.parse("http://example.com/test"));
@@ -103,8 +103,8 @@ void requestTests() {
       
       final UserAgent userAgent = USER_AGENT.parse("test/1.1").value;
       
-      final Dictionary<Header, String> headers =
-            (new Dictionary<Header, dynamic>.wrapMap(
+      final Multimap<Header, String, dynamic> headers = 
+          Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAllFromMap(
                 {Header.ACCEPT : acceptedMediaRanges,
                  Header.ACCEPT_CHARSET : acceptedCharsets,
                  Header.ACCEPT_ENCODING : acceptedEncodings,
@@ -130,7 +130,7 @@ void requestTests() {
                  Header.PRAGMA : pragmaCacheDirectives,
                  Header.PROXY_AUTHORIZATION : authorizationCredentials,
                  Header.REFERER : referer,
-                 Header.USER_AGENT : userAgent}).mapValues(Header.asHeaderValue));
+                 Header.USER_AGENT : userAgent}).mapValues(Header.asHeaderValue);
 
       final Request request =  
           new Request.wrapHeaders(headers, Method.PUT, uri);
@@ -163,8 +163,8 @@ void requestTests() {
     });
     
     test("with if-Range as date string", () {
-      final Dictionary<Header, String> headers = 
-          new Dictionary.wrapMap({Header.IF_RANGE : ""});
+      final SequenceMultimap<Header, String> headers = 
+          Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAllFromMap({Header.IF_RANGE : ""});
 
       final Request request = new Request.wrapHeaders(headers, Method.PUT, Uri.parse("http://www.example.com"));
       // FIXME:

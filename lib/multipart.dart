@@ -12,6 +12,7 @@ import "package:restlib_common/collections.immutable.dart";
 import "package:restlib_common/io.dart";
 import "package:restlib_common/preconditions.dart";
 
+import "data.dart";
 import "http.dart";
 
 part "src/multipart/multipart_impl.dart";
@@ -53,7 +54,27 @@ class _ByteStreamableMultipart<T extends ByteStreamable>
 
 // Use this to include custom part headers
 abstract class PartContentInfo implements ContentInfo {
+  Dictionary<Header, dynamic> get customHeaders;
   
+  PartContentInfo with_({
+    Dictionary<Header, dynamic> customHeaders,
+    Iterable<ContentEncoding> encodings,
+    Iterable<Language> languages,
+    int length,
+    Uri location,
+    MediaRange mediaRange,
+    ContentRange range 
+  });
+  
+  ContentInfo without({
+    final bool customHeaders: false,
+    final bool encodings: false,
+    final bool languages: false,
+    final bool length: false,
+    final bool location: false,
+    final bool mediaRange:  false,
+    final bool range : false
+  });
 }
 
 class Part<T> {
@@ -61,7 +82,7 @@ class Part<T> {
   final T entity;
   
   Part(final ContentInfo contentInfo, this.entity):
-      this.contentInfo = new _PartContentInfo(contentInfo) {
+      this.contentInfo = new _PartContentInfo(Persistent.EMPTY_DICTIONARY, contentInfo) {
     checkNotNull(contentInfo);
     checkNotNull(entity);
   }
@@ -77,8 +98,7 @@ Future<Multipart> parseMultipartStream(
           .bind(msgStream)
           .map((final MimeMultipart multipart) =>
               new Part(new ContentInfo.wrapHeaders(
-                (final Header header) => 
-                    new Option(multipart.headers[header.toString()])), 
+                  Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAllFromMap(multipart.headers)), 
               multipart))
           .fold(Persistent.EMPTY_SEQUENCE, (final ImmutableSequence<Future> futureResults, final Part<Stream<List<int>>> part) => 
               partParserProvider(part.contentInfo)

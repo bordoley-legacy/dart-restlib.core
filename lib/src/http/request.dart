@@ -1,31 +1,180 @@
 part of restlib.core.http;
 
+String _requestToString(final Request request) {
+  final String requestLine = "${request.method} ${request.uri.path}${request.uri.query.isEmpty ? "" : request.uri.query}\r\n";
+  final String host = "${request.uri.host}${request.uri.port > 0 ? ":${request.uri.port}" : ""}";
+    
+  final StringBuffer buffer = (new StringBuffer()
+    ..write(requestLine)
+    ..write(Header.HOST.write(host))
+    ..write(Header.AUTHORIZATION.write(request.authorizationCredentials))
+    ..write(Header.CACHE_CONTROL.write(request.cacheDirectives))
+    ..write(request.contentInfo)
+    ..write(Header.EXPECT.write(request.expectations))
+    ..write(Header.PRAGMA.write(request.pragmaCacheDirectives))
+    ..write(request.preconditions)
+    ..write(request.preferences)
+    ..write(Header.PROXY_AUTHORIZATION.write(request.proxyAuthorizationCredentials))
+    ..write(Header.REFERER.write(request.referer))
+    ..write(Header.USER_AGENT.write(request.userAgent))
+    ..write(request.entity.map((final entity) => 
+        "\r\n\r\n${entity.toString()}\r\n").orElse("")));
+    
+  request.customHeaders.forEach((final Pair<Header, dynamic> pair) =>
+      buffer.write(pair.fst.write(pair.snd)));
+    
+  return buffer.toString();
+} 
+
+Request _requestWith(
+    final Request delegate, 
+    final ChallengeMessage authorizationCredentials,
+    final Iterable<CacheDirective> cacheDirectives,
+    final ContentInfo contentInfo,
+    final Dictionary<Header, dynamic> customHeaders,
+    final entity,
+    final Iterable<Expectation> expectations,
+    final Method method,
+    final Iterable<CacheDirective> pragmaCacheDirectives,
+    final RequestPreconditions preconditions,
+    final RequestPreferences preferences,
+    final ChallengeMessage proxyAuthorizationCredentials,
+    final Uri referer,
+    final Uri uri,
+    final UserAgent userAgent) {
+  if (isNull(authorizationCredentials) &&
+      isNull(cacheDirectives) &&
+      isNull(contentInfo) &&
+      isNull(customHeaders) &&
+      isNull(entity) &&
+      isNull(expectations) &&
+      isNull(method) &&
+      isNull(pragmaCacheDirectives) &&
+      isNull(preconditions) &&
+      isNull(preferences) &&
+      isNull(proxyAuthorizationCredentials) &&
+      isNull(referer) && 
+      isNull(uri) &&
+      isNull(userAgent)) {
+    return delegate;
+  }
+  
+  return new _RequestImpl(
+      computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
+      Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
+      firstNotNull(contentInfo, delegate.contentInfo),
+      Persistent.EMPTY_DICTIONARY.insertAll(customHeaders),
+      computeIfEmpty(new Option(entity), () => delegate.entity),
+      Persistent.EMPTY_SET.addAll(firstNotNull(expectations, delegate.expectations)),
+      firstNotNull(method, delegate.method),
+      Persistent.EMPTY_SET.addAll(firstNotNull(pragmaCacheDirectives, delegate.pragmaCacheDirectives)),
+      firstNotNull(preconditions, delegate.preconditions),
+      firstNotNull(preferences, delegate.preferences),
+      computeIfEmpty(new Option(proxyAuthorizationCredentials), () => delegate.proxyAuthorizationCredentials),
+      computeIfEmpty(new Option(referer), () => delegate.referer),
+      firstNotNull(uri, delegate.uri),
+      computeIfEmpty(new Option(userAgent), () => delegate.userAgent));
+}
+
+Request _requestWithout(
+  final Request delegate,
+  final bool authorizationCredentials,
+  final bool cacheDirectives,
+  final bool contentInfo,
+  final bool customHeaders,
+  final bool entity,
+  final bool expectations,
+  final bool pragmaCacheDirectives,
+  final bool preconditions,
+  final bool preferences,
+  final bool proxyAuthorizationCredentials,
+  final bool referer,
+  final bool userAgent) =>
+      new _RequestImpl(
+          !authorizationCredentials ? delegate.authorizationCredentials : Option.NONE,
+          !cacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.cacheDirectives) : Persistent.EMPTY_SET,
+          !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
+          !customHeaders ? Persistent.EMPTY_DICTIONARY.insertAll(delegate.customHeaders) : Persistent.EMPTY_DICTIONARY,
+          !entity ? delegate.entity : Option.NONE,
+          !expectations? Persistent.EMPTY_SET.addAll(delegate.expectations) : Persistent.EMPTY_SET,
+          delegate.method,
+          !pragmaCacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.pragmaCacheDirectives) : Persistent.EMPTY_SET,
+          !preconditions ? delegate.preconditions : RequestPreconditions.NONE,
+          !preferences ? delegate.preferences : RequestPreferences.NONE,
+          !proxyAuthorizationCredentials ? delegate.proxyAuthorizationCredentials : Option.NONE,
+          !referer ? delegate.referer : Option.NONE,
+          delegate.uri,
+          !userAgent ? delegate.userAgent : Option.NONE);
+
 abstract class Request<T> {  
-  factory Request.wrapHeaders(final SequenceMultimap<Header, String> headers, final Method method, final Uri requestUri) =>
+  factory Request(final Method method, final uri, {
+    final ChallengeMessage authorizationCredentials,
+    final Iterable<CacheDirective> cacheDirectives : const [],
+    final ContentInfo contentInfo,
+    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
+    final T entity,
+    final Iterable<Expectation> expectations : const [],
+    final Iterable<CacheDirective> pragmaCacheDirectives : const [],
+    final RequestPreconditions preconditions,    
+    final RequestPreferences preferences,
+    final ChallengeMessage proxyAuthorizationCredentials,
+    final Uri referer,    
+    final UserAgent userAgent}) =>
+        new _RequestImpl(
+            new Option(authorizationCredentials),
+            Persistent.EMPTY_SET.addAll(cacheDirectives),
+            firstNotNull(contentInfo, ContentInfo.NONE),
+            Persistent.EMPTY_DICTIONARY.insertAll(customHeaders),
+            new Option(entity),
+            Persistent.EMPTY_SET.addAll(expectations),
+            method,
+            Persistent.EMPTY_SET.addAll(pragmaCacheDirectives),
+            firstNotNull(preconditions, RequestPreconditions.NONE),
+            firstNotNull(preferences, RequestPreferences.NONE),
+            new Option(proxyAuthorizationCredentials),
+            new Option(referer),
+            uri,
+            new Option(userAgent));
+  
+  factory Request.wrapHeaders(final Multimap<Header, String, dynamic> headers, final Method method, final Uri requestUri) =>
       new _HeadersRequestWrapper(headers, method, requestUri);
   
   Option<ChallengeMessage> get authorizationCredentials;
-  ImmutableSet<CacheDirective> get cacheDirectives;
+  
+  FiniteSet<CacheDirective> get cacheDirectives;
+  
   ContentInfo get contentInfo;
-  Option<T> get entity;
-  ImmutableSet<Expectation> get expectations;
   
   Dictionary<Header, dynamic> get customHeaders;
   
+  Option<T> get entity;
+  
+  FiniteSet<Expectation> get expectations;
+
   Method get method;
-  ImmutableSet<CacheDirective> get pragmaCacheDirectives;
+  
+  FiniteSet<CacheDirective> get pragmaCacheDirectives;
+  
   RequestPreconditions get preconditions;
+  
   RequestPreferences get preferences;
+  
   Option<ChallengeMessage> get proxyAuthorizationCredentials;
+  
   Option<Uri> get referer;
+  
   Uri get uri;
+  
   Option<UserAgent> get userAgent;
+  
+  String toString();
   
   Request with_({
     ChallengeMessage authorizationCredentials,
     Iterable<CacheDirective> cacheDirectives,
     ContentInfo contentInfo,
-    entity,
+    Dictionary<Header, dynamic> customHeaders,
+    T entity,
     Iterable<Expectation> expectations,
     Method method,
     Iterable<CacheDirective> pragmaCacheDirectives,
@@ -35,28 +184,45 @@ abstract class Request<T> {
     Uri referer,
     Uri uri,
     UserAgent userAgent});
+  
+  Request without({
+    bool authorizationCredentials : false,
+    bool cacheDirectives : false,
+    bool contentInfo : false,
+    bool customHeaders : false,
+    bool entity : false,
+    bool expectations : false,
+    bool pragmaCacheDirectives : false,
+    bool preconditions : false,
+    bool preferences : false,
+    bool proxyAuthorizationCredentials : false,
+    bool referer : false,
+    bool userAgent : false});
 }
 
 abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
   Option<ChallengeMessage> get authorizationCredentials =>
       delegate.authorizationCredentials;
   
-  ImmutableSet<CacheDirective> get cacheDirectives =>
+  FiniteSet<CacheDirective> get cacheDirectives =>
       delegate.cacheDirectives;
   
   ContentInfo get contentInfo =>
       delegate.contentInfo;
   
+  Dictionary<Header, dynamic> get customHeaders =>
+      delegate.customHeaders;
+  
   Option<T> get entity =>
       delegate.entity;
   
-  ImmutableSet<Expectation> get expectations =>
+  FiniteSet<Expectation> get expectations =>
       delegate.expectations;
   
   Method get method =>
       delegate.method;
   
-  ImmutableSet<CacheDirective> get pragmaCacheDirectives =>
+  FiniteSet<CacheDirective> get pragmaCacheDirectives =>
       delegate.pragmaCacheDirectives;
   
   RequestPreconditions get preconditions =>
@@ -76,40 +242,16 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
   
   Option<UserAgent> get userAgent =>
       delegate.userAgent;
-}
-
-abstract class RequestMixin implements Request {
-  String toString() {
-    String requestLine = "${method} ${uri.path}${uri.query.isEmpty ? "" : uri.query}\r\n";
-    String host = "${uri.host}${uri.port > 0 ? ":${uri.port}" : ""}";
-    
-    final StringBuffer buffer = (new StringBuffer()
-      ..write(requestLine)
-      ..write(Header.HOST.write(host))
-      ..write(Header.AUTHORIZATION.write(authorizationCredentials))
-      ..write(Header.CACHE_CONTROL.write(this.cacheDirectives))
-      ..write(contentInfo)
-      ..write(Header.EXPECT.write(expectations))
-      ..write(Header.PRAGMA.write(pragmaCacheDirectives))
-      ..write(preconditions)
-      ..write(preferences)
-      ..write(Header.PROXY_AUTHORIZATION.write(proxyAuthorizationCredentials))
-      ..write(Header.REFERER.write(referer))
-      ..write(Header.USER_AGENT.write(userAgent))
-      ..write(entity.map((final entity) => 
-          "\r\n\r\n${entity.toString()}\r\n").orElse("")));
-    
-    this.customHeaders.forEach((final Pair<Header, dynamic> pair) =>
-        buffer.write(pair.fst.write(pair.snd)));
-    
-    return buffer.toString();
-  }
+  
+  String toString() =>
+      _requestToString(this);
   
   Request with_({
     final ChallengeMessage authorizationCredentials,
     final Iterable<CacheDirective> cacheDirectives,
     final ContentInfo contentInfo,
-    final entity,
+    final Dictionary<Header, dynamic> customHeaders,
+    final T entity,
     final Iterable<Expectation> expectations,
     final Method method,
     final Iterable<CacheDirective> pragmaCacheDirectives,
@@ -119,103 +261,125 @@ abstract class RequestMixin implements Request {
     final Uri referer,
     final Uri uri,
     final UserAgent userAgent}) =>
-        new _RequestImpl._delegate(this, 
-            authorizationCredentials: authorizationCredentials, 
-            cacheDirectives: cacheDirectives, 
-            contentInfo: contentInfo, 
-            entity: entity, 
-            expectations: expectations, 
-            method: method, 
-            pragmaCacheDirectives: pragmaCacheDirectives, 
-            preconditions: preconditions, 
-            preferences: preferences, 
-            proxyAuthorizationCredentials: proxyAuthorizationCredentials, 
-            referer: referer,
-            uri: uri, 
-            userAgent: userAgent);
+        _requestWith(
+            this,
+            authorizationCredentials,
+            cacheDirectives, 
+            contentInfo,
+            customHeaders,
+            entity,
+            expectations,
+            method,
+            pragmaCacheDirectives,
+            preconditions, 
+            preferences,
+            proxyAuthorizationCredentials,
+            referer, 
+            uri,
+            userAgent);
+  
+  Request without({
+    final bool authorizationCredentials : false,
+    final bool cacheDirectives : false,
+    final bool contentInfo : false,
+    final bool customHeaders : false,
+    final bool entity : false,
+    final bool expectations : false,
+    final bool pragmaCacheDirectives : false,
+    final bool preconditions : false,
+    final bool preferences : false,
+    final bool proxyAuthorizationCredentials : false,
+    final bool referer : false,
+    final bool userAgent : false}) =>
+        _requestWithout(
+            this,
+            authorizationCredentials,
+            cacheDirectives, 
+            contentInfo,
+            customHeaders,
+            entity,
+            expectations,
+            pragmaCacheDirectives,
+            preconditions, 
+            preferences,
+            proxyAuthorizationCredentials,
+            referer, 
+            userAgent);
 }
 
-class RequestBuilder<T> {
-  Option<ChallengeMessage> _authorizationCredentials = Option.NONE;
-  MutableSet<CacheDirective> _cacheDirectives = new MutableSet.hash();
-  ContentInfo _contentInfo = ContentInfo.NONE;
-  Option<T> _entity = Option.NONE;
-  MutableSet<Expectation> _expectations = new MutableSet.hash();
-  Method _method = null;
-  MutableSet<CacheDirective> _pragmaCacheDirectives = new MutableSet.hash();
-  RequestPreconditions _preconditions = RequestPreconditions.NONE;
-  RequestPreferences _preferences = RequestPreferences.NONE;
-  Option<ChallengeMessage> _proxyAuthorizationCredentials = Option.NONE;
-  Option<Uri> _referer = Option.NONE;
-  Uri _uri = null;
-  Option<UserAgent> _userAgent = Option.NONE;
+abstract class _RequestMixin<T> implements Request<T> {
+  String toString() =>
+      _requestToString(this);
   
-  set authorizationCredentials(final ChallengeMessage authorizationCredentials) =>
-    this._authorizationCredentials = new Option(authorizationCredentials);
+  Request with_({
+    final ChallengeMessage authorizationCredentials,
+    final Iterable<CacheDirective> cacheDirectives,
+    final ContentInfo contentInfo,
+    final Dictionary<Header, dynamic> customHeaders,
+    final T entity,
+    final Iterable<Expectation> expectations,
+    final Method method,
+    final Iterable<CacheDirective> pragmaCacheDirectives,
+    final RequestPreconditions preconditions,
+    final RequestPreferences preferences,
+    final ChallengeMessage proxyAuthorizationCredentials,
+    final Uri referer,
+    final Uri uri,
+    final UserAgent userAgent}) =>
+        _requestWith(
+            this,
+            authorizationCredentials,
+            cacheDirectives, 
+            contentInfo,
+            customHeaders,
+            entity,
+            expectations,
+            method,
+            pragmaCacheDirectives,
+            preconditions, 
+            preferences,
+            proxyAuthorizationCredentials,
+            referer, 
+            uri,
+            userAgent);
   
-  set contentInfo(final ContentInfo contentInfo) => 
-      this._contentInfo = checkNotNull(contentInfo);
-  
-  set entity(final T entity) => 
-      this._entity = new Option(entity);
-  
-  set method(final Method method) => 
-      this._method = checkNotNull(method);
-  
-  set preconditions(final RequestPreconditions preconditions) => 
-      this._preconditions = checkNotNull(preconditions);
-  
-  set preferences(final RequestPreferences preferences) =>
-      this._preferences = checkNotNull(preferences);
-  
-  set proxyAuthorizationCredentials(final ChallengeMessage proxyAuthorizationCredentials) =>
-      this._proxyAuthorizationCredentials = new Option(proxyAuthorizationCredentials);
-  
-  set referer(final Uri referer) => 
-      this._referer = new Option(referer);
-  
-  set uri(final Uri uri) => 
-      this._uri = checkNotNull(uri);
-  
-  set userAgent(final UserAgent userAgent) => 
-      this._userAgent = new Option(userAgent);
-  
-  void addCacheDirective(final CacheDirective cacheDirective) {
-    this._cacheDirectives.add(cacheDirective);
-  }
-  
-  void addCacheDirectives(final Iterable<CacheDirective> cacheDirectives) => 
-      this._cacheDirectives.addAll(cacheDirectives);
-  
-  void addExpectation(final Expectation expectation) {
-    this._expectations.add(expectation);
-  }
-  
-  void addExpectations(final Iterable<Expectation> expectations) => 
-      this._expectations.addAll(expectations);
-  
-  void addPragmaCacheDirective(final CacheDirective cacheDirective) {
-    this._pragmaCacheDirectives.add(cacheDirective);
-  }
-  
-  void addPragmaCacheDirectives(final Iterable<CacheDirective> cacheDirectives) => 
-      this._pragmaCacheDirectives.addAll(cacheDirectives);
- 
-  Request build() {
-    checkState(_method != null);
-    checkState(_uri != null);
-    return new _RequestImpl(this); 
-  }
+  Request without({
+    final bool authorizationCredentials : false,
+    final bool cacheDirectives : false,
+    final bool contentInfo : false,
+    final bool customHeaders : false,
+    final bool entity : false,
+    final bool expectations : false,
+    final bool pragmaCacheDirectives : false,
+    final bool preconditions : false,
+    final bool preferences : false,
+    final bool proxyAuthorizationCredentials : false,
+    final bool referer : false,
+    final bool userAgent : false}) =>
+        _requestWithout(
+            this,
+            authorizationCredentials,
+            cacheDirectives, 
+            contentInfo,
+            customHeaders,
+            entity,
+            expectations,
+            pragmaCacheDirectives,
+            preconditions, 
+            preferences,
+            proxyAuthorizationCredentials,
+            referer, 
+            userAgent);
 }
 
 class _RequestImpl<T> 
     extends Object 
-    with RequestMixin
+    with _RequestMixin
     implements Request {
   final Option<ChallengeMessage> authorizationCredentials;
   final ImmutableSet<CacheDirective> cacheDirectives;
   final ContentInfo contentInfo;
-  ImmutableDictionary<Header, dynamic> customHeaders;
+  final ImmutableDictionary<Header, dynamic> customHeaders;
   final Option<T> entity;
   final ImmutableSet<Expectation> expectations;
   final Method method;
@@ -227,54 +391,26 @@ class _RequestImpl<T>
   final Uri uri;
   final Option<UserAgent> userAgent;
   
-  _RequestImpl(RequestBuilder builder) :
-    this.authorizationCredentials = builder._authorizationCredentials,
-    this.cacheDirectives = Persistent.EMPTY_SET.addAll(builder._cacheDirectives),
-    this.contentInfo = builder._contentInfo,
-    this.entity = builder._entity,
-    this.expectations = Persistent.EMPTY_SET.addAll(builder._expectations),
-    this.method = builder._method,
-    this.pragmaCacheDirectives = Persistent.EMPTY_SET.addAll(builder._pragmaCacheDirectives),
-    this.preconditions = builder._preconditions,
-    this.preferences = builder._preferences,
-    this.proxyAuthorizationCredentials = builder._proxyAuthorizationCredentials,
-    this.referer = builder._referer,
-    this.uri = builder._uri,
-    this.userAgent = builder._userAgent;
-  
-  _RequestImpl._delegate(final Request delegate, {
-    final ChallengeMessage authorizationCredentials,
-    final Iterable<CacheDirective> cacheDirectives,
-    final ContentInfo contentInfo,
-    final entity,
-    final Iterable<Expectation> expectations,
-    final Method method,
-    final Iterable<CacheDirective> pragmaCacheDirectives,
-    final RequestPreconditions preconditions,
-    final RequestPreferences preferences,
-    final ChallengeMessage proxyAuthorizationCredentials,
-    final Uri referer,
-    final Uri uri,
-    final UserAgent userAgent}) :
-      this.authorizationCredentials = computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
-      this.cacheDirectives = computeIfNotNullOtherwise(cacheDirectives, delegate.cacheDirectives, Persistent.EMPTY_SET.addAll),
-      this.contentInfo = firstNotNull(contentInfo, delegate.contentInfo),
-      this.entity = computeIfEmpty(new Option(entity), () => delegate.entity),
-      this.expectations = computeIfNotNullOtherwise(expectations, delegate.expectations, Persistent.EMPTY_SET.addAll),
-      this.method = firstNotNull(method, delegate.method),
-      this.pragmaCacheDirectives = computeIfNotNullOtherwise(pragmaCacheDirectives, delegate.pragmaCacheDirectives, Persistent.EMPTY_SET.addAll),
-      this.preconditions = firstNotNull(preconditions, delegate.preconditions),
-      this.preferences = firstNotNull(preferences, delegate.preferences),
-      this.proxyAuthorizationCredentials = computeIfEmpty(new Option(proxyAuthorizationCredentials), () => delegate.proxyAuthorizationCredentials),
-      this.referer = computeIfEmpty(new Option(referer), () => delegate.referer),
-      this.uri = firstNotNull(uri, delegate.uri),
-      this.userAgent = computeIfEmpty(new Option(userAgent), () => delegate.userAgent);
-      
+  _RequestImpl(
+    this.authorizationCredentials,
+    this.cacheDirectives,
+    this.contentInfo,
+    this.customHeaders,
+    this.entity,
+    this.expectations,
+    this.method,
+    this.pragmaCacheDirectives,
+    this.preconditions,
+    this.preferences,
+    this.proxyAuthorizationCredentials,
+    this.referer,
+    this.uri,
+    this.userAgent);    
 }
     
 class _HeadersRequestWrapper
     extends Object 
-    with RequestMixin,
+    with _RequestMixin,
       _Parseable
     implements Request {
   Option<ChallengeMessage> _authorizationCredentials;
@@ -282,10 +418,9 @@ class _HeadersRequestWrapper
   ContentInfo _contentInfo;
   ImmutableSet<Expectation> _expectations;
   Dictionary<Header, dynamic> _customHeaders;
-  final SequenceMultimap<Header, String> headers;
   final Option entity = Option.NONE;
+  final Multimap<Header, String, dynamic> _headers;
   final Method method;
-  
   ImmutableSet<CacheDirective> _pragmaCacheDirectives;
   RequestPreconditions _preconditions;
   RequestPreferences _preferences;
@@ -294,9 +429,7 @@ class _HeadersRequestWrapper
   final Uri uri;
   Option<UserAgent> _userAgent;
 
-  // FIXME: Should take a protocol argument so that the request URI
-  // gets the correct protocol
-  _HeadersRequestWrapper(this.headers, this.method, this.uri);
+  _HeadersRequestWrapper(this._headers, this.method, this.uri);
 
   Option<ChallengeMessage> get authorizationCredentials =>
       computeIfNull(_authorizationCredentials, () {
@@ -317,14 +450,14 @@ class _HeadersRequestWrapper
   
   ContentInfo get contentInfo =>
       computeIfNull(_contentInfo, () {
-        _contentInfo = new ContentInfo.wrapHeaders(headers);
+        _contentInfo = new ContentInfo.wrapHeaders(_headers);
         return _contentInfo;
       });
   
   Dictionary<Header, dynamic> get customHeaders =>
       computeIfNull(_customHeaders, () {
         _customHeaders = 
-            headers.dictionary
+            _headers.dictionary
               .filterKeys((final Header header) => 
                   !Header._standard.contains(header))
               .mapValues((final Sequence<String> values) => 
@@ -356,13 +489,13 @@ class _HeadersRequestWrapper
   
   RequestPreconditions get preconditions =>
       computeIfNull(_preconditions, () {
-        _preconditions = new RequestPreconditions.wrapHeaders(headers);
+        _preconditions = new RequestPreconditions.wrapHeaders(_headers);
         return _preconditions;
       });
   
   RequestPreferences get preferences =>
       computeIfNull(_preferences, () {
-        _preferences = new RequestPreferences.wrapHeaders(headers);
+        _preferences = new RequestPreferences.wrapHeaders(_headers);
         return _preferences;
       });
   
@@ -374,7 +507,7 @@ class _HeadersRequestWrapper
 
   Option<Uri> get referer =>
       computeIfNull(_referer, () {
-        _referer = firstWhere(headers.call(Header.REFERER), (final String uri) => true)
+        _referer = firstWhere(_headers.call(Header.REFERER), (final String uri) => true)
             .flatMap(_parseUri);
         return _referer;
       });
@@ -385,4 +518,3 @@ class _HeadersRequestWrapper
         return _userAgent;    
       });
 }
-

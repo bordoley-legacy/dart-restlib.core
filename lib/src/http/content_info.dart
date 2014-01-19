@@ -1,18 +1,109 @@
 part of restlib.core.http;
 
+String _contentInfoToString(final ContentInfo contentInfo) => 
+    (new StringBuffer()
+      ..write(Header.CONTENT_ENCODING.write(contentInfo.encodings))
+      ..write(Header.CONTENT_LANGUAGE.write(contentInfo.languages))
+      ..write(Header.CONTENT_LENGTH.write(contentInfo.length))
+      ..write(Header.CONTENT_LOCATION.write(contentInfo.location))
+      ..write(Header.CONTENT_TYPE.write(contentInfo.mediaRange))
+      ..write(Header.CONTENT_RANGE.write(contentInfo.range))
+    ).toString();
+
+ContentInfo _contentInfoWith(
+  final ContentInfo delegate,
+  final Iterable<ContentEncoding> encodings,
+  final Iterable<Language> languages,
+  final int length,
+  final Uri location,
+  final MediaRange mediaRange,
+  final ContentRange range) {
+  
+  if(isNull(encodings) && 
+      isNull(languages) && 
+      isNull(length) && 
+      isNull(length) && 
+      isNull(location) && 
+      isNull(mediaRange) && 
+      isNull(range)) {
+    return delegate;
+  }
+  
+  return new _ContentInfoImpl(
+      Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(encodings, delegate.encodings)), 
+      Persistent.EMPTY_SET.addAll(firstNotNull(languages, delegate.languages)), 
+      computeIfEmpty(new Option(length), () => delegate.length), 
+      computeIfEmpty(new Option(location), () => delegate.location), 
+      computeIfEmpty(new Option(mediaRange), () => delegate.mediaRange), 
+      computeIfEmpty(new Option(range), () => delegate.range));
+}
+
+ContentInfo _contentInfoWithout(
+  final ContentInfo delegate, 
+  final bool encodings,
+  final bool languages,
+  final bool length,
+  final bool location,
+  final bool mediaRange,
+  final bool range) {
+  
+  if (encodings && languages && length && location && mediaRange && range) {
+    return ContentInfo.NONE;
+  }
+  
+  return new _ContentInfoImpl(
+      !encodings ? Persistent.EMPTY_SEQUENCE.addAll(delegate.encodings) : Persistent.EMPTY_SEQUENCE,
+      !languages ? Persistent.EMPTY_SET.addAll(delegate.languages) : Persistent.EMPTY_SET,
+      !length ? delegate.length : Option.NONE,
+      !location ? delegate.location : Option.NONE,
+      !mediaRange ? delegate.mediaRange : Option.NONE,
+      !range ? delegate.range : Option.NONE);
+}
+
 abstract class ContentInfo {
   static const ContentInfo NONE = const _ContentInfoNone();
   
-  factory ContentInfo.wrapHeaders(final SequenceMultimap<Header, String> headers) =>
+  factory ContentInfo({
+    final Iterable<ContentEncoding> encodings : const [],
+    final Iterable<Language> languages : const [],
+    final int length,
+    final Uri location,
+    final MediaRange mediaRange,
+    final ContentRange range}) {
+    
+    if (isNull(encodings) && 
+        isNull(languages) && 
+        isNull(length) && 
+        isNull(location) && 
+        isNull(mediaRange) && 
+        isNull(range)) {
+      return ContentInfo.NONE;
+    }
+    return new _ContentInfoImpl(
+        Persistent.EMPTY_SEQUENCE.addAll(encodings), 
+        Persistent.EMPTY_SET.addAll(languages), 
+        new Option(length), 
+        new Option(location), 
+        new Option(mediaRange), 
+        new Option(range));
+  }
+  
+  factory ContentInfo.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
       new _HeadersContentInfoImpl(headers);
       
-  // The encodings applied to the content in order.
-  ImmutableSequence<ContentEncoding> get encodings;
-  ImmutableSet<Language> get languages;
+  Sequence<ContentEncoding> get encodings;
+  
+  FiniteSet<Language> get languages;
+  
   Option<int> get length;
+  
   Option<Uri> get location;
+  
   Option<MediaRange> get mediaRange;
+  
   Option<ContentRange> get range;
+  
+  String toString();
   
   ContentInfo with_({
     Iterable<ContentEncoding> encodings,
@@ -33,15 +124,9 @@ abstract class ContentInfo {
   });
 }
 
-class _ContentInfoNone implements ContentInfo {
-  final ImmutableSequence<ContentEncoding> encodings = Persistent.EMPTY_SEQUENCE;
-  final ImmutableSet<Language> languages = Persistent.EMPTY_SET;
-  final Option<int> length = Option.NONE;
-  final Option<Uri> location = Option.NONE;
-  final Option<MediaRange> mediaRange = Option.NONE;
-  final Option<ContentRange> range = Option.NONE;
-  
-  const _ContentInfoNone();
+abstract class _ContentInfoMixin implements ContentInfo {
+  String toString() =>
+      _contentInfoToString(this);
   
   ContentInfo with_({
     final Iterable<ContentEncoding> encodings,
@@ -49,14 +134,8 @@ class _ContentInfoNone implements ContentInfo {
     final int length,
     final Uri location,
     final MediaRange mediaRange,
-    final ContentRange range
-  }) => new _ContentInfoImpl._with(this, 
-      encodings: encodings, 
-      languages: languages, 
-      length: length, 
-      location: location, 
-      mediaRange: mediaRange, 
-      range: range);
+    final ContentRange range}) => 
+        _contentInfoWith(this, encodings, languages, length, location, mediaRange, range);
   
   ContentInfo without({
     final bool encodings: false,
@@ -64,23 +143,52 @@ class _ContentInfoNone implements ContentInfo {
     final bool length: false,
     final bool location: false,
     final bool mediaRange:  false,
-    final bool range : false
-  }) => new _ContentInfoImpl._without(this, 
-      encodings: encodings, 
-      languages: languages, 
-      length: length, 
-      location: location, 
-      mediaRange: mediaRange, 
-      range: range);
+    final bool range : false}) => 
+        _contentInfoWithout(this, encodings, languages, length, location, mediaRange, range);
+}
+
+class _ContentInfoNone implements ContentInfo {
+  final ImmutableSequence<ContentEncoding> encodings = Persistent.EMPTY_SEQUENCE;
+  final FiniteSet<Language> languages = Persistent.EMPTY_SET;
+  final Option<int> length = Option.NONE;
+  final Option<Uri> location = Option.NONE;
+  final Option<MediaRange> mediaRange = Option.NONE;
+  final Option<ContentRange> range = Option.NONE;
+  
+  const _ContentInfoNone();
   
   String toString() => "";
+  
+  ContentInfo with_({
+    final Iterable<ContentEncoding> encodings,
+    final Iterable<Language> languages,
+    final int length,
+    final Uri location,
+    final MediaRange mediaRange,
+    final ContentRange range}) => 
+        new ContentInfo(
+            encodings : encodings, 
+            languages : languages, 
+            length : length,
+            location : location, 
+            mediaRange : mediaRange, 
+            range: range);
+  
+  ContentInfo without({
+    final bool encodings: false,
+    final bool languages: false,
+    final bool length: false,
+    final bool location: false,
+    final bool mediaRange:  false,
+    final bool range : false}) => 
+        this;
 }
 
 abstract class ForwardingContentInfo implements Forwarder, ContentInfo {
-  ImmutableSequence<ContentEncoding> get encodings =>
+  Sequence<ContentEncoding> get encodings =>
       delegate.encodings;
   
-  ImmutableSet<Language> get languages =>
+  FiniteSet<Language> get languages =>
       delegate.languages;
   
   Option<int> get length =>
@@ -94,23 +202,18 @@ abstract class ForwardingContentInfo implements Forwarder, ContentInfo {
   
   Option<ContentRange> get range =>
       delegate.range;
-}
-
-abstract class ContentInfoWith_ implements ContentInfo {
+  
+  String toString() =>
+      _contentInfoToString(this);
+  
   ContentInfo with_({
     final Iterable<ContentEncoding> encodings,
     final Iterable<Language> languages,
     final int length,
     final Uri location,
     final MediaRange mediaRange,
-    final ContentRange range
-  }) => new _ContentInfoImpl._with(this, 
-      encodings: encodings, 
-      languages: languages, 
-      length: length, 
-      location: location, 
-      mediaRange: mediaRange, 
-      range: range);
+    final ContentRange range}) => 
+        _contentInfoWith(this, encodings, languages, length, location, mediaRange, range);
   
   ContentInfo without({
     final bool encodings: false,
@@ -118,55 +221,13 @@ abstract class ContentInfoWith_ implements ContentInfo {
     final bool length: false,
     final bool location: false,
     final bool mediaRange:  false,
-    final bool range : false
-  })  => new _ContentInfoImpl._without(this, 
-      encodings: encodings, 
-      languages: languages, 
-      length: length, 
-      location: location, 
-      mediaRange: mediaRange, 
-      range: range);
-}
-
-class ContentInfoBuilder {
-  MutableSequence<ContentEncoding> _encodings = new GrowableSequence();
-  MutableSet<Language> _languages = new MutableSet.hash();
-  Option<int> _length = Option.NONE;
-  Option<Uri> _location = Option.NONE;
-  Option<MediaRange> _mediaRange = Option.NONE;
-  Option<ContentRange> _range  = Option.NONE;
-  
-  set length (final int length) => 
-      this._length = new Option(length);
-  
-  set location(final Uri location) => 
-      this._location = new Option(location);
-
-  set mediaRange (final MediaRange mediaRange) =>
-    this._mediaRange = new Option(mediaRange);
-  
-  set range(final ContentRange range) =>
-      this._range = new Option(range);
-  
-  void addEncoding(final ContentEncoding encoding) => 
-      this._encodings.add(encoding);
-  
-  void addEncodings(final Iterable<ContentEncoding> encodings) =>
-    this._encodings.addAll(encodings);
-  
-  void addLanguage(final Language language) =>
-      this._languages.add(language);
-  
-  void addLanguages(final Iterable<Language> languages) => 
-      this._languages.addAll(languages);
-
-  ContentInfo build() => new _ContentInfoImpl(this);
+    final bool range : false}) =>
+        _contentInfoWithout(this, encodings, languages, length, location, mediaRange, range);
 }
 
 class _ContentInfoImpl 
-    extends Object 
-    with ContentInfoToString, 
-      ContentInfoWith_
+    extends Object
+    with _ContentInfoMixin
     implements ContentInfo {
   final ImmutableSequence<ContentEncoding> encodings;
   final ImmutableSet<Language> languages;
@@ -175,65 +236,15 @@ class _ContentInfoImpl
   final Option<MediaRange> mediaRange;
   final Option<ContentRange> range;
 
-  _ContentInfoImpl(final ContentInfoBuilder builder) :
-    encodings = Persistent.EMPTY_SEQUENCE.addAll(builder._encodings),
-    languages = Persistent.EMPTY_SET.addAll(builder._languages),
-    length = builder._length,
-    location = builder._location,
-    mediaRange = builder._mediaRange,
-    range = builder._range;
-  
-  _ContentInfoImpl._with(final ContentInfo delegate,{
-    final Iterable<ContentEncoding> encodings,
-    final Iterable<Language> languages,
-    final int length,
-    final Uri location,
-    final MediaRange mediaRange,
-    final ContentRange range
-  }) :
-    this.encodings = computeIfNotNullOtherwise(encodings, delegate.encodings, Persistent.EMPTY_SEQUENCE.addAll),
-    this.languages = computeIfNotNullOtherwise(languages, delegate.languages, Persistent.EMPTY_SET.addAll),
-    this.length = computeIfEmpty(new Option(length), () => delegate.length),
-    this.location = computeIfEmpty(new Option(location), () => delegate.location),
-    this.mediaRange = computeIfEmpty(new Option(mediaRange), () => delegate.mediaRange),
-    this.range = computeIfEmpty(new Option(range), () => delegate.range);
-  
-  _ContentInfoImpl._without(final ContentInfo delegate,{
-    final bool encodings,
-    final bool languages,
-    final bool length,
-    final bool location,
-    final bool mediaRange,
-    final bool range
-  }) :
-    this.encodings = !encodings ? delegate.encodings : Persistent.EMPTY_SEQUENCE,
-    this.languages = !languages ? delegate.languages : Persistent.EMPTY_SET,
-    this.length = !length ? delegate.length : Option.NONE,
-    this.location = !location ? delegate.location : Option.NONE,
-    this.mediaRange = !mediaRange ? delegate.mediaRange : Option.NONE,
-    this.range = !range ? delegate.range : Option.NONE;
+  _ContentInfoImpl(this.encodings, this.languages, this.length, this.location, this.mediaRange, this.range);  
 }
-
-abstract class ContentInfoToString implements ContentInfo {
-  String toString() => 
-      (new StringBuffer()
-        ..write(Header.CONTENT_ENCODING.write(encodings))
-        ..write(Header.CONTENT_LANGUAGE.write(languages))
-        ..write(Header.CONTENT_LENGTH.write(length))
-        ..write(Header.CONTENT_LOCATION.write(location))
-        ..write(Header.CONTENT_TYPE.write(mediaRange))
-        ..write(Header.CONTENT_RANGE.write(range))
-      ).toString();
-}
-
 
 class _HeadersContentInfoImpl 
     extends Object 
-    with ContentInfoToString,
-      ContentInfoWith_,
+    with _ContentInfoMixin,
       _Parseable
     implements ContentInfo {
-  final SequenceMultimap<Header, String> headers;
+  final Multimap<Header, String, dynamic> _headers;
   ImmutableSequence<ContentEncoding> _encodings;
   ImmutableSet<Language> _languages;
   Option<int> _length;
@@ -241,7 +252,7 @@ class _HeadersContentInfoImpl
   Option<MediaRange> _mediaRange;
   Option<ContentRange> _range;
 
-  _HeadersContentInfoImpl(this.headers);
+  _HeadersContentInfoImpl(this._headers);
   
   ImmutableSequence<ContentEncoding> get encodings =>
       computeIfNull(_encodings, () {
@@ -273,7 +284,7 @@ class _HeadersContentInfoImpl
   
   Option<Uri> get location =>
       computeIfNull(_location, () {     
-        _location = firstWhere(headers.call(Header.CONTENT_LOCATION), (final String uri) => true)
+        _location = firstWhere(_headers.call(Header.CONTENT_LOCATION), (final String uri) => true)
             .flatMap(_parseUri);
         return _location;
       });

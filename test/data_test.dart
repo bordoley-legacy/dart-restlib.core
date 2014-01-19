@@ -1,6 +1,7 @@
 library restlib.data_test;
 
 import "package:restlib_common/collections.dart";
+import "package:restlib_common/collections.immutable.dart";
 import "package:restlib_testing/testing.dart";
 
 import "package:restlib_core/data.dart";

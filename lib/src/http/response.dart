@@ -1,24 +1,221 @@
 part of restlib.core.http;
 
+String _responseToString(final Response response) {
+    final StringBuffer buffer = 
+        (new StringBuffer()
+          ..write("$response.status\r\n")
+          ..write(Header.ACCEPT_RANGES.write(response.acceptedRangeUnits))
+          ..write(Header.AGE.write(response.age))
+          ..write(Header.ALLOW.write(response.allowedMethods))
+          ..write(Header.WWW_AUTHENTICATE.write(response.authenticationChallenges))
+          ..write(Header.CACHE_CONTROL.write(response.cacheDirectives))
+          ..write(response.contentInfo)
+          ..write(Header.DATE.write(response.date))
+          ..write(Header.ENTITY_TAG.write(response.entityTag))
+          ..write(Header.EXPIRES.write(response.expires))
+          ..write(Header.LAST_MODIFIED.write(response.lastModified))
+          ..write(Header.LOCATION.write(response.location))
+          ..write(Header.PROXY_AUTHENTICATE.write(response.proxyAuthenticationChallenges))
+          ..write(Header.RETRY_AFTER.write(response.retryAfter))
+          ..write(Header.SERVER.write(response.server))
+          ..write(Header.VARY.write(response.vary))
+          ..write(response.entity.map((final entity) => 
+              "\r\n\r\n${entity.toString()}\r\n").orElse("")));
+   
+  response.customHeaders.forEach((final Pair<Header, dynamic> header) =>
+      buffer.write(header.fst.write(header.snd)));      
+    
+  return buffer.toString();
+}   
+
+Response _responseWith(
+  final Response delegate,
+  final Iterable<RangeUnit> acceptedRangeUnits,
+  final int age,
+  final Iterable<Method> allowedMethods,
+  final Iterable<ChallengeMessage> authenticationChallenges,
+  final Iterable<CacheDirective> cacheDirectives,
+  final ContentInfo contentInfo,
+  final Dictionary<Header, dynamic> customHeaders,
+  final DateTime date,
+  final entity,
+  final EntityTag entityTag,
+  final DateTime expires,
+  final DateTime lastModified,
+  final Uri location,
+  final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
+  final DateTime retryAfter,
+  final UserAgent server,
+  final Status status,
+  final Iterable<Header> vary,
+  final Iterable<Warning> warnings) {
+ 
+  if(isNull(acceptedRangeUnits) &&
+      isNull(age) &&
+      isNull(allowedMethods) &&
+      isNull(authenticationChallenges) &&
+      isNull(cacheDirectives) &&
+      isNull(contentInfo) &&
+      isNull(customHeaders) &&
+      isNull(date) &&
+      isNull(entity) &&
+      isNull(entityTag) &&
+      isNull(expires) &&
+      isNull(lastModified) &&
+      isNull(location) &&
+      isNull(proxyAuthenticationChallenges) &&
+      isNull(retryAfter) &&
+      isNull(server) &&
+      isNull(status) &&
+      isNull(vary) &&
+      isNull(warnings)) {
+    return delegate;
+  }
+  
+  return new _ResponseImpl(
+      Persistent.EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, delegate.acceptedRangeUnits)),
+      computeIfEmpty(new Option(age), () => delegate.age),
+      Persistent.EMPTY_SET.addAll(firstNotNull(allowedMethods, delegate.allowedMethods)),
+      Persistent.EMPTY_SET.addAll(firstNotNull(authenticationChallenges, delegate.authenticationChallenges)),
+      Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
+      firstNotNull(contentInfo, delegate.contentInfo),
+      Persistent.EMPTY_DICTIONARY.insertAll(firstNotNull(customHeaders, delegate.customHeaders)),
+      computeIfEmpty(new Option(date), () => delegate.date),
+      computeIfEmpty(new Option(entity), () => delegate.entity),
+      computeIfEmpty(new Option(entityTag), () => delegate.entityTag),
+      computeIfEmpty(new Option(expires), () => delegate.expires),
+      computeIfEmpty(new Option(lastModified), () => delegate.lastModified),
+      computeIfEmpty(new Option(location), () => delegate.location),
+      Persistent.EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, delegate.proxyAuthenticationChallenges)),   
+      computeIfEmpty(new Option(retryAfter), () => delegate.retryAfter),
+      computeIfEmpty(new Option(server), () => delegate.server),
+      firstNotNull(status, delegate.status),
+      Persistent.EMPTY_SET.addAll(firstNotNull(vary, delegate.vary)),
+      Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(warnings, delegate.warnings)));
+}
+
+Response _responseWithout(
+  final Response delegate,
+  final bool acceptedRangeUnits,
+  final bool age,
+  final bool allowedMethods,
+  final bool authenticationChallenges,
+  final bool cacheDirectives,
+  final bool contentInfo,
+  final bool customHeaders,
+  final bool date,
+  final bool entity,
+  final bool entityTag,
+  final bool expires,
+  final bool lastModified,
+  final bool location,
+  final bool proxyAuthenticationChallenges,
+  final bool retryAfter,
+  final bool server,
+  final bool vary,
+  final bool warnings) =>
+      new _ResponseImpl(
+          !acceptedRangeUnits ? Persistent.EMPTY_SET.addAll(delegate.acceptedRangeUnits) : Persistent.EMPTY_SET,
+          !age ? delegate.age : Option.NONE, 
+          !allowedMethods ? Persistent.EMPTY_SET.addAll(delegate.allowedMethods) : Persistent.EMPTY_SET,
+          !authenticationChallenges ? Persistent.EMPTY_SET.addAll(delegate.authenticationChallenges) : Persistent.EMPTY_SET,
+          !cacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.authenticationChallenges) : Persistent.EMPTY_SET,
+          !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
+          !customHeaders ? Persistent.EMPTY_DICTIONARY.insertAll(delegate.customHeaders) : Persistent.EMPTY_DICTIONARY,
+          !date ? delegate.date : Option.NONE,
+          !entity ? delegate.entity : Option.NONE,
+          !entityTag ? delegate.entityTag : Option.NONE,
+          !expires ? delegate.expires : Option.NONE,
+          !lastModified ? delegate.lastModified : Option.NONE,
+          !location ? delegate.location : Option.NONE,    
+          !proxyAuthenticationChallenges ? Persistent.EMPTY_SET.addAll(delegate.proxyAuthenticationChallenges) : Persistent.EMPTY_SET,
+          !retryAfter ? delegate.retryAfter : Option.NONE,
+          !server ? delegate.server : Option.NONE,
+          delegate.status,
+          !vary ? Persistent.EMPTY_SET.addAll(delegate.vary) : Persistent.EMPTY_SET,
+          !warnings ? Persistent.EMPTY_SEQUENCE.addAll(delegate.warnings) :  Persistent.EMPTY_SEQUENCE);
+          
 abstract class Response<T> {  
-  ImmutableSet<RangeUnit> get acceptedRangeUnits;
+  factory Response(
+    final Status status, {
+    final Iterable<RangeUnit> acceptedRangeUnits : const [],
+    final int age,
+    final Iterable<Method> allowedMethods : const [],
+    final Iterable<ChallengeMessage> authenticationChallenges : const [],
+    final Iterable<CacheDirective> cacheDirectives : const [],
+    final ContentInfo contentInfo,
+    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
+    final DateTime date,
+    final T entity,
+    final EntityTag entityTag,
+    final DateTime expires,
+    final DateTime lastModified,
+    final Uri location,
+    final Iterable<ChallengeMessage> proxyAuthenticationChallenges : const [],
+    final DateTime retryAfter,
+    final UserAgent server,  
+    final Iterable<Header> vary : const [],
+    final Iterable<Warning> warnings : const []}) =>
+        new _ResponseImpl(
+            Persistent.EMPTY_SET.addAll(acceptedRangeUnits),
+            new Option(age),
+            Persistent.EMPTY_SET.addAll(allowedMethods),
+            Persistent.EMPTY_SET.addAll(authenticationChallenges),
+            Persistent.EMPTY_SET.addAll(cacheDirectives),
+            firstNotNull(contentInfo, ContentInfo.NONE),
+            Persistent.EMPTY_DICTIONARY.insertAll(customHeaders),
+            new Option(date),
+            new Option(entity),
+            new Option(entityTag),
+            new Option(expires),
+            new Option(lastModified),
+            new Option(location),
+            Persistent.EMPTY_SET.addAll(proxyAuthenticationChallenges),
+            new Option(retryAfter),
+            new Option(server),
+            status,
+            Persistent.EMPTY_SET.addAll(vary),
+            Persistent.EMPTY_SEQUENCE.addAll(warnings));
+    
+  FiniteSet<RangeUnit> get acceptedRangeUnits;
+  
   Option<int> get age;
-  ImmutableSet<Method> get allowedMethods;
-  ImmutableSet<ChallengeMessage> get authenticationChallenges;
-  ImmutableSet<CacheDirective> get cacheDirectives;
+  
+  FiniteSet<Method> get allowedMethods;
+  
+  FiniteSet<ChallengeMessage> get authenticationChallenges;
+  
+  FiniteSet<CacheDirective> get cacheDirectives;
+  
   ContentInfo get contentInfo;
+  
+  Dictionary<Header, dynamic> get customHeaders;
+  
   Option<DateTime> get date;
+  
   Option<T> get entity;
+  
   Option<EntityTag> get entityTag;
+  
   Option<DateTime> get expires;
+  
   Option<DateTime> get lastModified;
+  
   Option<Uri> get location;
-  ImmutableSet<ChallengeMessage> get proxyAuthenticationChallenges;
+  
+  FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges;
+  
   Option<DateTime> get retryAfter;
+  
   Option<UserAgent> get server;
+  
   Status get status;
-  ImmutableSet<Header> get vary;
-  ImmutableSequence<Warning> get warnings;
+  
+  FiniteSet<Header> get vary;
+  
+  Sequence<Warning> get warnings;
+  
+  String toString();
   
   Response with_({
     Iterable<RangeUnit> acceptedRangeUnits,
@@ -27,8 +224,9 @@ abstract class Response<T> {
     Iterable<ChallengeMessage> authenticationChallenges,
     Iterable<CacheDirective> cacheDirectives,
     ContentInfo contentInfo,
+    Dictionary<Header, dynamic> customHeaders,
     DateTime date,
-    entity,
+    T entity,
     EntityTag entityTag,
     DateTime expires,
     DateTime lastModified,
@@ -39,22 +237,42 @@ abstract class Response<T> {
     Status status,
     Iterable<Header> vary,
     Iterable<Warning> warnings});
+  
+  Response without({
+    bool acceptedRangeUnits : false,
+    bool age : false,
+    bool allowedMethods : false,
+    bool authenticationChallenges : false,
+    bool cacheDirectives : false,
+    bool contentInfo : false,
+    bool customHeaders : false,
+    bool date : false,
+    bool entity : false,
+    bool entityTag : false,
+    bool expires : false,
+    bool lastModified : false,
+    bool location : false,
+    bool proxyAuthenticationChallenges : false,
+    bool retryAfter : false,
+    bool server : false,
+    bool vary : false,
+    bool warnings : false});
 }
 
 abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
-  ImmutableSet<RangeUnit> get acceptedRangeUnits =>
+  FiniteSet<RangeUnit> get acceptedRangeUnits =>
       delegate.acceptedRangeUnits;
   
   Option<int> get age =>
       delegate.age;
   
-  ImmutableSet<Method> get allowedMethods =>
+  FiniteSet<Method> get allowedMethods =>
       delegate.allowedMethods;
   
-  ImmutableSet<ChallengeMessage> get authenticationChallenges =>
+  FiniteSet<ChallengeMessage> get authenticationChallenges =>
       delegate.authenticationChallenges;
   
-  ImmutableSet<CacheDirective> get cacheDirectives =>
+  FiniteSet<CacheDirective> get cacheDirectives =>
       delegate.cacheDirectives;
   
   ContentInfo get contentInfo =>
@@ -78,7 +296,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
   Option<Uri> get location =>
       delegate.location;
   
-  ImmutableSet<ChallengeMessage> get proxyAuthenticationChallenges =>
+  FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges =>
       delegate.proxyAuthenticationChallenges;
   
   Option<DateTime> get retryAfter =>
@@ -90,188 +308,196 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
   Status get status =>
       delegate.status;
   
-  ImmutableSet<Header> get vary =>
+  FiniteSet<Header> get vary =>
       delegate.vary;
   
-  ImmutableSequence<Warning> get warnings =>
+  Sequence<Warning> get warnings =>
       delegate.warnings;
+  
+  String toString() =>
+      _responseToString(this);
+  
+  Response with_({
+    final Iterable<RangeUnit> acceptedRangeUnits,
+    final int age,
+    final Iterable<Method> allowedMethods,
+    final Iterable<ChallengeMessage> authenticationChallenges,
+    final Iterable<CacheDirective> cacheDirectives,
+    final ContentInfo contentInfo,
+    final Dictionary<Header, dynamic> customHeaders,
+    final DateTime date,
+    final T entity,
+    final EntityTag entityTag,
+    final DateTime expires,
+    final DateTime lastModified,
+    final Uri location,
+    final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
+    final DateTime retryAfter,
+    final UserAgent server,
+    final Status status,
+    final Iterable<Header> vary,
+    final Iterable<Warning> warnings}) =>
+        _responseWith(
+            this, 
+            acceptedRangeUnits, 
+            age, 
+            allowedMethods, 
+            authenticationChallenges, 
+            cacheDirectives, 
+            contentInfo, 
+            customHeaders,
+            date,
+            entity,
+            entityTag,
+            expires,
+            lastModified,
+            location,
+            proxyAuthenticationChallenges,
+            retryAfter,
+            server,
+            status,
+            vary,
+            warnings);
+  
+  Response without({
+    final bool acceptedRangeUnits : false,
+    final bool age : false,
+    final bool allowedMethods : false,
+    final bool authenticationChallenges : false,
+    final bool cacheDirectives : false,
+    final bool contentInfo : false,
+    final bool customHeaders : false,
+    final bool date : false,
+    final bool entity : false,
+    final bool entityTag : false,
+    final bool expires : false,
+    final bool lastModified : false,
+    final bool location : false,
+    final bool proxyAuthenticationChallenges : false,
+    final bool retryAfter : false,
+    final bool server : false,
+    final bool vary : false,
+    final bool warnings : false}) =>
+        _responseWithout(
+            this, 
+            acceptedRangeUnits, 
+            age, 
+            allowedMethods, 
+            authenticationChallenges, 
+            cacheDirectives, 
+            contentInfo, 
+            customHeaders,
+            date,
+            entity,
+            entityTag,
+            expires,
+            lastModified,
+            location,
+            proxyAuthenticationChallenges,
+            retryAfter,
+            server,
+            vary,
+            warnings);
 }
 
-abstract class ResponseWith_<T> implements Response<T> {
-  Response with_({final Iterable<RangeUnit> acceptedRangeUnits,
-                  final int age,
-                  final Iterable<Method> allowedMethods,
-                  final Iterable<ChallengeMessage> authenticationChallenges,
-                  final Iterable<CacheDirective> cacheDirectives,
-                  final ContentInfo contentInfo,
-                  final DateTime date,
-                  final T entity,
-                  final EntityTag entityTag,
-                  final DateTime expires,
-                  final DateTime lastModified,
-                  final Uri location,
-                  final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
-                  final DateTime retryAfter,
-                  final UserAgent server,
-                  final Status status,
-                  final Iterable<Header> vary,
-                  final Iterable<Warning> warnings}) => 
-    new _ResponseImpl._delegating(this, 
-        acceptedRangeUnits: acceptedRangeUnits, 
-        age: age, 
-        allowedMethods: allowedMethods, 
-        authenticationChallenges: authenticationChallenges,
-        cacheDirectives: cacheDirectives, 
-        contentInfo: contentInfo, 
-        date: date, 
-        entity: entity, 
-        entityTag: entityTag, 
-        expires: expires, 
-        lastModified: lastModified, 
-        location: location, 
-        proxyAuthenticationChallenges: proxyAuthenticationChallenges, 
-        retryAfter: retryAfter, 
-        server: server, 
-        status: status, 
-        vary: vary, 
-        warnings: warnings);
-}
-
-abstract class ResponseToString<T> implements Response<T> {
-  String toString() {
-    return (new StringBuffer()
-            ..write("$status\r\n")
-            ..write(Header.ACCEPT_RANGES.write(acceptedRangeUnits))
-            ..write(Header.AGE.write(age))
-            ..write(Header.ALLOW.write(allowedMethods))
-            ..write(Header.WWW_AUTHENTICATE.write(authenticationChallenges))
-            ..write(Header.CACHE_CONTROL.write(cacheDirectives))
-            ..write(contentInfo)
-            ..write(Header.DATE.write(date))
-            ..write(Header.ENTITY_TAG.write(entityTag))
-            ..write(Header.EXPIRES.write(expires))
-            ..write(Header.LAST_MODIFIED.write(lastModified))
-            ..write(Header.LOCATION.write(location))
-            ..write(Header.PROXY_AUTHENTICATE.write(proxyAuthenticationChallenges))
-            ..write(Header.RETRY_AFTER.write(retryAfter))
-            ..write(Header.SERVER.write(server))
-            ..write(Header.VARY.write(vary))
-            ..write(entity.map((final entity) => 
-                "\r\n\r\n${entity.toString()}\r\n").orElse(""))
-            ).toString();    
-  }
-}
-
-class ResponseBuilder<T> {
-  MutableSet<RangeUnit> _acceptedRangeUnits = new MutableSet.hash();
-  Option<int> _age = Option.NONE;
-  MutableSet<Method> _allowedMethods = new MutableSet.hash();
-  MutableSet<ChallengeMessage> _authenticationChallenges = new MutableSet.hash();
-  MutableSet<CacheDirective> _cacheDirectives = new MutableSet.hash();
-  ContentInfo _contentInfo = ContentInfo.NONE;
-  Option<DateTime> _date = Option.NONE;
-  Option<T> _entity = Option.NONE;
-  Option<EntityTag> _entityTag = Option.NONE;
-  Option<DateTime> _expires = Option.NONE;
-  Option<DateTime> _lastModified = Option.NONE;
-  Option<Uri> _location = Option.NONE;
-  MutableSet<ChallengeMessage> _proxyAuthenticationChallenges = new MutableSet.hash();
-  Option<DateTime> _retryAfter = Option.NONE;
-  Option<UserAgent> _server = Option.NONE;
-  Status _status = Status.SUCCESS_OK;
-  MutableSet<Header> _vary = new MutableSet.hash();
-  MutableSequence<Warning> _warnings = new GrowableSequence();
-
-  set age(final int age) => 
-      this._age = new Option(age);
+abstract class _ResponseMixin<T> implements Response<T> {
+  String toString() =>
+      _responseToString(this);
   
-  set contentInfo(final ContentInfo contentInfo) => 
-      this._contentInfo = checkNotNull(contentInfo);
-
-  set date(final DateTime date) => 
-      this._date = new Option(date);
-
-  set entity(final T entity) => 
-      this._entity = new Option(entity);
+  Response with_({
+    final Iterable<RangeUnit> acceptedRangeUnits,
+    final int age,
+    final Iterable<Method> allowedMethods,
+    final Iterable<ChallengeMessage> authenticationChallenges,
+    final Iterable<CacheDirective> cacheDirectives,
+    final ContentInfo contentInfo,
+    final Dictionary<Header, dynamic> customHeaders,
+    final DateTime date,
+    final T entity,
+    final EntityTag entityTag,
+    final DateTime expires,
+    final DateTime lastModified,
+    final Uri location,
+    final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
+    final DateTime retryAfter,
+    final UserAgent server,
+    final Status status,
+    final Iterable<Header> vary,
+    final Iterable<Warning> warnings}) =>
+        _responseWith(
+            this, 
+            acceptedRangeUnits, 
+            age, 
+            allowedMethods, 
+            authenticationChallenges, 
+            cacheDirectives, 
+            contentInfo, 
+            customHeaders,
+            date,
+            entity,
+            entityTag,
+            expires,
+            lastModified,
+            location,
+            proxyAuthenticationChallenges,
+            retryAfter,
+            server,
+            status,
+            vary,
+            warnings);
   
-  set entityTag(final EntityTag entity) => 
-      this._entityTag = new Option(entity);
-  
-  set expires(final DateTime date) => 
-      this._expires = new Option(date);
-  
-  set lastModified(final DateTime date) => 
-      this._lastModified = new Option(date);
-  
-  set location(final Uri location) =>
-      this._location = new Option(location);
-  
-  set retryAfter(final DateTime date) => 
-      this._retryAfter = new Option(date);
-
-  set server(final UserAgent server) => 
-      this._server = new Option(server);
-  
-  set status(final Status status) => 
-      this._status = checkNotNull(status);
-  
-  void addAllowedMethod(final Method method) =>
-      this._allowedMethods.add(method);
-  
-  void addAllowedMethods(final Iterable<Method> methods) =>
-      this._allowedMethods.addAll(methods);
-  
-  void addAcceptedRangeUnit(final RangeUnit rangeUnit) =>
-      this._acceptedRangeUnits.add(rangeUnit);
-  
-  void addAcceptedRangeUnits(final Iterable<RangeUnit> rangeUnits) =>
-      this._acceptedRangeUnits.addAll(rangeUnits);
-  
-  void addAuthenticationChallenge(final ChallengeMessage challengeMessage) =>
-      this._authenticationChallenges.add(challengeMessage);
-  
-  void addAuthenticationChallenges(final Iterable<ChallengeMessage> challengeMessages) =>
-      this._authenticationChallenges.addAll(challengeMessages);
-  
-  void addCacheDirective(final CacheDirective cacheDirective) =>
-      this._cacheDirectives.add(cacheDirective);
-  
-  void addCacheDirectives(final Iterable<CacheDirective> cacheDirectives) =>
-      this._cacheDirectives.addAll(cacheDirectives);
-  
-  void addProxyAuthenticationChallenge(final ChallengeMessage challenge) =>
-      this._proxyAuthenticationChallenges.add(challenge); 
-  
-  void addProxyAuthenticationChallenges(final Iterable<ChallengeMessage> challenges) =>
-      this._proxyAuthenticationChallenges.addAll(challenges); 
-  
-  void addVaryHeader(final Header header) =>
-      this._vary.add(header);
-
-  void addVaryHeaders(final Iterable<Header> headers) => 
-      this._vary.addAll(headers);
-  
-  void addWarning(final Warning warning) => 
-      this._warnings.add(warning);
-  
-  void addWarnings(final Iterable<Warning> warnings) => 
-      this._warnings.addAll(warnings);
-
-  Response<T> build() => 
-      new _ResponseImpl(this);
+  Response without({
+    final bool acceptedRangeUnits : false,
+    final bool age : false,
+    final bool allowedMethods : false,
+    final bool authenticationChallenges : false,
+    final bool cacheDirectives : false,
+    final bool contentInfo : false,
+    final bool customHeaders : false,
+    final bool date : false,
+    final bool entity : false,
+    final bool entityTag : false,
+    final bool expires : false,
+    final bool lastModified : false,
+    final bool location : false,
+    final bool proxyAuthenticationChallenges : false,
+    final bool retryAfter : false,
+    final bool server : false,
+    final bool vary : false,
+    final bool warnings : false}) =>
+        _responseWithout(
+            this, 
+            acceptedRangeUnits, 
+            age, 
+            allowedMethods, 
+            authenticationChallenges, 
+            cacheDirectives, 
+            contentInfo, 
+            customHeaders,
+            date,
+            entity,
+            entityTag,
+            expires,
+            lastModified,
+            location,
+            proxyAuthenticationChallenges,
+            retryAfter,
+            server,
+            vary,
+            warnings);
 }
 
 class _ResponseImpl<T> 
     extends Object 
-    with ResponseToString<T>,
-      ResponseWith_<T>
-     implements Response<T> {
+    with _ResponseMixin<T>
+    implements Response<T> {
   final ImmutableSet<RangeUnit> acceptedRangeUnits;
   final Option<int> age;
   final ImmutableSet<Method> allowedMethods;
   final ImmutableSet<ChallengeMessage> authenticationChallenges;
   final ImmutableSet<CacheDirective> cacheDirectives;
   final ContentInfo contentInfo;
+  final ImmutableDictionary<Header, dynamic> customHeaders;
   final Option<DateTime> date;
   final Option<T> entity;
   final Option<EntityTag> entityTag;
@@ -285,61 +511,24 @@ class _ResponseImpl<T>
   final ImmutableSet<Header> vary;
   final ImmutableSequence<Warning> warnings;
 
-  _ResponseImpl(final ResponseBuilder builder):
-    acceptedRangeUnits = Persistent.EMPTY_SET.addAll(builder._acceptedRangeUnits),
-    age = builder._age,
-    allowedMethods = Persistent.EMPTY_SET.addAll(builder._allowedMethods),
-    authenticationChallenges = Persistent.EMPTY_SET.addAll(builder._authenticationChallenges),
-    cacheDirectives = Persistent.EMPTY_SET.addAll(builder._cacheDirectives),
-    contentInfo = builder._contentInfo,
-    date = builder._date,
-    entity = builder._entity,
-    entityTag = builder._entityTag,
-    expires = builder._expires,
-    lastModified = builder._lastModified,
-    location = builder._location,
-    proxyAuthenticationChallenges = Persistent.EMPTY_SET.addAll(builder._proxyAuthenticationChallenges),
-    retryAfter = builder._retryAfter,
-    server = builder._server,
-    status = builder._status,
-    vary = Persistent.EMPTY_SET.addAll(builder._vary),
-    warnings = Persistent.EMPTY_SEQUENCE.addAll(builder._warnings);
-  
-  _ResponseImpl._delegating(final Response delegate,
-                            {final Iterable<RangeUnit> acceptedRangeUnits,
-                             final int age,
-                             final Iterable<Method> allowedMethods,
-                             final Iterable<ChallengeMessage> authenticationChallenges,
-                             final Iterable<CacheDirective> cacheDirectives,
-                             final ContentInfo contentInfo,
-                             final DateTime date,
-                             final entity,
-                             final EntityTag entityTag,
-                             final DateTime expires,
-                             final DateTime lastModified,
-                             final Uri location,
-                             final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
-                             final DateTime retryAfter,
-                             final UserAgent server,
-                             final Status status,
-                             final Iterable<Header> vary,
-                             final Iterable<Warning> warnings}) :
-    this.acceptedRangeUnits = computeIfNotNullOtherwise(acceptedRangeUnits, delegate.acceptedRangeUnits, Persistent.EMPTY_SET.addAll),
-    this.age = computeIfEmpty(new Option(age), () => delegate.age),
-    this.allowedMethods = computeIfNotNullOtherwise(allowedMethods, delegate.allowedMethods, Persistent.EMPTY_SET.addAll),
-    this.authenticationChallenges = computeIfNotNullOtherwise(authenticationChallenges, delegate.authenticationChallenges, Persistent.EMPTY_SET.addAll),
-    this.cacheDirectives = computeIfNotNullOtherwise(authenticationChallenges, delegate.authenticationChallenges, Persistent.EMPTY_SET.addAll),
-    this.contentInfo = firstNotNull(contentInfo, delegate.contentInfo),
-    this.date = computeIfEmpty(new Option(date), () => delegate.date),
-    this.entity = computeIfEmpty(new Option(entity), () => delegate.entity),
-    this.entityTag = computeIfEmpty(new Option(entityTag), () => delegate.entityTag),
-    this.expires = computeIfEmpty(new Option(expires), () => delegate.expires),
-    this.lastModified = computeIfEmpty(new Option(lastModified), () => delegate.lastModified),
-    this.location = computeIfEmpty(new Option(location), () => delegate.location),
-    this.proxyAuthenticationChallenges = computeIfNotNullOtherwise(proxyAuthenticationChallenges, delegate.proxyAuthenticationChallenges, Persistent.EMPTY_SET.addAll),
-    this.retryAfter = computeIfEmpty(new Option(retryAfter), () => delegate.retryAfter),
-    this.server = computeIfEmpty(new Option(server), () => delegate.server),
-    this.status = firstNotNull(status, delegate.status),
-    this.vary = computeIfNotNullOtherwise(vary, delegate.vary, Persistent.EMPTY_SET.addAll),
-    this.warnings = computeIfNotNullOtherwise(warnings, delegate.warnings, Persistent.EMPTY_SET.addAll);
+  _ResponseImpl(
+    this.acceptedRangeUnits,
+    this.age,
+    this.allowedMethods,
+    this.authenticationChallenges,
+    this.cacheDirectives,
+    this.contentInfo,
+    this.customHeaders,
+    this.date,
+    this.entity,
+    this.entityTag,
+    this.expires,
+    this.lastModified,
+    this.location,
+    this.proxyAuthenticationChallenges,
+    this.retryAfter,
+    this.server,
+    this.status,
+    this.vary,
+    this.warnings);
 }

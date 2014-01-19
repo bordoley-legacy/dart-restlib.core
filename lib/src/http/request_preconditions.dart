@@ -1,24 +1,108 @@
 part of restlib.core.http;
 
+String _requestPreconditionsToString(final RequestPreconditions delegate) =>
+    (new StringBuffer()
+      ..write(Header.IF_MATCH.write(delegate.ifMatch))
+      ..write(Header.IF_MODIFIED_SINCE.write(delegate.ifModifiedSince))
+      ..write(Header.IF_NONE_MATCH.write(delegate.ifNoneMatch))
+      ..write(Header.IF_RANGE.write(
+          delegate.ifRange.map(
+              (final Either<EntityTag, DateTime> ifRange) =>
+                    ifRange.value)))
+      ..write(Header.IF_UNMODIFIED_SINCE.write(delegate.ifUnmodifiedSince))
+    ).toString();
+
+RequestPreconditions _requestPreconditionsWith(
+  final RequestPreconditions delegate,
+  final Iterable<EntityTag> ifMatch,
+  final DateTime ifModifiedSince,
+  final Iterable<EntityTag> ifNoneMatch,
+  final Either<EntityTag,DateTime> ifRange,
+  final DateTime ifUnmodifiedSince) {
+  
+  if (isNull(ifMatch) && isNull(ifModifiedSince) && isNull(ifNoneMatch) && isNull(ifRange) && isNull(ifUnmodifiedSince)) {
+    return delegate;
+  }
+  
+  return new _RequestPreconditionsImpl(
+      Persistent.EMPTY_SET.addAll(firstNotNull(ifMatch, delegate.ifMatch)),
+      computeIfEmpty(new Option(ifModifiedSince), () => delegate.ifModifiedSince),
+      Persistent.EMPTY_SET.addAll(firstNotNull(ifNoneMatch, delegate.ifNoneMatch)),
+      computeIfEmpty(new Option(ifRange), () => delegate.ifRange),
+      computeIfEmpty(new Option(ifUnmodifiedSince), () => delegate.ifUnmodifiedSince));
+}
+
+RequestPreconditions _requestPreconditionsWithout(
+  final RequestPreconditions delegate,                                                
+  final bool ifMatch,
+  final bool ifModifiedSince,
+  final bool ifNoneMatch,
+  final bool ifRange,
+  final bool ifUnmodifiedSince) {
+  
+  if (ifMatch && ifModifiedSince && ifNoneMatch && ifRange && ifUnmodifiedSince) {
+    return RequestPreconditions.NONE;
+  }
+  
+  return new _RequestPreconditionsImpl(
+      !ifMatch ? Persistent.EMPTY_SET.addAll(delegate.ifMatch) : Persistent.EMPTY_SET,
+      !ifModifiedSince ? delegate.ifModifiedSince : Option.NONE,
+      !ifNoneMatch ? Persistent.EMPTY_SET.addAll(delegate.ifNoneMatch) : Persistent.EMPTY_SET,
+      !ifRange ? delegate.ifRange : Option.NONE,
+      !ifUnmodifiedSince ? delegate.ifModifiedSince : Option.NONE);
+}
+
+
 abstract class RequestPreconditions {
   static const RequestPreconditions NONE = const _RequestPreconditionsNone();
   
-  factory RequestPreconditions.wrapHeaders(final SequenceMultimap<Header, String> headers) =>
+  factory RequestPreconditions({
+    final Iterable<EntityTag> ifMatch : const [],
+    final DateTime ifModifiedSince,
+    final Iterable<EntityTag> ifNoneMatch : const [],
+    final Either<EntityTag,DateTime> ifRange,
+    final DateTime ifUnmodifiedSince}) {
+    
+    if (isNull(ifMatch) && isNull(ifModifiedSince) && isNull(ifNoneMatch) && isNull(ifRange) && isNull(ifUnmodifiedSince)) {
+      return RequestPreconditions.NONE;
+    }
+
+    return new _RequestPreconditionsImpl(
+        Persistent.EMPTY_SET.addAll(ifMatch), 
+        new Option(ifModifiedSince), 
+        Persistent.EMPTY_SET.addAll(ifNoneMatch), 
+        new Option(ifRange), 
+        new Option(ifUnmodifiedSince));   
+  }
+  
+  factory RequestPreconditions.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
       new _HeadersRequestPreconditionsImpl(headers);
   
-  ImmutableSet<EntityTag> get ifMatch;
+  FiniteSet<EntityTag> get ifMatch;
+ 
   Option<DateTime> get ifModifiedSince;
   
-  ImmutableSet<EntityTag> get ifNoneMatch;
+  FiniteSet<EntityTag> get ifNoneMatch;
+  
   Option<Either<EntityTag,DateTime>> get ifRange;
+  
   Option<DateTime> get ifUnmodifiedSince;
+  
+  String toString();
   
   RequestPreconditions with_({
     Iterable<EntityTag> ifMatch,
     DateTime ifModifiedSince,
     Iterable<EntityTag> ifNoneMatch,
     Either<EntityTag,DateTime> ifRange,
-    DateTime ifUnmodifiedSince});                             
+    DateTime ifUnmodifiedSince}); 
+  
+  RequestPreconditions without({
+    bool ifMatch : false,
+    bool ifModifiedSince : false,
+    bool ifNoneMatch : false,
+    bool ifRange : false,
+    bool ifUnmodifiedSince : false}); 
 }
 
 class _RequestPreconditionsNone implements RequestPreconditions {
@@ -38,22 +122,30 @@ class _RequestPreconditionsNone implements RequestPreconditions {
     final Iterable<EntityTag> ifNoneMatch,
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) =>
-        new _RequestPreconditionsImpl._delegating(this, 
+        new RequestPreconditions(
             ifMatch: ifMatch, 
-            ifModifiedSince: ifModifiedSince, 
+            ifModifiedSince : ifModifiedSince, 
             ifNoneMatch: ifNoneMatch, 
-            ifRange: ifRange, 
-            ifUnmodifiedSince: ifUnmodifiedSince);
+            ifRange : ifRange, 
+            ifUnmodifiedSince : ifUnmodifiedSince);
+  
+  RequestPreconditions without({
+    bool ifMatch : false,
+    bool ifModifiedSince : false,
+    bool ifNoneMatch : false,
+    bool ifRange : false,
+    bool ifUnmodifiedSince : false}) =>
+        this;
 }
 
 abstract class ForwardingRequestPreconditions implements Forwarder, RequestPreconditions {
-  ImmutableSet<EntityTag> get ifMatch =>
+  FiniteSet<EntityTag> get ifMatch =>
       delegate.ifMatch;
   
   Option<DateTime> get ifModifiedSince =>
       delegate.ifModifiedSince;
   
-  ImmutableSet<EntityTag> get ifNoneMatch =>
+  FiniteSet<EntityTag> get ifNoneMatch =>
       delegate.ifNoneMatch;
   
   Option<Either<EntityTag,DateTime>> get ifRange =>
@@ -61,43 +153,75 @@ abstract class ForwardingRequestPreconditions implements Forwarder, RequestPreco
   
   Option<DateTime> get ifUnmodifiedSince =>
       delegate.ifUnmodifiedSince;
+  
+  String toString() =>
+      _requestPreconditionsToString(this);
+  
+  RequestPreconditions with_({
+    final Iterable<EntityTag> ifMatch,
+    final DateTime ifModifiedSince,
+    final Iterable<EntityTag> ifNoneMatch,
+    final Either<EntityTag,DateTime> ifRange,
+    final DateTime ifUnmodifiedSince}) =>
+        _requestPreconditionsWith(
+            this,
+            ifMatch,
+            ifModifiedSince,
+            ifNoneMatch,
+            ifRange,
+            ifUnmodifiedSince);
+  
+  RequestPreconditions without({
+    final bool ifMatch : false,
+    final bool ifModifiedSince : false,
+    final bool ifNoneMatch : false,
+    final bool ifRange : false,
+    final bool ifUnmodifiedSince : false}) =>
+        _requestPreconditionsWithout(
+            this,
+            ifMatch,
+            ifModifiedSince,
+            ifNoneMatch,
+            ifRange,
+            ifUnmodifiedSince);
 }
 
-class RequestPreconditionsBuilder {
-  MutableSet<EntityTag> _ifMatch = new MutableSet.hash();
-  Option<DateTime> _ifModifiedSince = Option.NONE;
-  MutableSet<EntityTag> _ifNoneMatch = new MutableSet.hash();
-  Option<Either<EntityTag,DateTime>> _ifRange = Option.NONE;
-  Option<DateTime> _ifUnmodifiedSince = Option.NONE;
+abstract class _RequestPreconditionsMixin implements RequestPreconditions {
+  String toString() =>
+      _requestPreconditionsToString(this);
   
-  set ifRangeDate(final DateTime date) =>
-    _ifRange = new Option(new Either.rightValue(date));
+  RequestPreconditions with_({
+    final Iterable<EntityTag> ifMatch,
+    final DateTime ifModifiedSince,
+    final Iterable<EntityTag> ifNoneMatch,
+    final Either<EntityTag,DateTime> ifRange,
+    final DateTime ifUnmodifiedSince}) =>
+        _requestPreconditionsWith(
+            this,
+            ifMatch,
+            ifModifiedSince,
+            ifNoneMatch,
+            ifRange,
+            ifUnmodifiedSince);
   
-  set ifRangeTag(final EntityTag tag) =>
-    _ifRange = new Option(new Either.leftValue(tag));
-  
-  set ifUnmodifiedSince (final DateTime date) =>
-    _ifUnmodifiedSince = new Option(date);
-  
-  void addIfMatchTag(final EntityTag tag) { 
-    _ifMatch.add(tag);
-  }
-  
-  set ifModifiedSince (final DateTime date) => 
-      _ifModifiedSince = new Option(date);
-  
-  void addIfNoneMatchTag(final EntityTag tag) { 
-    _ifNoneMatch.add(tag);
-  }
-  
-  RequestPreconditions build() => 
-      new _RequestPreconditionsImpl(this);
+  RequestPreconditions without({
+    final bool ifMatch : false,
+    final bool ifModifiedSince : false,
+    final bool ifNoneMatch : false,
+    final bool ifRange : false,
+    final bool ifUnmodifiedSince : false}) =>
+        _requestPreconditionsWithout(
+            this,
+            ifMatch,
+            ifModifiedSince,
+            ifNoneMatch,
+            ifRange,
+            ifUnmodifiedSince);
 }
 
 class _RequestPreconditionsImpl 
-    extends Object 
-    with RequestPreconditionsToString,
-      RequestPreconditionsWith_
+    extends Object
+    with _RequestPreconditionsMixin
     implements RequestPreconditions {
   final ImmutableSet<EntityTag> ifMatch;
   final Option<DateTime> ifModifiedSince;
@@ -105,71 +229,24 @@ class _RequestPreconditionsImpl
   final Option<Either<EntityTag,DateTime>> ifRange;
   final Option<DateTime> ifUnmodifiedSince;
   
-  _RequestPreconditionsImpl(final RequestPreconditionsBuilder builder) :
-    ifMatch = Persistent.EMPTY_SET.addAll(builder._ifMatch), 
-    ifModifiedSince = builder._ifModifiedSince,
-    ifNoneMatch = Persistent.EMPTY_SET.addAll(builder._ifNoneMatch),
-    ifRange = builder._ifRange,
-    ifUnmodifiedSince = builder._ifUnmodifiedSince;
-  
-  _RequestPreconditionsImpl._delegating(final RequestPreconditions delegate, {
-    final Iterable<EntityTag> ifMatch,
-    final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch,
-    final Either<EntityTag,DateTime> ifRange,
-    final DateTime ifUnmodifiedSince}) :
-      this.ifMatch = computeIfNotNullOtherwise(ifMatch, delegate.ifMatch, Persistent.EMPTY_SET.addAll),
-      this.ifModifiedSince = computeIfEmpty(new Option(ifModifiedSince), () => delegate.ifModifiedSince),
-      this.ifNoneMatch = computeIfNotNullOtherwise(ifNoneMatch, delegate.ifNoneMatch, Persistent.EMPTY_SET.addAll),
-      this.ifRange = computeIfEmpty(new Option(ifRange), () => delegate.ifRange),
-      this.ifUnmodifiedSince = computeIfEmpty(new Option(ifUnmodifiedSince), () => delegate.ifUnmodifiedSince);
+  _RequestPreconditionsImpl(this.ifMatch, this.ifModifiedSince, this.ifNoneMatch, this.ifRange, this.ifUnmodifiedSince);
 }
 
-abstract class RequestPreconditionsToString implements RequestPreconditions {
-  String toString() => 
-      (new StringBuffer()
-        ..write(Header.IF_MATCH.write(ifMatch))
-        ..write(Header.IF_MODIFIED_SINCE.write(ifModifiedSince))
-        ..write(Header.IF_NONE_MATCH.write(ifNoneMatch))
-        ..write(Header.IF_RANGE.write(
-            ifRange.map(
-                (final Either<EntityTag, DateTime> ifRange) =>
-                    ifRange.value)))
-      ..write(Header.IF_UNMODIFIED_SINCE.write(ifUnmodifiedSince))
-    ).toString();
-}
-
-abstract class RequestPreconditionsWith_ implements RequestPreconditions {
-  RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch,
-    final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch,
-    final Either<EntityTag,DateTime> ifRange,
-    final DateTime ifUnmodifiedSince}) =>
-        new _RequestPreconditionsImpl._delegating(this, 
-            ifMatch: ifMatch, 
-            ifModifiedSince: ifModifiedSince, 
-            ifNoneMatch: ifNoneMatch, 
-            ifRange: ifRange, 
-            ifUnmodifiedSince: ifUnmodifiedSince);
-}
-
-final Parser<Either<EntityTag,DateTime>> _ETAG_OR_DATETIME = ETAG ^ HTTP_DATE_TIME;
+final Parser<Either<EntityTag,DateTime>> _IF_RANGE = ETAG ^ HTTP_DATE_TIME;
 
 class _HeadersRequestPreconditionsImpl 
     extends Object 
-    with RequestPreconditionsToString,
-      RequestPreconditionsWith_,
+    with _RequestPreconditionsMixin,
       _Parseable
     implements RequestPreconditions {
-  final SequenceMultimap<Header, String> headers;
+  final Multimap<Header, String, dynamic> _headers;
   ImmutableSet<EntityTag> _ifMatch;
   Option<DateTime> _ifModifiedSince;
   ImmutableSet<EntityTag> _ifNoneMatch;
   Option<Either<EntityTag,DateTime>> _ifRange;
   Option<DateTime> _ifUnmodifiedSince;
   
-  _HeadersRequestPreconditionsImpl(this.headers);
+  _HeadersRequestPreconditionsImpl(this._headers);
   
   ImmutableSet<EntityTag> get ifMatch =>
       computeIfNull(_ifMatch, () {
@@ -200,7 +277,7 @@ class _HeadersRequestPreconditionsImpl
   
   Option<Either<EntityTag,DateTime>> get ifRange =>
       computeIfNull(_ifRange, () {
-        _ifRange = _parse(_ETAG_OR_DATETIME, Header.IF_RANGE);
+        _ifRange = _parse(_IF_RANGE, Header.IF_RANGE);
         return _ifRange;
       });
   
