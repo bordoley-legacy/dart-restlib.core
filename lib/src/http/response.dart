@@ -18,12 +18,13 @@ String _responseToString(final Response response) {
           ..write(Header.PROXY_AUTHENTICATE.write(response.proxyAuthenticationChallenges))
           ..write(Header.RETRY_AFTER.write(response.retryAfter))
           ..write(Header.SERVER.write(response.server))
-          ..write(Header.VARY.write(response.vary))
-          ..write(response.entity.map((final entity) => 
-              "\r\n\r\n${entity.toString()}\r\n").orElse("")));
+          ..write(Header.VARY.write(response.vary)));
    
   response.customHeaders.forEach((final Pair<Header, dynamic> header) =>
       buffer.write(header.fst.write(header.snd)));      
+  
+  buffer.write(response.entity.map((final entity) => 
+      "\r\n\r\n${entity.toString()}\r\n").orElse(""));
     
   return buffer.toString();
 }   
