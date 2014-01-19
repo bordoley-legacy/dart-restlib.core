@@ -136,8 +136,8 @@ abstract class Request<T> {
             uri,
             new Option(userAgent));
   
-  factory Request.wrapHeaders(final Multimap<Header, String, dynamic> headers, final Method method, final Uri requestUri) =>
-      new _HeadersRequestWrapper(headers, method, requestUri);
+  factory Request.wrapHeaders(final Method method, final Uri uri, final Multimap<Header, String, dynamic> headers) =>
+      new _HeadersRequestWrapper(headers, method, uri);
   
   Option<ChallengeMessage> get authorizationCredentials;
   
@@ -248,13 +248,13 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
   
   Request with_({
     final ChallengeMessage authorizationCredentials,
-    final Iterable<CacheDirective> cacheDirectives,
+    final Iterable<CacheDirective> cacheDirectives : const [],
     final ContentInfo contentInfo,
-    final Dictionary<Header, dynamic> customHeaders,
+    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
     final entity,
-    final Iterable<Expectation> expectations,
+    final Iterable<Expectation> expectations : const [],
     final Method method,
-    final Iterable<CacheDirective> pragmaCacheDirectives,
+    final Iterable<CacheDirective> pragmaCacheDirectives : const [],
     final RequestPreconditions preconditions,
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
@@ -313,13 +313,13 @@ abstract class _RequestMixin<T> implements Request<T> {
   
   Request with_({
     final ChallengeMessage authorizationCredentials,
-    final Iterable<CacheDirective> cacheDirectives,
+    final Iterable<CacheDirective> cacheDirectives : const [],
     final ContentInfo contentInfo,
-    final Dictionary<Header, dynamic> customHeaders,
+    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
     final entity,
-    final Iterable<Expectation> expectations,
+    final Iterable<Expectation> expectations : const [],
     final Method method,
-    final Iterable<CacheDirective> pragmaCacheDirectives,
+    final Iterable<CacheDirective> pragmaCacheDirectives : const [],
     final RequestPreconditions preconditions,
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,

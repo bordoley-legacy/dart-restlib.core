@@ -6,8 +6,7 @@ void requestTests() {
       final SequenceMultimap<Header, String> headers =
           Persistent.EMPTY_SEQUENCE_MULTIMAP.insert(Header.HOST, "example.com");
  
-
-      final Request request = new Request.wrapHeaders(headers, Method.PUT, Uri.parse("http://example.com/test"));
+      final Request request = new Request.wrapHeaders(Method.PUT, Uri.parse("http://example.com/test"), headers);
       
       expect(request.authorizationCredentials, isEmpty);
       expect(request.cacheDirectives, isEmpty);
@@ -133,7 +132,7 @@ void requestTests() {
                  Header.USER_AGENT : userAgent}).mapValues(Header.asHeaderValue);
 
       final Request request =  
-          new Request.wrapHeaders(headers, Method.PUT, uri);
+          new Request.wrapHeaders(Method.PUT, uri, headers);
       
       expect(request.authorizationCredentials.value, equals(authorizationCredentials));
       expect(request.cacheDirectives, equals(cacheDirectives));
@@ -166,7 +165,7 @@ void requestTests() {
       final SequenceMultimap<Header, String> headers = 
           Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAllFromMap({Header.IF_RANGE : ""});
 
-      final Request request = new Request.wrapHeaders(headers, Method.PUT, Uri.parse("http://www.example.com"));
+      final Request request = new Request.wrapHeaders(Method.PUT, Uri.parse("http://www.example.com"), headers);
       // FIXME:
       expect(request.preconditions.ifRange, isEmpty);
     });

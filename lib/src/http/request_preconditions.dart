@@ -91,9 +91,9 @@ abstract class RequestPreconditions {
   String toString();
   
   RequestPreconditions with_({
-    Iterable<EntityTag> ifMatch,
+    Iterable<EntityTag> ifMatch : const [],
     DateTime ifModifiedSince,
-    Iterable<EntityTag> ifNoneMatch,
+    Iterable<EntityTag> ifNoneMatch : const [],
     Either<EntityTag,DateTime> ifRange,
     DateTime ifUnmodifiedSince}); 
   
@@ -117,9 +117,9 @@ class _RequestPreconditionsNone implements RequestPreconditions {
   String toString() => "";
   
   RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch,
+    final Iterable<EntityTag> ifMatch : const[],
     final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch,
+    final Iterable<EntityTag> ifNoneMatch : const[],
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) =>
         new RequestPreconditions(
@@ -158,9 +158,9 @@ abstract class ForwardingRequestPreconditions implements Forwarder, RequestPreco
       _requestPreconditionsToString(this);
   
   RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch,
+    final Iterable<EntityTag> ifMatch : const [],
     final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch,
+    final Iterable<EntityTag> ifNoneMatch : const [],
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) =>
         _requestPreconditionsWith(
@@ -191,9 +191,9 @@ abstract class _RequestPreconditionsMixin implements RequestPreconditions {
       _requestPreconditionsToString(this);
   
   RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch,
+    final Iterable<EntityTag> ifMatch : const [],
     final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch,
+    final Iterable<EntityTag> ifNoneMatch : const [],
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) =>
         _requestPreconditionsWith(

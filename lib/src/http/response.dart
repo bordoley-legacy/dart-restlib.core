@@ -318,25 +318,25 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
       _responseToString(this);
   
   Response with_({
-    final Iterable<RangeUnit> acceptedRangeUnits,
+    final Iterable<RangeUnit> acceptedRangeUnits : const [],
     final int age,
-    final Iterable<Method> allowedMethods,
-    final Iterable<ChallengeMessage> authenticationChallenges,
-    final Iterable<CacheDirective> cacheDirectives,
+    final Iterable<Method> allowedMethods : const [],
+    final Iterable<ChallengeMessage> authenticationChallenges : const [],
+    final Iterable<CacheDirective> cacheDirectives : const [],
     final ContentInfo contentInfo,
-    final Dictionary<Header, dynamic> customHeaders,
+    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
     final DateTime date,
     final entity,
     final EntityTag entityTag,
     final DateTime expires,
     final DateTime lastModified,
     final Uri location,
-    final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
+    final Iterable<ChallengeMessage> proxyAuthenticationChallenges : const [],
     final DateTime retryAfter,
     final UserAgent server,
     final Status status,
-    final Iterable<Header> vary,
-    final Iterable<Warning> warnings}) =>
+    final Iterable<Header> vary : const [],
+    final Iterable<Warning> warnings : const []}) =>
         _responseWith(
             this, 
             acceptedRangeUnits, 
@@ -405,25 +405,25 @@ abstract class _ResponseMixin<T> implements Response<T> {
       _responseToString(this);
   
   Response with_({
-    final Iterable<RangeUnit> acceptedRangeUnits,
+    final Iterable<RangeUnit> acceptedRangeUnits : const [],
     final int age,
-    final Iterable<Method> allowedMethods,
-    final Iterable<ChallengeMessage> authenticationChallenges,
-    final Iterable<CacheDirective> cacheDirectives,
+    final Iterable<Method> allowedMethods : const [],
+    final Iterable<ChallengeMessage> authenticationChallenges : const [],
+    final Iterable<CacheDirective> cacheDirectives : const [],
     final ContentInfo contentInfo,
-    final Dictionary<Header, dynamic> customHeaders,
+    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
     final DateTime date,
     final entity,
     final EntityTag entityTag,
     final DateTime expires,
     final DateTime lastModified,
     final Uri location,
-    final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
+    final Iterable<ChallengeMessage> proxyAuthenticationChallenges : const [],
     final DateTime retryAfter,
     final UserAgent server,
     final Status status,
-    final Iterable<Header> vary,
-    final Iterable<Warning> warnings}) =>
+    final Iterable<Header> vary : const [],
+    final Iterable<Warning> warnings : const []}) =>
         _responseWith(
             this, 
             acceptedRangeUnits, 
