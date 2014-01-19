@@ -313,13 +313,13 @@ abstract class _RequestMixin<T> implements Request<T> {
   
   Request with_({
     final ChallengeMessage authorizationCredentials,
-    final Iterable<CacheDirective> cacheDirectives : const [],
+    final Iterable<CacheDirective> cacheDirectives,
     final ContentInfo contentInfo,
-    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
+    final Dictionary<Header, dynamic> customHeaders,
     final entity,
-    final Iterable<Expectation> expectations : const [],
+    final Iterable<Expectation> expectations,
     final Method method,
-    final Iterable<CacheDirective> pragmaCacheDirectives : const [],
+    final Iterable<CacheDirective> pragmaCacheDirectives,
     final RequestPreconditions preconditions,
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
