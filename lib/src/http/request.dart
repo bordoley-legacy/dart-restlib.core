@@ -63,7 +63,7 @@ Request _requestWith(
       computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
       Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
       firstNotNull(contentInfo, delegate.contentInfo),
-      Persistent.EMPTY_DICTIONARY.insertAll(customHeaders),
+      Persistent.EMPTY_DICTIONARY.insertAll(firstNotNull(customHeaders, delegate.customHeaders)),
       computeIfEmpty(new Option(entity), () => delegate.entity),
       Persistent.EMPTY_SET.addAll(firstNotNull(expectations, delegate.expectations)),
       firstNotNull(method, delegate.method),
