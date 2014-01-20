@@ -518,3 +518,30 @@ class _HeadersRequestWrapper
         return _userAgent;    
       });
 }
+
+Request requestMethodOverride(final Request request) {  
+  Request updateMethod(final Header header) =>
+      TOKEN.parse(request.customHeaders(header).value)
+        .map((final String token) {
+          final Method method = new Method.forName(token);
+          final Dictionary<Header, dynamic> customHeaders =
+              Persistent.EMPTY_DICTIONARY
+                .insertAll(request.customHeaders)
+                .removeAt(Header.X_HTTP_METHOD)
+                .removeAt(Header.X_HTTP_METHOD_OVERRIDE)
+                .removeAt(Header.X_METHOD_OVERRIDE);
+          return request.with_(method: method, customHeaders : customHeaders);
+        }).orElse(request);
+  
+  if (request.method != Method.POST) {
+    return request;
+  } else if (request.customHeaders.containsKey(Header.X_HTTP_METHOD)) {
+    return updateMethod(Header.X_HTTP_METHOD);
+  } else if (request.customHeaders.containsKey(Header.X_HTTP_METHOD_OVERRIDE)) {
+    return updateMethod(Header.X_HTTP_METHOD_OVERRIDE);
+  } else if (request.customHeaders.containsKey(Header.X_METHOD_OVERRIDE)) {
+    return updateMethod(Header.X_METHOD_OVERRIDE);
+  } else {
+    return request;
+  }
+}

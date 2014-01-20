@@ -65,6 +65,11 @@ class Header {
   static const Header WARNING = const Header._internal("warning", "Warning");
   static const Header WWW_AUTHENTICATE = const Header._internal("www-authenticate", "WWW-Authenticate");
   
+  // Extension Headers
+  static const Header X_HTTP_METHOD = const Header._internal("x-http-method", "X-HTTP-Method"); 
+  static const Header X_HTTP_METHOD_OVERRIDE = const Header._internal("x-http-method-override", "X-HTTP-Method-Override");
+  static const Header X_METHOD_OVERRIDE  = const Header._internal("x-method-override", "X-Method-Override");
+  
   static String asHeaderValue(final value) {
     if (value is Option) {
       return value
