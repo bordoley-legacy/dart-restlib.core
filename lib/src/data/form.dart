@@ -1,61 +1,56 @@
 part of restlib.core.data;
 
-//final Parser<Form> FORM ;
-/*
-class Form 
-    extends _MultimapForwarder {
+abstract class Form implements ImmutableMultisetMultimap<String, String>, Persistent {
+  static const Form EMPTY = const _FormImpl.empty();
   
-  // FIXME: Ideally this would const, but dart doesn't yet allow using mixins with const
-  // see: https://code.google.com/p/dart/issues/detail?id=9745  
-  static final Form EMPTY = new Form._internal(PersistentSequenceMultimap.EMPTY);
+  Form insert(final String key, final String value);
+  Form insertAll(final Iterable<Pair<String, String>> other);
+  Form insertAllFromMap(final Map<String, String> map);
+  Form insertPair(final Pair<String, String> pair);
+  Form removeAt(final String key);
+}
+
+class _FormImpl
+    extends Object
+    with ForwardingMultimap<String, String, Multiset<String>>,
+      ForwardingAssociative<String, String>,
+      ForwardingIterable<Pair<String, String>>
+    implements Form {
+  final ImmutableMultisetMultimap<String, String> delegate;
   
-  final PersistentSequenceMultimap<String, String> delegate;
+  const _FormImpl(this.delegate);
   
-  // FIXME: Ideally this would const, but dart doesn't yet allow using mixins with const
-  // see: https://code.google.com/p/dart/issues/detail?id=9745  
-  Form._internal(delegate):
-    this.delegate = delegate,
-    super(delegate);
+  const _FormImpl.empty() :
+    this.delegate = Persistent.EMPTY_MULTISET_MULTIMAP;
   
   int get hashCode =>
       delegate.hashCode;
   
-  bool equals(final other) {
+  bool operator==(other) {
     if (identical(this, other)) {
       return true;
-    } else if (other is Form) {
-      return this.delegate == (other as Form).delegate;
-    } else {
-      return false;
-    }
+    } 
+    
+    return delegate == other;
   }
   
-  Form insert(final String key, final String value) {
-    checkArgument(!key.isEmpty); 
-    return new Form._internal(delegate.insert(key, value));
-  }
+  Form insert(final String key, final String value) =>
+      new _FormImpl(delegate.insert(key, value));
+  
+  Form insertAll(final Iterable<Pair<String, String>> other) =>
+      other.isEmpty ? this : new _FormImpl(delegate.insertAll(other));
+  
+  Form insertAllFromMap(final Map<String, String> map) =>
+      map.isEmpty ? this : new _FormImpl(delegate.insertAllFromMap(map));
   
   Form insertPair(final Pair<String, String> pair) =>
-      insert(pair.fst, pair.snd);
-  
-  Form insertAll(final Iterable<Pair<String, String>> pairs) =>
-      pairs.fold(this, (final Form accumulator, final Pair<String, String> pair) =>
-          accumulator.insertPair(pair));
+      new _FormImpl(delegate.insertPair(pair));
   
   Form removeAt(final String key) =>
-      new Form._internal(delegate.removeAt(key));
+      delegate.dictionary[key]
+        .map((_) => new _FormImpl(delegate.removeAt(key)))
+        .orElse(this);
   
-  String toString() => 
-      delegate.toString();
+  String toString() =>
+      "FIXME: implement";
 }
-// FIXME: Work around https://code.google.com/p/dart/issues/detail?id=14453    
-class _MultimapForwarder 
-    extends ForwardingMultimap<String, String, dynamic>  
-    with  
-      ForwardingIterable<Pair<String,String>>,
-      ForwardingAssociative<String,String> {
-  
-  final Multimap<String, String, dynamic> delegate;
-  
-  _MultimapForwarder(this.delegate);
-}*/
