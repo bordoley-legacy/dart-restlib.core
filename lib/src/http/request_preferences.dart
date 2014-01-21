@@ -53,10 +53,10 @@ abstract class RequestPreferences {
   static const RequestPreferences NONE = const _RequestPreferencesNone();
   
   factory RequestPreferences({
-    final Iterable<Preference<Charset>> acceptedCharsets : const [],
-    final Iterable<Preference<ContentEncoding>> acceptedEncodings : const [],
-    final Iterable<Preference<Language>>  acceptedLanguages : const [],
-    final Iterable<Preference<MediaRange>> acceptedMediaRanges : const [],
+    final Iterable<Preference<Charset>> acceptedCharsets,
+    final Iterable<Preference<ContentEncoding>> acceptedEncodings,
+    final Iterable<Preference<Language>>  acceptedLanguages,
+    final Iterable<Preference<MediaRange>> acceptedMediaRanges,
     final Range range}) {
     
     if(isNull(acceptedCharsets) && 
@@ -68,10 +68,10 @@ abstract class RequestPreferences {
     }
     
     return new _RequestPreferencesImpl(
-        Persistent.EMPTY_SET.addAll(acceptedCharsets),
-        Persistent.EMPTY_SET.addAll(acceptedEncodings),
-        Persistent.EMPTY_SET.addAll(acceptedLanguages),
-        Persistent.EMPTY_SET.addAll(acceptedMediaRanges),
+        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedCharsets, EMPTY_LIST)),
+        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedEncodings, EMPTY_LIST)),
+        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedLanguages, EMPTY_LIST)),
+        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedMediaRanges, EMPTY_LIST)),
         new Option(range));
   }
   

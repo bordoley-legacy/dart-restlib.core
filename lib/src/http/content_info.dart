@@ -64,8 +64,8 @@ abstract class ContentInfo {
   static const ContentInfo NONE = const _ContentInfoNone();
   
   factory ContentInfo({
-    final Iterable<ContentEncoding> encodings : const [],
-    final Iterable<Language> languages : const [],
+    final Iterable<ContentEncoding> encodings,
+    final Iterable<Language> languages,
     final int length,
     final Uri location,
     final MediaRange mediaRange,
@@ -80,8 +80,8 @@ abstract class ContentInfo {
       return ContentInfo.NONE;
     }
     return new _ContentInfoImpl(
-        Persistent.EMPTY_SEQUENCE.addAll(encodings), 
-        Persistent.EMPTY_SET.addAll(languages), 
+        Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(encodings, EMPTY_LIST)), 
+        Persistent.EMPTY_SET.addAll(firstNotNull(languages, EMPTY_LIST)), 
         new Option(length), 
         new Option(location), 
         new Option(mediaRange), 

@@ -17,6 +17,7 @@ part "src/http/header_parsers.dart";
 part "src/http/method.dart";
 part "src/http/preference.dart";
 part "src/http/request.dart";
+part "src/http/request_extension_filter.dart";
 part "src/http/request_preconditions.dart";
 part "src/http/request_preferences.dart";
 part "src/http/response.dart";

@@ -139,44 +139,44 @@ Response _responseWithout(
 abstract class Response<T> {  
   factory Response(
     final Status status, {
-    final Iterable<RangeUnit> acceptedRangeUnits : const [],
+    final Iterable<RangeUnit> acceptedRangeUnits,
     final int age,
-    final Iterable<Method> allowedMethods : const [],
-    final Iterable<ChallengeMessage> authenticationChallenges : const [],
-    final Iterable<CacheDirective> cacheDirectives : const [],
+    final Iterable<Method> allowedMethods,
+    final Iterable<ChallengeMessage> authenticationChallenges,
+    final Iterable<CacheDirective> cacheDirectives,
     final ContentInfo contentInfo,
-    final Dictionary<Header, dynamic> customHeaders : Persistent.EMPTY_DICTIONARY,
+    final Dictionary<Header, dynamic> customHeaders,
     final DateTime date,
     final T entity,
     final EntityTag entityTag,
     final DateTime expires,
     final DateTime lastModified,
     final Uri location,
-    final Iterable<ChallengeMessage> proxyAuthenticationChallenges : const [],
+    final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
     final UserAgent server,  
-    final Iterable<Header> vary : const [],
-    final Iterable<Warning> warnings : const []}) =>
+    final Iterable<Header> vary,
+    final Iterable<Warning> warnings}) =>
         new _ResponseImpl(
-            Persistent.EMPTY_SET.addAll(acceptedRangeUnits),
+            Persistent.EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, EMPTY_LIST)),
             new Option(age),
-            Persistent.EMPTY_SET.addAll(allowedMethods),
-            Persistent.EMPTY_SET.addAll(authenticationChallenges),
-            Persistent.EMPTY_SET.addAll(cacheDirectives),
+            Persistent.EMPTY_SET.addAll(firstNotNull(allowedMethods, EMPTY_LIST)),
+            Persistent.EMPTY_SET.addAll(firstNotNull(authenticationChallenges, EMPTY_LIST)),
+            Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
             firstNotNull(contentInfo, ContentInfo.NONE),
-            Persistent.EMPTY_DICTIONARY.insertAll(customHeaders),
+            Persistent.EMPTY_DICTIONARY.insertAll(firstNotNull(customHeaders, Persistent.EMPTY_DICTIONARY)),
             new Option(date),
             new Option(entity),
             new Option(entityTag),
             new Option(expires),
             new Option(lastModified),
             new Option(location),
-            Persistent.EMPTY_SET.addAll(proxyAuthenticationChallenges),
+            Persistent.EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, EMPTY_LIST)),
             new Option(retryAfter),
             new Option(server),
             status,
-            Persistent.EMPTY_SET.addAll(vary),
-            Persistent.EMPTY_SEQUENCE.addAll(warnings));
+            Persistent.EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
+            Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
     
   FiniteSet<RangeUnit> get acceptedRangeUnits;
   

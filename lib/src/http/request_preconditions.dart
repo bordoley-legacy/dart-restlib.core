@@ -57,9 +57,9 @@ abstract class RequestPreconditions {
   static const RequestPreconditions NONE = const _RequestPreconditionsNone();
   
   factory RequestPreconditions({
-    final Iterable<EntityTag> ifMatch : const [],
+    final Iterable<EntityTag> ifMatch,
     final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch : const [],
+    final Iterable<EntityTag> ifNoneMatch,
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) {
     
@@ -68,9 +68,9 @@ abstract class RequestPreconditions {
     }
 
     return new _RequestPreconditionsImpl(
-        Persistent.EMPTY_SET.addAll(ifMatch), 
+        Persistent.EMPTY_SET.addAll(firstNotNull(ifMatch, EMPTY_LIST)), 
         new Option(ifModifiedSince), 
-        Persistent.EMPTY_SET.addAll(ifNoneMatch), 
+        Persistent.EMPTY_SET.addAll(firstNotNull(ifNoneMatch,  EMPTY_LIST)), 
         new Option(ifRange), 
         new Option(ifUnmodifiedSince));   
   }
