@@ -42,7 +42,7 @@ class _RequestExtensionAsAccept {
               query: uri.query,
               fragment: uri.fragment);
           final RequestPreferences newRequestPreferences = 
-              new RequestPreferences(
+              request.preferences.with_(
                   acceptedMediaRanges: [new Preference(mediaRange)]);
           return request.with_(
               uri: newUri,
