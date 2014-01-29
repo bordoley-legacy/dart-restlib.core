@@ -1,7 +1,8 @@
 part of restlib.core.data;
 
 abstract class Form implements ImmutableMultisetMultimap<String, String>, Persistent {
-  static const Form EMPTY = const _FormImpl.empty();
+  // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
+  static final  Form EMPTY = new _FormImpl.empty();
   
   Form put(final String key, final String value);
   Form putAll(final Iterable<Pair<String, String>> other);
@@ -18,9 +19,11 @@ class _FormImpl
     implements Form {
   final ImmutableMultisetMultimap<String, String> delegate;
   
-  const _FormImpl(this.delegate);
+  // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
+  _FormImpl(this.delegate);
   
-  const _FormImpl.empty() :
+  // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
+  _FormImpl.empty() :
     this.delegate = Persistent.EMPTY_MULTISET_MULTIMAP;
   
   int get hashCode =>
