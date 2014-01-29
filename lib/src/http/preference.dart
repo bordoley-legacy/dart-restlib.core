@@ -64,7 +64,7 @@ class Preference<T extends Matcheable<T>> {
           return null;
         }
         
-        return new Preference(value, qualityFactor: qfValue.value, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAll(parameters.skip(1)));        
+        return new Preference(value, qualityFactor: qfValue.value, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP.putAll(parameters.skip(1)));        
       });
         
   }  

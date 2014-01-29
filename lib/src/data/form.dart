@@ -3,10 +3,10 @@ part of restlib.core.data;
 abstract class Form implements ImmutableMultisetMultimap<String, String>, Persistent {
   static const Form EMPTY = const _FormImpl.empty();
   
-  Form insert(final String key, final String value);
-  Form insertAll(final Iterable<Pair<String, String>> other);
-  Form insertAllFromMap(final Map<String, String> map);
-  Form insertPair(final Pair<String, String> pair);
+  Form put(final String key, final String value);
+  Form putAll(final Iterable<Pair<String, String>> other);
+  Form putAllFromMap(final Map<String, String> map);
+  Form putPair(final Pair<String, String> pair);
   Form removeAt(final String key);
 }
 
@@ -34,17 +34,17 @@ class _FormImpl
     return delegate == other;
   }
   
-  Form insert(final String key, final String value) =>
-      new _FormImpl(delegate.insert(key, value));
+  Form put(final String key, final String value) =>
+      new _FormImpl(delegate.put(key, value));
   
-  Form insertAll(final Iterable<Pair<String, String>> other) =>
-      other.isEmpty ? this : new _FormImpl(delegate.insertAll(other));
+  Form putAll(final Iterable<Pair<String, String>> other) =>
+      other.isEmpty ? this : new _FormImpl(delegate.putAll(other));
   
-  Form insertAllFromMap(final Map<String, String> map) =>
-      map.isEmpty ? this : new _FormImpl(delegate.insertAllFromMap(map));
+  Form putAllFromMap(final Map<String, String> map) =>
+      map.isEmpty ? this : new _FormImpl(delegate.putAllFromMap(map));
   
-  Form insertPair(final Pair<String, String> pair) =>
-      new _FormImpl(delegate.insertPair(pair));
+  Form putPair(final Pair<String, String> pair) =>
+      new _FormImpl(delegate.putPair(pair));
   
   Form removeAt(final String key) =>
       delegate.dictionary[key]

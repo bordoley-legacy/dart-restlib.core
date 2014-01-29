@@ -98,7 +98,7 @@ Future<Multipart> parseMultipartStream(
           .bind(msgStream)
           .map((final MimeMultipart multipart) =>
               new Part(new ContentInfo.wrapHeaders(
-                  Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAllFromMap(multipart.headers)), 
+                  Persistent.EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(multipart.headers)), 
               multipart))
           .fold(Persistent.EMPTY_SEQUENCE, (final ImmutableSequence<Future> futureResults, final Part<Stream<List<int>>> part) => 
               partParserProvider(part.contentInfo)

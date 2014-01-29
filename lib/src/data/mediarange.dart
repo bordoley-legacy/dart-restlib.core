@@ -13,7 +13,7 @@ final Parser<MediaRange> MEDIA_RANGE =
       final String subtype = e.elementAt(2).toLowerCase();
       Option<Charset> charset = Option.NONE;
       final SetMultimap<String, String> parameters = 
-          Persistent.EMPTY_SET_MULTIMAP.insertAll(
+          Persistent.EMPTY_SET_MULTIMAP.putAll(
               e.elementAt(3).where((final KeyValuePair kvp) {                
                 final String key = kvp.fst.toLowerCase();
                 
@@ -68,7 +68,7 @@ class MediaRange implements Matcheable<MediaRange> {
     
     parameters = firstNotNull(parameters, Persistent.EMPTY_SET_MULTIMAP);
     parameters = 
-        Persistent.EMPTY_SET_MULTIMAP.insertAll(
+        Persistent.EMPTY_SET_MULTIMAP.putAll(
             parameters.map((final Pair<String,String> kv) {
               checkArgument(TOKEN.parse(kv.fst).isNotEmpty);
               checkArgument(kv.fst.toLowerCase() != "q");

@@ -13,7 +13,7 @@ final Parser<ChallengeMessage> CHALLENGE_MESSAGE =
           (final Iterable<Option<KeyValuePair>> pairs) => 
               new ParametersChallengeMessage._internal(
                   scheme, 
-                  Persistent.EMPTY_DICTIONARY.insertAll(
+                  Persistent.EMPTY_DICTIONARY.putAll(
                       pairs
                         .where((final Option<KeyValuePair> optionalPair) => 
                             optionalPair.isNotEmpty)

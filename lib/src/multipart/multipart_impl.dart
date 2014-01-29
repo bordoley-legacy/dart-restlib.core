@@ -36,7 +36,7 @@ class _PartContentInfo
             location: location, 
             mediaRange: mediaRange, 
             range: range);
-    return new _PartContentInfo(Persistent.EMPTY_DICTIONARY.insertAll(customHeaders), delegate);
+    return new _PartContentInfo(Persistent.EMPTY_DICTIONARY.putAll(customHeaders), delegate);
   }
   
   ContentInfo without({

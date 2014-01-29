@@ -14,8 +14,8 @@ preferenceTests() {
          [new Preference("a", qualityFactor: 500),
          new Preference("a", qualityFactor: 500, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP)])      
     ..addEqualityGroup( 
-         [new Preference("a", qualityFactor: 500, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP.insert("a", "b")),
-         new Preference("a", qualityFactor: 500, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP.insert("a", "b"))])           
+         [new Preference("a", qualityFactor: 500, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP.put("a", "b")),
+         new Preference("a", qualityFactor: 500, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP.put("a", "b"))])           
     ..executeTestCase();
   
   Parser prefParser = Preference.parser(CHARSET);
@@ -30,5 +30,5 @@ preferenceTests() {
 
   doTestParse("UTF-8", Charset.UTF_8, 1000, Persistent.EMPTY_SEQUENCE_MULTIMAP);
   doTestParse("UTF-8; q=0.5", Charset.UTF_8, 500, Persistent.EMPTY_SEQUENCE_MULTIMAP);
-  doTestParse("UTF-8; q=0.5; a=b", Charset.UTF_8, 500, Persistent.EMPTY_SEQUENCE_MULTIMAP.insert("a", "b"));
+  doTestParse("UTF-8; q=0.5; a=b", Charset.UTF_8, 500, Persistent.EMPTY_SEQUENCE_MULTIMAP.put("a", "b"));
 }

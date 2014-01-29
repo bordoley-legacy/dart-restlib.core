@@ -3,12 +3,12 @@ part of restlib.core.data;
 final Parser<Expectation> EXPECTATION =
   KVP.sepBy1(OWS_SEMICOLON_OWS)
     .map((final Iterable<KeyValuePair> kvp) =>
-        new Expectation._internal(Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAll(kvp)));
+        new Expectation._internal(Persistent.EMPTY_SEQUENCE_MULTIMAP.putAll(kvp)));
 
 class Expectation {
   static final Expectation EXPECTS_100_CONTINUE = 
       new Expectation._internal(
-          Persistent.EMPTY_SEQUENCE_MULTIMAP.insert("100-continue",""));
+          Persistent.EMPTY_SEQUENCE_MULTIMAP.put("100-continue",""));
   
   final Multimap<String, String, dynamic> expectations;
   

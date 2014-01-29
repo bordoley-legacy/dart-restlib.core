@@ -63,7 +63,7 @@ Request _requestWith(
       computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
       Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
       firstNotNull(contentInfo, delegate.contentInfo),
-      Persistent.EMPTY_DICTIONARY.insertAll(firstNotNull(customHeaders, delegate.customHeaders)),
+      Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, delegate.customHeaders)),
       computeIfEmpty(new Option(entity), () => delegate.entity),
       Persistent.EMPTY_SET.addAll(firstNotNull(expectations, delegate.expectations)),
       firstNotNull(method, delegate.method),
@@ -94,7 +94,7 @@ Request _requestWithout(
           !authorizationCredentials ? delegate.authorizationCredentials : Option.NONE,
           !cacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.cacheDirectives) : Persistent.EMPTY_SET,
           !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
-          !customHeaders ? Persistent.EMPTY_DICTIONARY.insertAll(delegate.customHeaders) : Persistent.EMPTY_DICTIONARY,
+          !customHeaders ? Persistent.EMPTY_DICTIONARY.putAll(delegate.customHeaders) : Persistent.EMPTY_DICTIONARY,
           !entity ? delegate.entity : Option.NONE,
           !expectations? Persistent.EMPTY_SET.addAll(delegate.expectations) : Persistent.EMPTY_SET,
           delegate.method,
@@ -124,7 +124,7 @@ abstract class Request<T> {
             new Option(authorizationCredentials),
             Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
             firstNotNull(contentInfo, ContentInfo.NONE),
-            Persistent.EMPTY_DICTIONARY.insertAll(firstNotNull(customHeaders, Persistent.EMPTY_DICTIONARY)),
+            Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, Persistent.EMPTY_DICTIONARY)),
             new Option(entity),
             Persistent.EMPTY_SET.addAll(firstNotNull(expectations, EMPTY_LIST)),
             method,
@@ -526,7 +526,7 @@ Request requestMethodOverride(final Request request) {
           final Method method = new Method.forName(token);
           final Dictionary<Header, dynamic> customHeaders =
               Persistent.EMPTY_DICTIONARY
-                .insertAll(request.customHeaders)
+                .putAll(request.customHeaders)
                 .removeAt(Header.X_HTTP_METHOD)
                 .removeAt(Header.X_HTTP_METHOD_OVERRIDE)
                 .removeAt(Header.X_METHOD_OVERRIDE);

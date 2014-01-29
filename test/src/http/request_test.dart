@@ -4,7 +4,7 @@ void requestTests() {
   group("factory:wrapHeaders()", () {
     test("with no headers present", () { 
       final SequenceMultimap<Header, String> headers =
-          Persistent.EMPTY_SEQUENCE_MULTIMAP.insert(Header.HOST, "example.com");
+          Persistent.EMPTY_SEQUENCE_MULTIMAP.put(Header.HOST, "example.com");
  
       final Request request = new Request.wrapHeaders(Method.PUT, Uri.parse("http://example.com/test"), headers);
       
@@ -103,7 +103,7 @@ void requestTests() {
       final UserAgent userAgent = USER_AGENT.parse("test/1.1").value;
       
       final Multimap<Header, String, dynamic> headers = 
-          Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAllFromMap(
+          Persistent.EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(
                 {Header.ACCEPT : acceptedMediaRanges,
                  Header.ACCEPT_CHARSET : acceptedCharsets,
                  Header.ACCEPT_ENCODING : acceptedEncodings,
@@ -163,7 +163,7 @@ void requestTests() {
     
     test("with if-Range as date string", () {
       final SequenceMultimap<Header, String> headers = 
-          Persistent.EMPTY_SEQUENCE_MULTIMAP.insertAllFromMap({Header.IF_RANGE : ""});
+          Persistent.EMPTY_SEQUENCE_MULTIMAP.putAllFromMap({Header.IF_RANGE : ""});
 
       final Request request = new Request.wrapHeaders(Method.PUT, Uri.parse("http://www.example.com"), headers);
       // FIXME:

@@ -36,7 +36,7 @@ mediaRangeTests() {
   
   doTestParse("a/b", "a", "b", Option.NONE, Persistent.EMPTY_SET_MULTIMAP);
   doTestParse("a/b; charset =  \t UTF-8", "a", "b", new Option(Charset.UTF_8), Persistent.EMPTY_SET_MULTIMAP);
-  doTestParse("a/b; c=d; e=f", "a", "b",  Option.NONE, Persistent.EMPTY_SET_MULTIMAP.insertAllFromMap({"c" : "d", "e" : "f"}));   
+  doTestParse("a/b; c=d; e=f", "a", "b",  Option.NONE, Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"c" : "d", "e" : "f"}));   
 
   doTestParseWithInvalid("");
   doTestParseWithInvalid("a");
@@ -46,7 +46,7 @@ mediaRangeTests() {
   
   // Ignore bad charsets
   doTestParse("a/b; charset=\" \\\" \"" , "a", "b", Option.NONE, Persistent.EMPTY_SET_MULTIMAP);
-  doTestParse("a/b; charset=US-ASCII; c=d; charset=UTF-8", "a", "b", new Option(Charset.US_ASCII), Persistent.EMPTY_SET_MULTIMAP.insertAllFromMap({"c" : "d"}));
+  doTestParse("a/b; charset=US-ASCII; c=d; charset=UTF-8", "a", "b", new Option(Charset.US_ASCII), Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"c" : "d"}));
   doTestParse("a/b; charset=*", "a", "b", Option.NONE, Persistent.EMPTY_SET_MULTIMAP);
 
   new EqualsTester()
@@ -61,7 +61,7 @@ mediaRangeTests() {
     ..addEqualityGroup(
       [MediaRange.APPLICATION_ATOM_ENTRY,
       MEDIA_RANGE.parse("application/atom+xml; type = \"entry\"").value,
-      new MediaRange("application", "atom+xml", parameters: Persistent.EMPTY_SET_MULTIMAP.insertAllFromMap({"type" : "entry"}))])
+      new MediaRange("application", "atom+xml", parameters: Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"type" : "entry"}))])
     ..addEqualityGroup(
       [MediaRange.APPLICATION_ATOM.withCharset(Charset.UTF_8),
       MEDIA_RANGE.parse("application/atom+xml; charSet = utf-8").value,
@@ -69,7 +69,7 @@ mediaRangeTests() {
     ..addEqualityGroup(
       [MediaRange.APPLICATION_ATOM_ENTRY.withCharset(Charset.UTF_8),
       MEDIA_RANGE.parse("application/atom+xml; type = \"entry\"     \t\t\t; charSet = utf-8").value,
-      new MediaRange("application", "atom+xml", charset: Charset.UTF_8, parameters: Persistent.EMPTY_SET_MULTIMAP.insertAllFromMap({"tyPe" : "entry"}))])                
+      new MediaRange("application", "atom+xml", charset: Charset.UTF_8, parameters: Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"tyPe" : "entry"}))])                
     ..addEqualityGroup(
       [MediaRange.TEXT_HTML,
       MEDIA_RANGE.parse("text/html").value,
@@ -104,6 +104,6 @@ mediaRangeTests() {
   doTestFactoryConstructorWithInvalid("a", "@");
   doTestFactoryConstructorWithInvalid("@", "b");
   doTestFactoryConstructorWithInvalid("a", "b", charset: Charset.ANY);
-  doTestFactoryConstructorWithInvalid("a", "b", parameters: Persistent.EMPTY_SET_MULTIMAP.insertAllFromMap({"charset" : "UTF-8"}));
-  doTestFactoryConstructorWithInvalid("a", "b", parameters: Persistent.EMPTY_SET_MULTIMAP.insertAllFromMap({"q" : "1.0"}));
+  doTestFactoryConstructorWithInvalid("a", "b", parameters: Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"charset" : "UTF-8"}));
+  doTestFactoryConstructorWithInvalid("a", "b", parameters: Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"q" : "1.0"}));
 }
