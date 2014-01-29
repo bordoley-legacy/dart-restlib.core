@@ -5,7 +5,10 @@ final Parser<int> _WARN_CODE =
     .map((final Iterable e) =>
       e.elementAt(0) * 100 + e.elementAt(1)*10 + e.elementAt(2));
 
-final Parser<Either<HostPort, String>> _WARN_AGENT = (_HOST_PORT ^ TOKEN);
+final Parser<Authority> _HOST_PORT = AUTHORITY.map((final Authority authority) =>
+    (authority.userInfo.isNotEmpty) ? null : authority);
+
+final Parser<Either<Authority, String>> _WARN_AGENT = (_HOST_PORT ^ TOKEN);
 
 final Parser<DateTime> _WARN_DATE =
   (DQUOTE + HTTP_DATE_TIME + DQUOTE)
@@ -22,15 +25,16 @@ final Parser<Warning> WARNING =
         new Warning._internal(e.elementAt(0), e.elementAt(2), e.elementAt(4), e.elementAt(5)));
   
 class Warning {
-  final Either<HostPort, String> warnAgent;
+  final Either<Authority, String> warnAgent;
   final int warnCode;
   final Option<DateTime> warnDate;
   final String warnText;
   
-  factory Warning.hostPort(final int warnCode, final HostPort warnAgent, final String warnText, [final DateTime warnDate = null]) {
+  factory Warning.hostPort(final int warnCode, final Authority warnAgent, final String warnText, [final DateTime warnDate = null]) {
     checkArgument(warnCode > 0);
     checkArgument(warnCode <= 999);
     checkArgument(QUOTABLE.matchesAllOf(warnText));
+    checkArgument(warnAgent.userInfo.isEmpty);
     
     return new Warning._internal(warnCode, new Either.leftValue(warnAgent), warnText, new Option(warnDate));
   }
@@ -63,10 +67,4 @@ class Warning {
   
   String toString() =>
       "$warnCode $warnAgent ${encodeQuotedString(warnText)}${warnDate.map(toHttpDate).orElse("")}";
-}
-
-final Parser<HostPort> _HOST_PORT = NONE;
-
-class HostPort {
-  
 }

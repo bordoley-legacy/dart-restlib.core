@@ -12,6 +12,7 @@ import "package:restlib_parsing/parsing.dart";
 
 import "http_syntax.dart";
 import "http.dart";
+import "net.dart";
 
 part "src/data/cache_directive.dart";
 part "src/data/challenge_message.dart";

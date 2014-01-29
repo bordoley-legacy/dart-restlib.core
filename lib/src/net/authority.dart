@@ -1,6 +1,6 @@
 part of restlib.core.net;
 
-final Parser<Authority> URI_AUTHORITY_PARSER = 
+final Parser<Authority> AUTHORITY = 
   _authorityParser(_USER_INFO, _HOST, Authority._builder);
 
 abstract class Authority extends IAuthority {
