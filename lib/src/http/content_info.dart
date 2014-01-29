@@ -15,7 +15,7 @@ ContentInfo _contentInfoWith(
   final Iterable<ContentEncoding> encodings,
   final Iterable<Language> languages,
   final int length,
-  final Uri location,
+  final URI location,
   final MediaRange mediaRange,
   final ContentRange range) {
   
@@ -67,7 +67,7 @@ abstract class ContentInfo {
     final Iterable<ContentEncoding> encodings,
     final Iterable<Language> languages,
     final int length,
-    final Uri location,
+    final URI location,
     final MediaRange mediaRange,
     final ContentRange range}) {
     
@@ -97,7 +97,7 @@ abstract class ContentInfo {
   
   Option<int> get length;
   
-  Option<Uri> get location;
+  Option<URI> get location;
   
   Option<MediaRange> get mediaRange;
   
@@ -109,7 +109,7 @@ abstract class ContentInfo {
     Iterable<ContentEncoding> encodings,
     Iterable<Language> languages,
     int length,
-    Uri location,
+    URI location,
     MediaRange mediaRange,
     ContentRange range
   });
@@ -132,7 +132,7 @@ abstract class _ContentInfoMixin implements ContentInfo {
     final Iterable<ContentEncoding> encodings,
     final Iterable<Language> languages,
     final int length,
-    final Uri location,
+    final URI location,
     final MediaRange mediaRange,
     final ContentRange range}) => 
         _contentInfoWith(this, encodings, languages, length, location, mediaRange, range);
@@ -151,7 +151,7 @@ class _ContentInfoNone implements ContentInfo {
   final ImmutableSequence<ContentEncoding> encodings = Persistent.EMPTY_SEQUENCE;
   final FiniteSet<Language> languages = Persistent.EMPTY_SET;
   final Option<int> length = Option.NONE;
-  final Option<Uri> location = Option.NONE;
+  final Option<URI> location = Option.NONE;
   final Option<MediaRange> mediaRange = Option.NONE;
   final Option<ContentRange> range = Option.NONE;
   
@@ -163,7 +163,7 @@ class _ContentInfoNone implements ContentInfo {
     final Iterable<ContentEncoding> encodings: const [],
     final Iterable<Language> languages : const [],
     final int length,
-    final Uri location,
+    final URI location,
     final MediaRange mediaRange,
     final ContentRange range}) => 
         new ContentInfo(
@@ -194,7 +194,7 @@ abstract class ForwardingContentInfo implements Forwarder, ContentInfo {
   Option<int> get length =>
       delegate.length;
   
-  Option<Uri> get location =>
+  Option<URI> get location =>
       delegate.location;
   
   Option<MediaRange> get mediaRange =>
@@ -210,7 +210,7 @@ abstract class ForwardingContentInfo implements Forwarder, ContentInfo {
     final Iterable<ContentEncoding> encodings,
     final Iterable<Language> languages,
     final int length,
-    final Uri location,
+    final URI location,
     final MediaRange mediaRange,
     final ContentRange range}) => 
         _contentInfoWith(this, encodings, languages, length, location, mediaRange, range);
@@ -232,7 +232,7 @@ class _ContentInfoImpl
   final ImmutableSequence<ContentEncoding> encodings;
   final ImmutableSet<Language> languages;
   final Option<int> length;
-  final Option<Uri> location;
+  final Option<URI> location;
   final Option<MediaRange> mediaRange;
   final Option<ContentRange> range;
 
@@ -248,7 +248,7 @@ class _HeadersContentInfoImpl
   ImmutableSequence<ContentEncoding> _encodings;
   ImmutableSet<Language> _languages;
   Option<int> _length;
-  Option<Uri> _location;
+  Option<URI> _location;
   Option<MediaRange> _mediaRange;
   Option<ContentRange> _range;
 
@@ -282,10 +282,10 @@ class _HeadersContentInfoImpl
         return _length;
       });
   
-  Option<Uri> get location =>
+  Option<URI> get location =>
       computeIfNull(_location, () {     
         _location = firstWhere(_headers.call(Header.CONTENT_LOCATION), (final String uri) => true)
-            .flatMap(_parseUri);
+            .flatMap(URI_.parse);
         return _location;
       });
   

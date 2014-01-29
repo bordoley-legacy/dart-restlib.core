@@ -12,8 +12,8 @@ class _RequestExtensionAsAccept {
   _RequestExtensionAsAccept(this.extensionMap);
   
   Request call(final Request request) {
-    final Iterable<String> pathSegments = request.uri.pathSegments;  
-    final String lastSegment = pathSegments.last;
+    final Path path = request.uri.path;  
+    final String lastSegment = path.last;
     final int index = lastSegment.lastIndexOf(".");
     
     // cases:
@@ -30,15 +30,12 @@ class _RequestExtensionAsAccept {
     
     return extensionMap(extension)
         .map((final MediaRange mediaRange) {
-          final Iterable<String> newPathSegments = 
-              pathSegments.take(pathSegments.length - 1).toList(growable: true)..add(newLastSegment);
-          final Uri uri = request.uri;
-          final Uri newUri = new Uri(
+          final Path newPath = path.tail.add(newLastSegment);
+          final URI uri = request.uri;
+          final URI newUri = new URI(
               scheme: uri.scheme, 
-              userInfo: uri.userInfo, 
-              host: uri.host, 
-              port: uri.port, 
-              pathSegments: newPathSegments, 
+              authority: uri.authority.nullableValue, 
+              path: newPath, 
               query: uri.query,
               fragment: uri.fragment);
           final RequestPreferences newRequestPreferences = 

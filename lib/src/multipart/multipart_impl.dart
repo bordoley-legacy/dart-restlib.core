@@ -24,7 +24,7 @@ class _PartContentInfo
     final Iterable<ContentEncoding> encodings,
     final Iterable<Language> languages,
     final int length,
-    final Uri location,
+    final URI location,
     final MediaRange mediaRange,
     final ContentRange range 
   }) {

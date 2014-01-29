@@ -43,7 +43,7 @@ Response _responseWith(
   final EntityTag entityTag,
   final DateTime expires,
   final DateTime lastModified,
-  final Uri location,
+  final URI location,
   final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
   final DateTime retryAfter,
   final UserAgent server,
@@ -151,7 +151,7 @@ abstract class Response<T> {
     final EntityTag entityTag,
     final DateTime expires,
     final DateTime lastModified,
-    final Uri location,
+    final URI location,
     final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
     final UserAgent server,  
@@ -202,7 +202,7 @@ abstract class Response<T> {
   
   Option<DateTime> get lastModified;
   
-  Option<Uri> get location;
+  Option<URI> get location;
   
   FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges;
   
@@ -231,7 +231,7 @@ abstract class Response<T> {
     EntityTag entityTag,
     DateTime expires,
     DateTime lastModified,
-    Uri location,
+    URI location,
     Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     DateTime retryAfter,
     UserAgent server,
@@ -294,7 +294,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
   Option<DateTime> get lastModified =>
       delegate.lastModified;
   
-  Option<Uri> get location =>
+  Option<URI> get location =>
       delegate.location;
   
   FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges =>
@@ -331,7 +331,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
     final EntityTag entityTag,
     final DateTime expires,
     final DateTime lastModified,
-    final Uri location,
+    final URI location,
     final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
     final UserAgent server,
@@ -418,7 +418,7 @@ abstract class _ResponseMixin<T> implements Response<T> {
     final EntityTag entityTag,
     final DateTime expires,
     final DateTime lastModified,
-    final Uri location,
+    final URI location,
     final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
     final UserAgent server,
@@ -504,7 +504,7 @@ class _ResponseImpl<T>
   final Option<EntityTag> entityTag;
   final Option<DateTime> expires;
   final Option<DateTime> lastModified;
-  final Option<Uri> location;
+  final Option<URI> location;
   final ImmutableSet<ChallengeMessage> proxyAuthenticationChallenges;
   final Option<DateTime> retryAfter;
   final Option<UserAgent> server;

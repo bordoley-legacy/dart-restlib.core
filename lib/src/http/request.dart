@@ -2,11 +2,10 @@ part of restlib.core.http;
 
 String _requestToString(final Request request) {
   final String requestLine = "${request.method} ${request.uri.path}${request.uri.query.isEmpty ? "" : request.uri.query}\r\n";
-  final String host = "${request.uri.host}${request.uri.port > 0 ? ":${request.uri.port}" : ""}";
     
   final StringBuffer buffer = (new StringBuffer()
     ..write(requestLine)
-    ..write(Header.HOST.write(host))
+    ..write(Header.HOST.write(request.uri.authority.value))
     ..write(Header.AUTHORIZATION.write(request.authorizationCredentials))
     ..write(Header.CACHE_CONTROL.write(request.cacheDirectives))
     ..write(request.contentInfo)
@@ -39,8 +38,8 @@ Request _requestWith(
     final RequestPreconditions preconditions,
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
-    final Uri referer,
-    final Uri uri,
+    final URI referer,
+    final URI uri,
     final UserAgent userAgent) {
   if (isNull(authorizationCredentials) &&
       isNull(cacheDirectives) &&
@@ -118,7 +117,7 @@ abstract class Request<T> {
     final RequestPreconditions preconditions,    
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
-    final Uri referer,    
+    final URI referer,    
     final UserAgent userAgent}) =>
         new _RequestImpl(
             new Option(authorizationCredentials),
@@ -136,7 +135,7 @@ abstract class Request<T> {
             uri,
             new Option(userAgent));
   
-  factory Request.wrapHeaders(final Method method, final Uri uri, final Multimap<Header, String, dynamic> headers) =>
+  factory Request.wrapHeaders(final Method method, final URI uri, final Multimap<Header, String, dynamic> headers) =>
       new _HeadersRequestWrapper(headers, method, uri);
   
   Option<ChallengeMessage> get authorizationCredentials;
@@ -161,9 +160,9 @@ abstract class Request<T> {
   
   Option<ChallengeMessage> get proxyAuthorizationCredentials;
   
-  Option<Uri> get referer;
+  Option<URI> get referer;
   
-  Uri get uri;
+  URI get uri;
   
   Option<UserAgent> get userAgent;
   
@@ -181,8 +180,8 @@ abstract class Request<T> {
     RequestPreconditions preconditions,
     RequestPreferences preferences,
     ChallengeMessage proxyAuthorizationCredentials,
-    Uri referer,
-    Uri uri,
+    URI referer,
+    URI uri,
     UserAgent userAgent});
   
   Request without({
@@ -234,10 +233,10 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
   Option<ChallengeMessage> get proxyAuthorizationCredentials =>
       delegate.proxyAuthorizationCredentials;
   
-  Option<Uri> get referer =>
+  Option<URI> get referer =>
       delegate.referer;
   
-  Uri get uri =>
+  URI get uri =>
       delegate.uri;
   
   Option<UserAgent> get userAgent =>
@@ -258,8 +257,8 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
     final RequestPreconditions preconditions,
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
-    final Uri referer,
-    final Uri uri,
+    final URI referer,
+    final URI uri,
     final UserAgent userAgent}) =>
         _requestWith(
             this,
@@ -323,8 +322,8 @@ abstract class _RequestMixin<T> implements Request<T> {
     final RequestPreconditions preconditions,
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
-    final Uri referer,
-    final Uri uri,
+    final URI referer,
+    final URI uri,
     final UserAgent userAgent}) =>
         _requestWith(
             this,
@@ -387,8 +386,8 @@ class _RequestImpl<T>
   final RequestPreconditions preconditions;
   final RequestPreferences preferences;
   final Option<ChallengeMessage> proxyAuthorizationCredentials;
-  final Option<Uri> referer;
-  final Uri uri;
+  final Option<URI> referer;
+  final URI uri;
   final Option<UserAgent> userAgent;
   
   _RequestImpl(
@@ -425,8 +424,8 @@ class _HeadersRequestWrapper
   RequestPreconditions _preconditions;
   RequestPreferences _preferences;
   Option<ChallengeMessage> _proxyAuthorizationCredentials;
-  Option<Uri> _referer;
-  final Uri uri;
+  Option<URI> _referer;
+  final URI uri;
   Option<UserAgent> _userAgent;
 
   _HeadersRequestWrapper(this._headers, this.method, this.uri);
@@ -505,10 +504,10 @@ class _HeadersRequestWrapper
         return _proxyAuthorizationCredentials;
       });
 
-  Option<Uri> get referer =>
+  Option<URI> get referer =>
       computeIfNull(_referer, () {
-        _referer = firstWhere(_headers.call(Header.REFERER), (final String uri) => true)
-            .flatMap(_parseUri);
+        _referer = firstWhere(_headers[Header.REFERER], (final String uri) => true)
+            .flatMap(URI_.parse);
         return _referer;
       });
   

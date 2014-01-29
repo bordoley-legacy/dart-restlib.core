@@ -2,11 +2,11 @@ part of restlib.core.net_test;
 
 // see: https://github.com/bestiejs/punycode.js/blob/master/tests/tests.js
 void _doTestPunyCodeEncode(final String description, final String decoded, final String encoded) =>
-    group(description, () {
+    group(description, () {/*
       test("toDomainName()", () => 
           expect(_toASCII(decoded), equals(encoded)));
       test("toInternationalDomainName()", () =>
-          expect(_toUnicode(encoded), equals(decoded)));
+          expect(_toUnicode(encoded), equals(decoded)));*/
     });
 
 void testPunyCodeEncode() {

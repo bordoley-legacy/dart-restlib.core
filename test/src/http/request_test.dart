@@ -6,7 +6,7 @@ void requestTests() {
       final SequenceMultimap<Header, String> headers =
           Persistent.EMPTY_SEQUENCE_MULTIMAP.put(Header.HOST, "example.com");
  
-      final Request request = new Request.wrapHeaders(Method.PUT, Uri.parse("http://example.com/test"), headers);
+      final Request request = new Request.wrapHeaders(Method.PUT, URI_.parse("http://example.com/test").value, headers);
       
       expect(request.authorizationCredentials, isEmpty);
       expect(request.cacheDirectives, isEmpty);
@@ -31,7 +31,7 @@ void requestTests() {
       expect(request.preferences.acceptedMediaRanges, isEmpty);
       expect(request.proxyAuthorizationCredentials, isEmpty);
       expect(request.referer, isEmpty);
-      expect(request.uri, equals(Uri.parse("http://example.com/test")));
+      expect(request.uri, equals(URI_.parse("http://example.com/test").value));
       expect(request.userAgent, isEmpty);
     });
     
@@ -63,8 +63,8 @@ void requestTests() {
           Persistent.EMPTY_SET.addAll([]);
       
       final int contentLength = 10;
-      final Uri contentLocation = 
-          Uri.parse("https://example.com/fake/content/location");
+      final URI contentLocation = 
+          URI_.parse("https://example.com/fake/content/location").value;
       
       final MediaRange contentMediaRange = 
           MEDIA_RANGE.parse("application/json; charset=\"UTF-8\"").value;
@@ -95,10 +95,10 @@ void requestTests() {
       
       //final Range range = "";
       
-      final Uri referer = 
-          Uri.parse("https://example.com/fake/referer");
+      final URI referer = 
+          URI_.parse("https://example.com/fake/referer").value;
       
-      final Uri uri = Uri.parse("$scheme://$host$path");
+      final URI uri = URI_.parse("$scheme://$host$path").value;
       
       final UserAgent userAgent = USER_AGENT.parse("test/1.1").value;
       
@@ -165,7 +165,7 @@ void requestTests() {
       final SequenceMultimap<Header, String> headers = 
           Persistent.EMPTY_SEQUENCE_MULTIMAP.putAllFromMap({Header.IF_RANGE : ""});
 
-      final Request request = new Request.wrapHeaders(Method.PUT, Uri.parse("http://www.example.com"), headers);
+      final Request request = new Request.wrapHeaders(Method.PUT, URI_.parse("http://www.example.com").value, headers);
       // FIXME:
       expect(request.preconditions.ifRange, isEmpty);
     });

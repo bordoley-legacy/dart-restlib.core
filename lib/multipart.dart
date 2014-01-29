@@ -14,6 +14,7 @@ import "package:restlib_common/preconditions.dart";
 
 import "data.dart";
 import "http.dart";
+import "net.dart";
 
 part "src/multipart/multipart_impl.dart";
 
@@ -61,7 +62,7 @@ abstract class PartContentInfo implements ContentInfo {
     Iterable<ContentEncoding> encodings,
     Iterable<Language> languages,
     int length,
-    Uri location,
+    URI location,
     MediaRange mediaRange,
     ContentRange range 
   });
