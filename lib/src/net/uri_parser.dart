@@ -2,7 +2,7 @@ part of restlib.core.net;
 
 final Parser<URI> URI_ = _iriParser(
     AUTHORITY,
-    _PATH,
+    PATH,
     _QUERY,
     _FRAGMENT,
     _URI._builder);

@@ -1,7 +1,7 @@
 part of restlib.core.net;
 
 final Parser<String> _PATH_SEGMENT = _PCHAR.orElse("");
-final Parser<Path> _PATH = 
+final Parser<Path> PATH = 
   _PATH_SEGMENT
     .sepBy(FORWARD_SLASH)
     .map(Path.EMPTY.addAll)

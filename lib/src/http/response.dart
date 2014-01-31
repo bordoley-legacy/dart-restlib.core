@@ -18,6 +18,7 @@ String _responseToString(final Response response) {
           ..write(Header.PROXY_AUTHENTICATE.write(response.proxyAuthenticationChallenges))
           ..write(Header.RETRY_AFTER.write(response.retryAfter))
           ..write(Header.SERVER.write(response.server))
+          ..write(response.setCookies.map(Header.SET_COOKIE.write).join())
           ..write(Header.VARY.write(response.vary)));
    
   response.customHeaders.forEach((final Pair<Header, dynamic> header) =>
@@ -47,6 +48,7 @@ Response _responseWith(
   final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
   final DateTime retryAfter,
   final UserAgent server,
+  final Iterable<SetCookie> setCookies,
   final Status status,
   final Iterable<Header> vary,
   final Iterable<Warning> warnings) {
@@ -67,6 +69,7 @@ Response _responseWith(
       isNull(proxyAuthenticationChallenges) &&
       isNull(retryAfter) &&
       isNull(server) &&
+      isNull(setCookies) &&
       isNull(status) &&
       isNull(vary) &&
       isNull(warnings)) {
@@ -90,6 +93,7 @@ Response _responseWith(
       Persistent.EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, delegate.proxyAuthenticationChallenges)),   
       computeIfEmpty(new Option(retryAfter), () => delegate.retryAfter),
       computeIfEmpty(new Option(server), () => delegate.server),
+      Persistent.EMPTY_SET.addAll(firstNotNull(setCookies, delegate.setCookies)),
       firstNotNull(status, delegate.status),
       Persistent.EMPTY_SET.addAll(firstNotNull(vary, delegate.vary)),
       Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(warnings, delegate.warnings)));
@@ -113,6 +117,7 @@ Response _responseWithout(
   final bool proxyAuthenticationChallenges,
   final bool retryAfter,
   final bool server,
+  final bool setCookies,
   final bool vary,
   final bool warnings) =>
       new _ResponseImpl(
@@ -132,6 +137,7 @@ Response _responseWithout(
           !proxyAuthenticationChallenges ? Persistent.EMPTY_SET.addAll(delegate.proxyAuthenticationChallenges) : Persistent.EMPTY_SET,
           !retryAfter ? delegate.retryAfter : Option.NONE,
           !server ? delegate.server : Option.NONE,
+          !setCookies ? Persistent.EMPTY_SET.addAll(delegate.setCookies) : Persistent.EMPTY_SET,    
           delegate.status,
           !vary ? Persistent.EMPTY_SET.addAll(delegate.vary) : Persistent.EMPTY_SET,
           !warnings ? Persistent.EMPTY_SEQUENCE.addAll(delegate.warnings) :  Persistent.EMPTY_SEQUENCE);
@@ -154,7 +160,8 @@ abstract class Response<T> {
     final URI location,
     final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
-    final UserAgent server,  
+    final UserAgent server, 
+    final Iterable<SetCookie> setCookies,
     final Iterable<Header> vary,
     final Iterable<Warning> warnings}) =>
         new _ResponseImpl(
@@ -174,6 +181,7 @@ abstract class Response<T> {
             Persistent.EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, EMPTY_LIST)),
             new Option(retryAfter),
             new Option(server),
+            Persistent.EMPTY_SET.add(firstNotNull(setCookies, EMPTY_LIST)),
             status,
             Persistent.EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
             Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
@@ -210,6 +218,8 @@ abstract class Response<T> {
   
   Option<UserAgent> get server;
   
+  FiniteSet<SetCookie> get setCookies;
+  
   Status get status;
   
   FiniteSet<Header> get vary;
@@ -235,6 +245,7 @@ abstract class Response<T> {
     Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     DateTime retryAfter,
     UserAgent server,
+    Iterable<SetCookie> setCookies,
     Status status,
     Iterable<Header> vary,
     Iterable<Warning> warnings});
@@ -256,6 +267,7 @@ abstract class Response<T> {
     bool proxyAuthenticationChallenges : false,
     bool retryAfter : false,
     bool server : false,
+    bool setCookies : false,
     bool vary : false,
     bool warnings : false});
 }
@@ -306,6 +318,9 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
   Option<UserAgent> get server =>
       delegate.server;
   
+  FiniteSet<SetCookie> get setCookies =>
+      delegate.setCookies;
+  
   Status get status =>
       delegate.status;
   
@@ -335,6 +350,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
     final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
     final UserAgent server,
+    final Iterable<SetCookie> setCookies,
     final Status status,
     final Iterable<Header> vary,
     final Iterable<Warning> warnings}) =>
@@ -356,6 +372,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
             proxyAuthenticationChallenges,
             retryAfter,
             server,
+            setCookies,
             status,
             vary,
             warnings);
@@ -377,6 +394,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
     final bool proxyAuthenticationChallenges : false,
     final bool retryAfter : false,
     final bool server : false,
+    final bool setCookies : false,
     final bool vary : false,
     final bool warnings : false}) =>
         _responseWithout(
@@ -397,6 +415,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
             proxyAuthenticationChallenges,
             retryAfter,
             server,
+            setCookies,
             vary,
             warnings);
 }
@@ -422,6 +441,7 @@ abstract class _ResponseMixin<T> implements Response<T> {
     final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
     final UserAgent server,
+    final Iterable<SetCookie> setCookies,
     final Status status,
     final Iterable<Header> vary,
     final Iterable<Warning> warnings}) =>
@@ -443,6 +463,7 @@ abstract class _ResponseMixin<T> implements Response<T> {
             proxyAuthenticationChallenges,
             retryAfter,
             server,
+            setCookies,
             status,
             vary,
             warnings);
@@ -464,6 +485,7 @@ abstract class _ResponseMixin<T> implements Response<T> {
     final bool proxyAuthenticationChallenges : false,
     final bool retryAfter : false,
     final bool server : false,
+    final bool setCookies : false,
     final bool vary : false,
     final bool warnings : false}) =>
         _responseWithout(
@@ -484,6 +506,7 @@ abstract class _ResponseMixin<T> implements Response<T> {
             proxyAuthenticationChallenges,
             retryAfter,
             server,
+            setCookies,
             vary,
             warnings);
 }
@@ -508,6 +531,7 @@ class _ResponseImpl<T>
   final ImmutableSet<ChallengeMessage> proxyAuthenticationChallenges;
   final Option<DateTime> retryAfter;
   final Option<UserAgent> server;
+  final FiniteSet<SetCookie> setCookies;
   final Status status;
   final ImmutableSet<Header> vary;
   final ImmutableSequence<Warning> warnings;
@@ -529,6 +553,7 @@ class _ResponseImpl<T>
     this.proxyAuthenticationChallenges,
     this.retryAfter,
     this.server,
+    this.setCookies,
     this.status,
     this.vary,
     this.warnings);

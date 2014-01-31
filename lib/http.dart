@@ -27,7 +27,15 @@ part "src/http/status.dart";
 abstract class _Parseable {
   SequenceMultimap<Header, String> get _headers;
   
-  Option _parse(final Parser parser, final Header header) =>
-      // FIXME: verify the join is correct
-      parser.parse(_headers[header].join(","));
+  Option _parse(final Parser parser, final Header header) { 
+    // Special case Set-Cookie per RFC
+    if (header == Header.SET_COOKIE) {
+      final Iterable parsed = 
+          _headers[header].expand((final String setCookie) => 
+              parser.parse(setCookie));
+      return parsed.isEmpty ? Option.NONE : new Option(parsed);
+    } else {
+      return parser.parse(_headers[header].join(","));
+    }
+  }
 }

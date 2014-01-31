@@ -11,6 +11,7 @@ abstract class InternationalDomainName {
 }
 
 final RuneMatcher _REG_NAME_SAFE_CHARS = _UNRESERVED | _SUB_DELIMS;
+final Parser<DomainName> DOMAIN_NAME = _REG_NAME;
 final Parser<DomainName> _REG_NAME = 
   new _PercentEncodedStringParser(_REG_NAME_SAFE_CHARS.matches).map((final String domain) =>
       new _DomainName(domain));

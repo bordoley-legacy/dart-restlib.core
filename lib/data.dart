@@ -20,6 +20,7 @@ part "src/data/charset.dart";
 part "src/data/comment.dart";
 part "src/data/content_encoding.dart";
 part "src/data/content_range.dart";
+part "src/data/cookie.dart";
 part "src/data/entity_tag.dart";
 part "src/data/expectation.dart";
 part "src/data/form.dart";

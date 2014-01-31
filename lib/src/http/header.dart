@@ -11,10 +11,10 @@ class Header {
           [ACCEPT, ACCEPT_CHARSET, ACCEPT_ENCODING, ACCEPT_LANGUAGE, ACCEPT_RANGES,
            AGE, ALLOW, AUTHORIZATION, CACHE_CONTROL, CONNECTION, CONTENT_ENCODING,
            CONTENT_LENGTH, CONTENT_LOCATION, CONTENT_MD5, CONTENT_RANGE, CONTENT_TYPE,
-           DATE, ENTITY_TAG, EXPECT, EXPIRES, FROM, HOST, IF_MATCH, IF_MODIFIED_SINCE,
+           COOKIE, DATE, ENTITY_TAG, EXPECT, EXPIRES, FROM, HOST, IF_MATCH, IF_MODIFIED_SINCE,
            IF_NONE_MATCH, IF_RANGE, IF_UNMODIFIED_SINCE, LAST_MODIFIED, LOCATION,
            MAX_FORWARDS, PRAGMA, PROXY_AUTHENTICATE, PROXY_AUTHORIZATION, RANGE,
-           RETRY_AFTER, SERVER, TE, TRAILER, TRANSFER_ENCODING, UPGRADE, USER_AGENT,
+           RETRY_AFTER, SERVER, SET_COOKIE, TE, TRAILER, TRANSFER_ENCODING, UPGRADE, USER_AGENT,
            VARY, VIA, WARNING, WWW_AUTHENTICATE]);
   
   static const Header ACCEPT = const Header._internal("accept", "Accept");   
@@ -34,6 +34,7 @@ class Header {
   static const Header CONTENT_MD5 = const Header._internal("content-md5", "Content-MD5");
   static const Header CONTENT_RANGE = const Header._internal("content-range", "Content-Range");
   static const Header CONTENT_TYPE = const Header._internal("content-type", "Content-Type");
+  static const Header COOKIE = const Header._internal("cookie", "Cookie");
   static const Header DATE = const Header._internal("date", "Date");
   static const Header ENTITY_TAG = const Header._internal("etag", "ETag");
   static const Header EXPECT = const Header._internal("expect", "Expect");
@@ -55,6 +56,7 @@ class Header {
   static const Header REFERER = const Header._internal("referer","Referer");
   static const Header RETRY_AFTER = const Header._internal("retry-after", "Retry-After");
   static const Header SERVER = const Header._internal("server", "Server");
+  static const Header SET_COOKIE = const Header._internal("set-cookie", "Set-Cookie");
   static const Header TE = const Header._internal("te", "TE");
   static const Header TRAILER = const Header._internal("trailer", "Trailer");
   static const Header TRANSFER_ENCODING = const Header._internal("transfer-encoding", "Transfer-Encoding");
@@ -72,12 +74,9 @@ class Header {
   
   static String asHeaderValue(final value) {
     if (value is Option) {
-      return value
-        .map((final value) =>
-            asHeaderValue(value))
-        .orElse("");
+      return value.map(asHeaderValue).orElse("");
     } else if (value is Iterable) {
-      return (value.isEmpty) ? "" : value.join(", ");
+      return value.isEmpty ? "" : value.join(", ");
     } else if (value is DateTime) {
       return toHttpDate(value);
     } else {
@@ -104,8 +103,8 @@ class Header {
   }
   
   String write(var value) {
-    String headerValue = asHeaderValue(value);
-    return !headerValue.isEmpty ? "${_display}: ${headerValue}\r\n" : "";
+    final String headerValue = asHeaderValue(value);
+    return headerValue.isNotEmpty ? "${_display}: ${headerValue}\r\n" : "";
   }
   
   String toString() {
