@@ -181,7 +181,7 @@ abstract class Response<T> {
             Persistent.EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, EMPTY_LIST)),
             new Option(retryAfter),
             new Option(server),
-            Persistent.EMPTY_SET.add(firstNotNull(setCookies, EMPTY_LIST)),
+            Persistent.EMPTY_SET.addAll(firstNotNull(setCookies, EMPTY_LIST)),
             status,
             Persistent.EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
             Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
