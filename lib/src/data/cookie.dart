@@ -73,6 +73,15 @@ class SetCookie {
   final ImmutableSet<CookieAttribute> attributes;
   
   SetCookie._internal(this.cookie, this.attributes);
+  
+  String toString() {
+    final StringBuffer buffer = new StringBuffer();
+    buffer.write(cookie);
+    attributes.forEach((final CookieAttribute attr) =>
+        buffer..write("; ")..write(attr));
+    return buffer.toString();
+  }
+      
 }
 
 // cookie-av
