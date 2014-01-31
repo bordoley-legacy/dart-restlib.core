@@ -9,32 +9,36 @@ final Parser<Iterable<CookieAttribute>> _SET_COOKIE_ATTRIBUTES =
   (SEMICOLON + _COOKIE_AV.sepBy(SEMICOLON)).map((final Iterable e) => 
       e.elementAt(1)).orElse(EMPTY_LIST);
 
-final Parser<CookieAttribute> _COOKIE_AV = null ;
+final Parser<CookieAttribute> _COOKIE_AV = 
+  _EXPIRES_AV | _MAX_AGE_AV | _DOMAIN_AV | _PATH_AV | _SECURE_AV | _HTTP_ONLY_AV | _EXTENSION_AV;
 
-final Parser<CookieExpiresAttribute> _EXPIRES_AV =
+final Parser<CookieAttribute> _EXPIRES_AV =
   (string("Expires=") + HTTP_DATE_TIME).map((final Iterable e) =>
       new CookieExpiresAttribute._internal(e.elementAt(1)));
 
-final Parser<CookieMaxAgeAttribute> _MAX_AGE_AV =
+final Parser<CookieAttribute> _MAX_AGE_AV =
   (string("Max-Age=") + INTEGER).map((final Iterable e) =>
       new CookieMaxAgeAttribute._internal(e.elementAt(1)));
 
-final Parser<CookieDomainAttribute> _DOMAIN_AV =
+final Parser<CookieAttribute> _DOMAIN_AV =
   (string("Domain=") + DOMAIN_NAME).map((final Iterable e) => 
       new CookieDomainAttribute._internal(e.elementAt(1)));
 
-final Parser<CookiePathAttribute> _PATH_AV =
+final Parser<CookieAttribute> _PATH_AV =
   (string("Path=") + PATH).map((final Iterable e) =>
       new CookiePathAttribute._internal(e.elementAt(1)));
 
-final Parser<_CookieHttpOnlyAttribute> _HTTP_ONLY_AV = 
+final Parser<CookieAttribute> _HTTP_ONLY_AV = 
   string(CookieAttribute.HTTP_ONLY.toString()).map((_) => 
       CookieAttribute.HTTP_ONLY); 
 
-final Parser<_CookieSecureAttribute> _SECURE_AV = 
+final Parser<CookieAttribute> _SECURE_AV = 
   string(CookieAttribute.SECURE.toString()).map((_) => 
       CookieAttribute.SECURE); 
-  
+
+final Parser<CookieAttribute> _EXTENSION_AV =
+  (CHAR & CTL.negate() & SEMICOLON.negate()).many().map(objectToString);
+
 final Parser<Cookie> COOKIE_PAIR = 
   (TOKEN + EQUALS + _COOKIE_VALUE)
     .map((final Iterable e) =>
