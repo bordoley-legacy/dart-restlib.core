@@ -37,7 +37,8 @@ final Parser<CookieAttribute> _SECURE_AV =
       CookieAttribute.SECURE); 
 
 final Parser<CookieAttribute> _EXTENSION_AV =
-  (CHAR & CTL.negate() & SEMICOLON.negate()).many().map(objectToString);
+  (CHAR & CTL.negate() & SEMICOLON.negate()).many().map((final IterableString ext) =>
+      new CookieExtensionAttribute._internal(ext.toString()));
 
 final Parser<Cookie> COOKIE_PAIR = 
   (TOKEN + EQUALS + _COOKIE_VALUE)
