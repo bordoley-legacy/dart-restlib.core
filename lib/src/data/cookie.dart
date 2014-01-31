@@ -67,6 +67,9 @@ class Cookie extends Pair<String, String> {
   
   bool operator==(other) =>
       super == other;
+  
+  String toString() =>
+      "$fst=$snd";
 }
 
 class SetCookie {
