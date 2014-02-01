@@ -1,5 +1,6 @@
 library restlib.core.data;
 
+import "dart:collection";
 import "dart:convert";
 
 import "package:restlib_common/collections.dart";

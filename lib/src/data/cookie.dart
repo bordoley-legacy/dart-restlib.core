@@ -71,7 +71,7 @@ class _CookieMultimap
     extends Object
     with ForwardingMultimap<String, String, FiniteSet<String>>,
       ForwardingAssociative<String, String>,
-      ForwardingIterable<Cookie> 
+      IterableMixin<Cookie> 
     implements CookieMultimap {
  
   final ImmutableSetMultimap<String, String> delegate;
