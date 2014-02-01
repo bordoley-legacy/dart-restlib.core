@@ -1,5 +1,29 @@
 part of restlib.core.data;
 
+final Parser<Form> FORM = 
+  _FORM_PAIR.sepBy(AMPERSAND).map((final Iterable<Pair<String, String>> pairs) =>
+      Form.EMPTY.putAll(pairs));
+
+// http://url.spec.whatwg.org/#concept-urlencoded-parser
+final Parser<Pair<String, String>> _FORM_PAIR = 
+  AMPERSAND.negate().many().map((final IterableString pairItr) {
+    final String pair = pairItr.toString();
+    final int sepLoc = pair.toString().indexOf("=");
+    
+    String key = "";
+    String value = "";
+    if (sepLoc > -1) {
+      key = pair.substring(0, sepLoc);
+    }
+    
+    if (sepLoc < pair.length -2 ); {
+      value = pair.substring(sepLoc +1);
+    }
+    
+    // FIXME: URI decode the pair
+    return new Pair(key, value);
+  });
+
 abstract class Form implements ImmutableMultisetMultimap<String, String>, Persistent {
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
   static final  Form EMPTY = new _FormImpl.empty();
@@ -54,6 +78,8 @@ class _FormImpl
         .map((_) => new _FormImpl(delegate.removeAt(key)))
         .orElse(this);
   
+  // FIXME: URI encode the pairs
   String toString() =>
-      "FIXME: implement";
+      map((final Pair<String, String> pair) => 
+          new Pair(pair.fst, pair.snd)).join("&");
 }
