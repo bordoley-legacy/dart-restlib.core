@@ -1,8 +1,8 @@
 part of restlib.core.net;
 
 final Codec<String, String> _USER_INFO_CODEC = utf8codec(_USER_INFO_SAFE_CHARS.matches);
-final Codec<String, String> _QUERY_CODEC = utf8codec(_QUERY_SAFE_CHARS.matches);
-final Codec<String, String> _FRAGMENT_CODEC = utf8codec(_FRAGMENT_SAFE_CHARS.matches);
+final Codec<String, String> _QUERY_CODEC = utf8codec(QUERY_SAFE_CHARS.matches);
+final Codec<String, String> _FRAGMENT_CODEC = utf8codec(FRAGMENT_SAFE_CHARS.matches);
 
 class _URI extends _IRIBase implements URI {
   static URI _builder(final String scheme, final Option<Authority> authority,

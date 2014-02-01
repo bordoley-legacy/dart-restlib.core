@@ -20,9 +20,11 @@ final Parser<Pair<String, String>> _FORM_PAIR =
       value = pair.substring(sepLoc +1);
     }
     
-    // FIXME: URI decode the pair
-    return new Pair(key, value);
+    return new Pair(_FORM_CODEC.decode(key), _FORM_CODEC.decode(value));
   });
+
+final Codec<String,String> _FORM_CODEC = utf8codec(QUERY_SAFE_CHARS.matches);
+
 
 abstract class Form implements ImmutableMultisetMultimap<String, String>, Persistent {
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
@@ -78,8 +80,7 @@ class _FormImpl
         .map((_) => new _FormImpl(delegate.removeAt(key)))
         .orElse(this);
   
-  // FIXME: URI encode the pairs
   String toString() =>
       map((final Pair<String, String> pair) => 
-          new Pair(pair.fst, pair.snd)).join("&");
+          "${_FORM_CODEC.encode(pair.fst)}=${_FORM_CODEC.encode(pair.snd)}".replaceAll("%20", "+")).join("&");
 }
