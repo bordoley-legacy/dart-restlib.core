@@ -1,7 +1,7 @@
 part of restlib.core.http;
 
 String _requestToString(final Request request) {
-  final String requestLine = "${request.method} ${request.uri.path}${request.uri.query.isEmpty ? "" : request.uri.query}\r\n";
+  final String requestLine = "${request.method} ${request.uri.path}${request.uri.query.isEmpty ? "" : "?${request.uri.query}"}""\r\n";
     
   final StringBuffer buffer = (new StringBuffer()
     ..write(requestLine)
@@ -16,12 +16,13 @@ String _requestToString(final Request request) {
     ..write(request.preferences)
     ..write(Header.PROXY_AUTHORIZATION.write(request.proxyAuthorizationCredentials))
     ..write(Header.REFERER.write(request.referer))
-    ..write(Header.USER_AGENT.write(request.userAgent))
-    ..write(request.entity.map((final entity) => 
-        "\r\n\r\n${entity.toString()}\r\n").orElse("")));
+    ..write(Header.USER_AGENT.write(request.userAgent)));
     
   request.customHeaders.forEach((final Pair<Header, dynamic> pair) =>
       buffer.write(pair.fst.write(pair.snd)));
+  
+  buffer.write(request.entity.map((final entity) => 
+      "\r\n\r\n${entity.toString()}\r\n").orElse(""));
     
   return buffer.toString();
 } 
