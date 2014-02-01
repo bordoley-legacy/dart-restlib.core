@@ -7,7 +7,7 @@ final Parser<Form> FORM =
 // http://url.spec.whatwg.org/#concept-urlencoded-parser
 final Parser<Pair<String, String>> _FORM_PAIR = 
   AMPERSAND.negate().many().map((final IterableString pairItr) {
-    final String pair = pairItr.toString();
+    final String pair = pairItr.toString().replaceAll("+", "%20");
     final int sepLoc = pair.toString().indexOf("=");
     
     String key = "";
