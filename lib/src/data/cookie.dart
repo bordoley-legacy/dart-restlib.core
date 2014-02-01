@@ -57,7 +57,7 @@ final RuneMatcher _COOKIE_OCTET =
 
 final RuneMatcher _EXTENSION_VALUE = CHAR & CTL.negate() & SEMICOLON.negate();
 
-abstract class CookieMultimap implements ImmutableSetMultimap<String, String>, Iterable<Cookie> {
+abstract class CookieMultimap implements ImmutableSetMultimap<String, String> {
   static final  CookieMultimap EMPTY = new _CookieMultimap.empty();
   
   CookieMultimap put(final String key, final String value);
@@ -71,7 +71,7 @@ class _CookieMultimap
     extends Object
     with ForwardingMultimap<String, String, FiniteSet<String>>,
       ForwardingAssociative<String, String>,
-      IterableMixin<Cookie> 
+      IterableMixin<Pair<String, String>> 
     implements CookieMultimap {
  
   final ImmutableSetMultimap<String, String> delegate;
