@@ -9,7 +9,7 @@ String _requestToString(final Request request) {
     ..write(Header.AUTHORIZATION.write(request.authorizationCredentials))
     ..write(Header.CACHE_CONTROL.write(request.cacheDirectives))
     ..write(request.contentInfo)
-    ..write(Header.COOKIE.write(request.cookies.join("; ")))
+    ..write(Header.COOKIE.write(request.cookies.toString()))
     ..write(Header.EXPECT.write(request.expectations))
     ..write(Header.PRAGMA.write(request.pragmaCacheDirectives))
     ..write(request.preconditions)
@@ -65,7 +65,7 @@ Request _requestWith(
       computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
       Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
       firstNotNull(contentInfo, delegate.contentInfo),
-      Persistent.EMPTY_SET.addAll(firstNotNull(cookies, delegate.cookies)),
+      CookieMultimap.EMPTY.putAll(firstNotNull(cookies, delegate.cookies)),
       Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, delegate.customHeaders)),
       computeIfEmpty(new Option(entity), () => delegate.entity),
       Persistent.EMPTY_SET.addAll(firstNotNull(expectations, delegate.expectations)),
@@ -98,7 +98,7 @@ Request _requestWithout(
           !authorizationCredentials ? delegate.authorizationCredentials : Option.NONE,
           !cacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.cacheDirectives) : Persistent.EMPTY_SET,
           !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
-          !cookies ? Persistent.EMPTY_SET.addAll(delegate.cookies) : Persistent.EMPTY_SET,   
+          !cookies ? CookieMultimap.EMPTY.putAll(delegate.cookies) : Persistent.EMPTY_SET,   
           !customHeaders ? Persistent.EMPTY_DICTIONARY.putAll(delegate.customHeaders) : Persistent.EMPTY_DICTIONARY,
           !entity ? delegate.entity : Option.NONE,
           !expectations? Persistent.EMPTY_SET.addAll(delegate.expectations) : Persistent.EMPTY_SET,
@@ -130,7 +130,7 @@ abstract class Request<T> {
             new Option(authorizationCredentials),
             Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
             firstNotNull(contentInfo, ContentInfo.NONE),
-            Persistent.EMPTY_SET.addAll(firstNotNull(cookies, EMPTY_LIST)),
+            CookieMultimap.EMPTY.putAll(firstNotNull(cookies, EMPTY_LIST)),
             Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, Persistent.EMPTY_DICTIONARY)),
             new Option(entity),
             Persistent.EMPTY_SET.addAll(firstNotNull(expectations, EMPTY_LIST)),
@@ -152,7 +152,7 @@ abstract class Request<T> {
   
   ContentInfo get contentInfo;
   
-  FiniteSet<Cookie> get cookies;
+  CookieMultimap get cookies;
   
   Dictionary<Header, dynamic> get customHeaders;
   
@@ -220,7 +220,7 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
   ContentInfo get contentInfo =>
       delegate.contentInfo;
   
-  FiniteSet<Cookie> get cookies =>
+  CookieMultimap get cookies =>
       delegate.cookies;
   
   Dictionary<Header, dynamic> get customHeaders =>
@@ -400,7 +400,7 @@ class _RequestImpl<T>
   final Option<ChallengeMessage> authorizationCredentials;
   final ImmutableSet<CacheDirective> cacheDirectives;
   final ContentInfo contentInfo;
-  final ImmutableSet<Cookie> cookies;
+  final CookieMultimap cookies;
   final ImmutableDictionary<Header, dynamic> customHeaders;
   final Option<T> entity;
   final ImmutableSet<Expectation> expectations;
@@ -439,7 +439,7 @@ class _HeadersRequestWrapper
   Option<ChallengeMessage> _authorizationCredentials;
   ImmutableSet<CacheDirective> _cacheDirectives;
   ContentInfo _contentInfo;
-  ImmutableSet<Cookie> _cookies;
+  CookieMultimap _cookies;
   Dictionary<Header, dynamic> _customHeaders;
   final Option entity = Option.NONE;
   ImmutableSet<Expectation> _expectations;
@@ -478,13 +478,9 @@ class _HeadersRequestWrapper
         return _contentInfo;
       });
   
-  ImmutableSet<Cookie> get cookies =>
+  CookieMultimap get cookies =>
       computeIfNull(_cookies, () {
-        _cookies =
-            _parse(COOKIE, Header.COOKIE)
-              .map((final Iterable<Cookie> cookies) => 
-                  Persistent.EMPTY_SET.addAll(cookies))
-              .orElse(Persistent.EMPTY_SET);    
+        _cookies = _parse(COOKIE, Header.COOKIE).orElse(CookieMultimap.EMPTY);    
         return _cookies;
       });
   

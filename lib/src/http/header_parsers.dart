@@ -24,7 +24,9 @@ final Parser<Iterable<ContentEncoding>> CONTENT_ENCODING_HEADER = CONTENT_ENCODI
 
 final Parser<Iterable<Language>> CONTENT_LANGUAGE = LANGUAGE.sepBy(OWS_COMMA_OWS);
 
-final Parser<Iterable<Cookie>> COOKIE = COOKIE_PAIR.sepBy(SEMICOLON + SP);
+final Parser<CookieMultimap> COOKIE = 
+  (COOKIE_PAIR.sepBy(SEMICOLON + SP)).map((final Iterable<Cookie> cookies) =>
+      CookieMultimap.EMPTY.putAll(cookies));
 
 final Parser<Iterable<Expectation>> EXPECT = EXPECTATION.sepBy(OWS_COMMA_OWS);
 
