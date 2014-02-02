@@ -257,7 +257,7 @@ class _HeadersContentInfoImpl
   ImmutableSequence<ContentEncoding> get encodings =>
       computeIfNull(_encodings, () {
         _encodings = 
-            _parse(CONTENT_ENCODING_HEADER, Header.CONTENT_ENCODING)
+            _parse(_CONTENT_ENCODING_HEADER, Header.CONTENT_ENCODING)
               .map((final Iterable<ContentEncoding> encodings) => 
                   Persistent.EMPTY_SEQUENCE.addAll(encodings))
               .orElse(Persistent.EMPTY_SEQUENCE);
@@ -268,7 +268,7 @@ class _HeadersContentInfoImpl
   ImmutableSet<Language> get languages =>
       computeIfNull(_languages, () {
         _languages = 
-            _parse(CONTENT_LANGUAGE, Header.CONTENT_LANGUAGE)
+            _parse(_CONTENT_LANGUAGE, Header.CONTENT_LANGUAGE)
               .map((final Iterable<Language> languages) => 
                   Persistent.EMPTY_SET.addAll(languages))
               .orElse(Persistent.EMPTY_SET);    

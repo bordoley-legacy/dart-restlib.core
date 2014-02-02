@@ -249,7 +249,7 @@ class _HeadersRequestPreferencesImpl
   ImmutableSet<Preference<Charset>> get acceptedCharsets =>
       computeIfNull(_acceptedCharsets, () {
         _acceptedCharsets = 
-            _parse(ACCEPT_CHARSET, Header.ACCEPT_CHARSET)
+            _parse(_ACCEPT_CHARSET, Header.ACCEPT_CHARSET)
               .map((final Iterable<Preference<Charset>> acceptedCharsets) => 
                   Persistent.EMPTY_SET.addAll(acceptedCharsets))
               .orElse(Persistent.EMPTY_SET);
@@ -259,7 +259,7 @@ class _HeadersRequestPreferencesImpl
   ImmutableSet<Preference<ContentEncoding>> get acceptedEncodings =>
       computeIfNull(_acceptedEncodings, () {
         _acceptedEncodings = 
-            _parse(ACCEPT_ENCODING, Header.ACCEPT_ENCODING)
+            _parse(_ACCEPT_ENCODING, Header.ACCEPT_ENCODING)
               .map((final Iterable<Preference<ContentEncoding>> acceptedEncodings) =>
                   Persistent.EMPTY_SET.addAll(acceptedEncodings))
               .orElse(Persistent.EMPTY_SET);
@@ -269,7 +269,7 @@ class _HeadersRequestPreferencesImpl
   ImmutableSet<Preference<Language>> get acceptedLanguages =>
       computeIfNull(_acceptedLanguages, () {
         _acceptedLanguages = 
-            _parse(ACCEPT_LANGUAGE, Header.ACCEPT_LANGUAGE)
+            _parse(_ACCEPT_LANGUAGE, Header.ACCEPT_LANGUAGE)
               .map((final Iterable<Preference<Language>> acceptedLanguages) =>
                   Persistent.EMPTY_SET.addAll(acceptedLanguages))
               .orElse(Persistent.EMPTY_SET);    
@@ -280,7 +280,7 @@ class _HeadersRequestPreferencesImpl
   ImmutableSet<Preference<MediaRange>> get acceptedMediaRanges =>
       computeIfNull(_acceptedMediaRanges, () {
         _acceptedMediaRanges = 
-            _parse(ACCEPT, Header.ACCEPT)
+            _parse(_ACCEPT, Header.ACCEPT)
               .map((final Iterable<Preference<MediaRange>> acceptedMediaRanges) =>
                   Persistent.EMPTY_SET.addAll(acceptedMediaRanges))
               .orElse(Persistent.EMPTY_SET);

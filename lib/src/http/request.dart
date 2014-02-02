@@ -465,7 +465,7 @@ class _HeadersRequestWrapper
   ImmutableSet<CacheDirective> get cacheDirectives =>
       computeIfNull(_cacheDirectives, () {
         _cacheDirectives = 
-            _parse(CACHE_CONTROL, Header.CACHE_CONTROL)
+            _parse(_CACHE_CONTROL, Header.CACHE_CONTROL)
               .map((final Iterable<CacheDirective> cacheDirectives) =>
                   Persistent.EMPTY_SET.addAll(cacheDirectives))
               .orElse(Persistent.EMPTY_SET);
@@ -481,7 +481,7 @@ class _HeadersRequestWrapper
   
   CookieMultimap get cookies =>
       computeIfNull(_cookies, () {
-        _cookies = _parse(COOKIE, Header.COOKIE).orElse(CookieMultimap.EMPTY);    
+        _cookies = _parse(_COOKIE, Header.COOKIE).orElse(CookieMultimap.EMPTY);    
         return _cookies;
       });
   
@@ -500,7 +500,7 @@ class _HeadersRequestWrapper
   ImmutableSet<Expectation> get expectations =>
       computeIfNull(_expectations, () {
         _expectations = 
-            _parse(EXPECT, Header.EXPECT)
+            _parse(_EXPECT, Header.EXPECT)
               .map((final Iterable<Expectation> expectations) =>
                   Persistent.EMPTY_SET.addAll(expectations))
               .orElse(Persistent.EMPTY_SET);
@@ -511,7 +511,7 @@ class _HeadersRequestWrapper
   ImmutableSet<CacheDirective> get pragmaCacheDirectives =>
       computeIfNull(_pragmaCacheDirectives, () {
         _pragmaCacheDirectives = 
-            _parse(PRAGMA, Header.PRAGMA)
+            _parse(_PRAGMA, Header.PRAGMA)
               .map((final Iterable<CacheDirective> pragmaCacheDirectives) =>
                   Persistent.EMPTY_SET.addAll(pragmaCacheDirectives))
               .orElse(Persistent.EMPTY_SET);

@@ -251,7 +251,7 @@ class _HeadersRequestPreconditionsImpl
   ImmutableSet<EntityTag> get ifMatch =>
       computeIfNull(_ifMatch, () {
         _ifMatch = 
-            _parse(IF_MATCH, Header.IF_MATCH)
+            _parse(_IF_MATCH, Header.IF_MATCH)
               .map((final Iterable<EntityTag> ifMatch) =>
                   Persistent.EMPTY_SET.addAll(ifMatch))
               .orElse(Persistent.EMPTY_SET);
@@ -268,7 +268,7 @@ class _HeadersRequestPreconditionsImpl
   ImmutableSet<EntityTag> get ifNoneMatch =>
       computeIfNull(_ifNoneMatch, () {
         _ifNoneMatch = 
-            _parse(IF_NONE_MATCH, Header.IF_NONE_MATCH)
+            _parse(_IF_NONE_MATCH, Header.IF_NONE_MATCH)
               .map((final Iterable<EntityTag> ifNoneMatch) => 
                   Persistent.EMPTY_SET.addAll(ifNoneMatch))
               .orElse(Persistent.EMPTY_SET);
