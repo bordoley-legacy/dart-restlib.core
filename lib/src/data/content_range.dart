@@ -1,12 +1,12 @@
 part of restlib.core.data;
 
 final Parser<UnsatisfiedRange> _UNSATISFIED_CONTENT_RANGE =
-  (GLOB + FORWARD_SLASH + INTEGER)
+  (ASTERISK + FORWARD_SLASH + INTEGER)
     .map((final Iterable e) =>
         new UnsatisfiedRange._internal(e.elementAt(2)));
 
 final Parser _BYTE_RANGE_RESP =
-  (INTEGER + DASH + INTEGER + FORWARD_SLASH  + (INTEGER ^ GLOB))
+  (INTEGER + DASH + INTEGER + FORWARD_SLASH  + (INTEGER ^ ASTERISK))
     .map((final Iterable e) {
       final int size = 
           (e.elementAt(4) as Either)
