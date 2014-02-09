@@ -75,12 +75,7 @@ final Parser<DateTime> HTTP_DATE_TIME = _IMF_FIX_DATE;
 
 String _twoDigit(final int number) {
   checkArgument(number >=0 && number < 100);
-  
-  if (number > 9) {
-    return number.toString();
-  } else {
-    return "0$number";
-  }
+  return number > 9 ? number.toString() : "0$number";
 }
 
 String _day(final DateTime date) {

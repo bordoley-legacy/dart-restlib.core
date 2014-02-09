@@ -1,6 +1,7 @@
 part of restlib.core.net;
 
 final RuneMatcher _I_REG_NAME_SAFE_CHARS = _I_UNRESERVED | _SUB_DELIMS;
+final Parser<InternationalDomainName> INTERNATIONAL_DOMAIN_NAME = _I_REG_NAME;
 final Parser<InternationalDomainName> _I_REG_NAME = 
   new _PercentEncodedStringParser(_REG_NAME_SAFE_CHARS.matches).map((final String domain) =>
       new _InternationalDomainName(domain));
@@ -17,7 +18,7 @@ final Parser<DomainName> _REG_NAME =
       new _DomainName(domain));
 
 abstract class DomainName implements InternationalDomainName {
-  
+
 }
 
 class _InternationalDomainName extends _InternationalDomainNameBase implements InternationalDomainName {

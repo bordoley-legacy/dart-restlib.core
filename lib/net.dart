@@ -10,9 +10,11 @@ import "package:restlib_common/objects.dart";
 import "package:restlib_common/preconditions.dart";
 
 import "package:restlib_parsing/parsing.dart";
+import "./net.schemes.dart";
 
 part "src/net/authority.dart";
 part "src/net/authority_impl.dart";
+part "src/net/email_address.dart";
 part "src/net/iauthority.dart";
 part "src/net/iauthority_impl.dart";
 part "src/net/international_domain.dart";

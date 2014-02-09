@@ -15,7 +15,7 @@ final Parser<Path> PATH =
 
 abstract class Path implements IPath {
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
-  static final EMPTY = new _Path(Persistent.EMPTY_SEQUENCE);
+  static final Path EMPTY = new _Path(Persistent.EMPTY_SEQUENCE);
   
   Path get tail; 
   

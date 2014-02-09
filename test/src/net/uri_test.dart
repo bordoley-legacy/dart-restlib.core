@@ -11,6 +11,90 @@ void uriTests() {
       });
     });
     
+    group("new URI.tag()", () {
+      void doTestNewUriTagWithIPAddress(final String expected, final IPAddress authority,  final DateTime date,
+                                        final Path specificPath, final String query, final String fragment) {
+        
+      }
+      
+      void doTestNewUriTagWithDomainName(final String expected, final String authority,  final DateTime date,
+                                         final String specificPath, final String query, final String fragment) {
+        final URI expectedUri = URI_.parseValue(expected);
+        final URI tag = new URI.tag(
+            authorityDomain: DOMAIN_NAME.parseValue(authority), 
+            date: date, 
+            specificPath: PATH.parseValue(specificPath), 
+            query: query, 
+            fragment: fragment);
+        test(expected, () =>
+            expect(tag, equals(expectedUri)));
+      }
+      
+      doTestNewUriTagWithDomainName(
+          "tag:www.example.com,2001-01-01:/a/b/c", 
+          "www.example.com", 
+          new DateTime(2001), 
+          "/a/b/c", "", "");
+
+      doTestNewUriTagWithDomainName(
+          "tag:www.example.com,2001-12-01:/a/b/c",
+          "www.example.com",
+          new DateTime(2001, 12),
+          "/a/b/c", "", "");
+      
+      doTestNewUriTagWithDomainName(
+          "tag:www.example.com,2001-12-05:/a/b/c",
+          "www.example.com", 
+          new DateTime(2001, 12, 5),
+          "/a/b/c", "", "");
+
+      
+      doTestNewUriTagWithDomainName(
+          "tag:www.example.com,2001-12-05:/a/b/c?query#fragment",
+          "www.example.com",
+          new DateTime(2001, 12, 5),
+         "/a/b/c",
+         "query",
+         "fragment");
+      
+      doTestNewUriTagWithDomainName(
+          "tag:www.example.com,2001-12-05:?query#fragment",
+          "www.example.com",
+          new DateTime(2001, 12, 5),
+          "",
+          "query",
+          "fragment");
+      
+      doTestNewUriTagWithDomainName(
+          "tag:www.example.com,2001-12-05:a?query#fragment",
+          "www.example.com",
+          new DateTime(2001, 12, 5),
+          "a",
+          "query",
+          "fragment");
+      /*
+       assertEquals(
+               Uri.parse("tag:192.168.1.1,2001-12-05:a?query#fragment"),
+               Uri.tagBuilder()
+                   .setAuthorityName(InetAddresses.forString("192.168.1.1"))
+                   .setDate(2001, 12, 5)
+                   .setSpecificPath("a")
+                   .setSpecificQuery("query")
+                   .setFragment("fragment")
+                   .build());*/
+       
+       // Test with international domain names
+       doTestNewUriTagWithDomainName(
+           "tag:xn--rsum-bpad.example.org,2001-12-05:a?query#fragment",
+           "xn--rsum-bpad.example.org",
+           new DateTime(2001, 12, 5),
+           "a",
+           "query",
+           "fragment");
+      
+      
+    });
+    
     group("canonicalize()", () {
       void doTestCanonicalize(final String expected, final String testUri) {
         test("with $testUri", () =>

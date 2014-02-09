@@ -15,7 +15,7 @@ part "src/net/uri_encoding_test.dart";
 part "src/net/uri_test.dart";
 
 main() {
-  //testPunyCodeEncode();
+  testPunyCodeEncode();
   uriTests();
   uriCodecTester();
 }
