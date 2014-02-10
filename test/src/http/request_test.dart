@@ -48,7 +48,7 @@ void requestTests() {
           Persistent.EMPTY_SET.addAll([]);
       
       final ImmutableSet<Preference<MediaRange>> acceptedMediaRanges =
-          Persistent.EMPTY_SET.addAll([new Preference(MediaRange.APPLICATION_ATOM), new Preference(MediaRange.APPLICATION_JSON)]);
+          Persistent.EMPTY_SET.addAll([new Preference(APPLICATION_ATOM_XML), new Preference(APPLICATION_JSON)]);
 
       final ChallengeMessage authorizationCredentials =
           CHALLENGE_MESSAGE.parse("Basic dGVzdDp0ZXN0").value;

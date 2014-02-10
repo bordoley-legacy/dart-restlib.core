@@ -38,25 +38,7 @@ final Parser<MediaRange> MEDIA_RANGE =
 class MediaRange implements Matcheable<MediaRange> {  
   static const MediaRange ANY = const MediaRange._internal("*", "*");
   static const MediaRange APPLICATION_ANY = const MediaRange._internal("application", "*");
-  static const MediaRange APPLICATION_ATOM = const MediaRange._internal("application", "atom+xml");
-  static final MediaRange APPLICATION_ATOM_ENTRY = MEDIA_RANGE.parseValue("application/atom+xml;type=entry");
-  static final MediaRange APPLICATION_ATOM_FEED = MEDIA_RANGE.parseValue("application/atom+xml;type=feed");
-  static const MediaRange APPLICATION_JSON = const MediaRange._internal("application", "json");
-  static final MediaRange APPLICATION_JSON_ENTRY = MEDIA_RANGE.parseValue("application/json;type=entry");
-  static final MediaRange APPLICATION_JSON_FEED = MEDIA_RANGE.parseValue("application/json;type=feed");
-  static const MediaRange APPLICATION_OCTET_STREAM = const MediaRange._internal("application", "octet-stream");
-  static const MediaRange APPLICATION_OPEN_SEARCH_DESCRIPTION_XML = const MediaRange._internal("application", "opensearchdescription+xml");
-  static const MediaRange APPLICATION_WWW_FORM = const MediaRange._internal("application", "x-www-form-urlencoded");
-  static const MediaRange APPLICATION_XML = const MediaRange._internal("application", "xml");
-  static const MediaRange GOOGLE_PROTOCOL_BUFFER = const MediaRange._internal("application", "x-protobuf");
-  static const MediaRange MULTIPART_BYTE_RANGE = const MediaRange._internal("multipart", "byteranges");
-  static const MediaRange MULTIPART_FORM_DATA = const MediaRange._internal("multipart", "form-data");
-  static const MediaRange MULTIPART_RELATED = const MediaRange._internal("multipart" , "related");
   static const MediaRange TEXT_ANY = const MediaRange._internal("text", "*");
-  static const MediaRange TEXT_HTML = const MediaRange._internal("text", "html");
-  static final MediaRange TEXT_HTML_ENTRY = MEDIA_RANGE.parseValue("text/html;type=entry");
-  static final MediaRange TEXT_HTML_FEED = MEDIA_RANGE.parseValue("text/html;type=feed");
-  static const MediaRange TEXT_PLAIN = const MediaRange._internal("text", "plain");     
 
   factory MediaRange(final String type, final String subtype, {final Charset charset, Multimap<String,String, dynamic> parameters}) {
     checkArgument(TOKEN.parse(type).isNotEmpty);
@@ -85,6 +67,12 @@ class MediaRange implements Matcheable<MediaRange> {
   final String type;
   final String subtype;
   final Multimap<String, String, dynamic> parameters;
+  
+  // FIXME: Making this public so that we can have a library of media ranges. Maybe this should be in a internal library
+  // where we can strictly define the limits of use.
+  const MediaRange.constant(this.type, this.subtype) :
+    this.charset = Option.NONE,
+    this.parameters = Persistent.EMPTY_SET_MULTIMAP;
   
   const MediaRange._internal(this.type, this.subtype, [this.charset = Option.NONE, this.parameters = Persistent.EMPTY_SET_MULTIMAP]);
   

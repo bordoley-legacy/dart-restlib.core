@@ -55,43 +55,43 @@ mediaRangeTests() {
       MEDIA_RANGE.parse("application/*").value, 
       new MediaRange("application", "*")])
     ..addEqualityGroup(
-      [MediaRange.APPLICATION_ATOM,
+      [APPLICATION_ATOM_XML,
       MEDIA_RANGE.parse("aPpLiCaTioN/AtOm+xmL").value,
       new MediaRange("applicAtion", "atoM+xml")])
     ..addEqualityGroup(
-      [MediaRange.APPLICATION_ATOM_ENTRY,
+      [APPLICATION_ATOM_XML_ENTRY,
       MEDIA_RANGE.parse("application/atom+xml; type = \"entry\"").value,
       new MediaRange("application", "atom+xml", parameters: Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"type" : "entry"}))])
     ..addEqualityGroup(
-      [MediaRange.APPLICATION_ATOM.withCharset(Charset.UTF_8),
+      [APPLICATION_ATOM_XML.withCharset(Charset.UTF_8),
       MEDIA_RANGE.parse("application/atom+xml; charSet = utf-8").value,
       new MediaRange("application", "atom+xml", charset: Charset.UTF_8)])      
     ..addEqualityGroup(
-      [MediaRange.APPLICATION_ATOM_ENTRY.withCharset(Charset.UTF_8),
+      [APPLICATION_ATOM_XML_ENTRY.withCharset(Charset.UTF_8),
       MEDIA_RANGE.parse("application/atom+xml; type = \"entry\"     \t\t\t; charSet = utf-8").value,
       new MediaRange("application", "atom+xml", charset: Charset.UTF_8, parameters: Persistent.EMPTY_SET_MULTIMAP.putAllFromMap({"tyPe" : "entry"}))])                
     ..addEqualityGroup(
-      [MediaRange.TEXT_HTML,
+      [TEXT_HTML,
       MEDIA_RANGE.parse("text/html").value,
       new MediaRange("text", "html")])
     ..executeTestCase();
 
   test("withCharset()", (){
-    expect(() => MediaRange.APPLICATION_ATOM.withCharset(Charset.ANY), throwsArgumentError);
+    expect(() => APPLICATION_ATOM_XML.withCharset(Charset.ANY), throwsArgumentError);
     expect(() => MediaRange.ANY.withCharset(Charset.UTF_8), throwsStateError);
     expect(() => MediaRange.TEXT_ANY.withCharset(Charset.UTF_8), throwsStateError);
   });
   
-  doTestMatch(MediaRange.APPLICATION_ATOM, MediaRange.APPLICATION_JSON, 0);
-  doTestMatch(MediaRange.APPLICATION_ATOM, MediaRange.TEXT_HTML, 0);
-  doTestMatch(MediaRange.ANY, MediaRange.APPLICATION_ATOM_ENTRY, 250);
-  doTestMatch(MediaRange.APPLICATION_ANY, MediaRange.APPLICATION_ATOM_ENTRY, 500);
+  doTestMatch(APPLICATION_ATOM_XML, APPLICATION_JSON, 0);
+  doTestMatch(APPLICATION_ATOM_XML, TEXT_HTML, 0);
+  doTestMatch(MediaRange.ANY, APPLICATION_ATOM_XML_ENTRY, 250);
+  doTestMatch(MediaRange.APPLICATION_ANY, APPLICATION_ATOM_XML_ENTRY, 500);
   doTestMatch(MEDIA_RANGE.parse("a/b; c=d; e=f").value, MEDIA_RANGE.parse("a/b; c=d").value, 750);
   doTestMatch(MEDIA_RANGE.parse("a/b; e=f").value, MEDIA_RANGE.parse("a/b; c=d").value, 0);
-  doTestMatch(MediaRange.APPLICATION_ATOM_ENTRY, MediaRange.APPLICATION_ATOM_ENTRY, 1000);
+  doTestMatch(APPLICATION_ATOM_XML_ENTRY, APPLICATION_ATOM_XML_ENTRY, 1000);
 
   // Ignore the charset parameter for matching.
-  doTestMatch(MediaRange.APPLICATION_ATOM_ENTRY, MediaRange.APPLICATION_ATOM_ENTRY.withCharset(Charset.UTF_8), 1000);
+  doTestMatch(APPLICATION_ATOM_XML_ENTRY, APPLICATION_ATOM_XML_ENTRY.withCharset(Charset.UTF_8), 1000);
  
   /* Proper behaviour here is up to negotiation depending on how connegResource gets implemented.
   test("invalid match", () {
