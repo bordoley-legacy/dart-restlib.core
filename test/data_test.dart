@@ -5,7 +5,7 @@ import "package:restlib_common/collections.immutable.dart";
 import "package:restlib_testing/testing.dart";
 
 import "package:restlib_core/data.dart";
-import "package:restlib_core/mediaranges.dart";
+import "package:restlib_core/data.mediaranges.dart";
 import "package:unittest/unittest.dart";
 
 part "src/data/cache_directive_test.dart";
