@@ -1,4 +1,4 @@
-library restlib.core.mediaranges;
+library restlib.core.data.mediaranges;
 
 import "package:restlib_common/collections.dart";
 
