@@ -113,8 +113,9 @@ abstract class _IRIBase implements IRI {
       return self;
     }
     
-    // FIXME:
     
+    // FIXME:
+    return null;
   }
 }
 

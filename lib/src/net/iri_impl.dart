@@ -6,11 +6,18 @@ class _IRI extends _IRIBase implements IRI {
                            new _IRI (scheme, authority, pathSegments, query, fragment);
   
   static IRI _normalize(final IRI iri, final _IRIBuilder builder) {
-    // FIXME: 
+    if (iri.scheme.isEmpty) {
+      return iri;
+    }
+   
+    // FIXME: normalize the URI authority component.
+    // FIXME: normalize query, 
+    // FIXME: normalize fragment
+    return _builder(iri.scheme.toLowerCase(), iri.authority,_removeDotSegments(iri.path), iri.query, iri.fragment);
   }
   
   final String fragment;
-  final Option<Authority> authority;
+  final Option<IAuthority> authority;
   final IPath path;
   final String query;
   final String scheme;
