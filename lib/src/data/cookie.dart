@@ -88,7 +88,7 @@ class _CookieMultimap
   
   Iterator<Cookie> get iterator =>
       delegate.map((final Pair<String, String> pair) => 
-          new Cookie._internal(pair.fst, pair.snd)).iterator;
+          new Cookie._wrap(pair)).iterator;
   
   bool operator==(other) {
     if (identical(this, other)) {
@@ -120,15 +120,25 @@ class _CookieMultimap
 }
 
 // cookie-pair
-class Cookie extends Pair<String, String> {
+class Cookie implements Pair<String, String> {
+  final Pair<String, String> _delegate;
   
-  const Cookie._internal(final String fst, final String snd) : super(fst,snd);
+  Cookie._internal(final String fst, final String snd) : 
+    _delegate = new Pair(fst, snd);
+  
+  Cookie._wrap(this._delegate);
+  
+  String get fst =>
+      _delegate.fst;
+  
+  String get snd =>
+      _delegate.snd;
   
   int get hashCode =>
-      super.hashCode;
+      _delegate.hashCode;
   
   bool operator==(other) =>
-      super == other;
+      _delegate == other;
   
   String toString() =>
       "$fst=$snd";

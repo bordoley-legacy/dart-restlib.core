@@ -4,7 +4,7 @@ part of restlib.core.data;
 final Parser<KeyValuePair> KVP =
   (TOKEN + _OPTIONAL_VALUE)
     .map((final Iterable elements) =>
-      new KeyValuePair(elements.elementAt(0), elements.elementAt(1)));
+      new KeyValuePair._internal(elements.elementAt(0), elements.elementAt(1)));
 
 final Parser<String> _OPTIONAL_VALUE =
   (OWS + EQUALS + OWS + OPTIONAL_WORD)
@@ -28,9 +28,26 @@ String _pairToString(final Pair pair) {
   }
 }
 
-class KeyValuePair extends Pair<String, String>  {    
-  KeyValuePair(k,v): super(k,v);  
+class KeyValuePair implements Pair<String, String>  {   
+  final Pair<String, String> _delegate;
+   
+  KeyValuePair._internal(final String fst, final String snd) : 
+     _delegate = new Pair(fst, snd);
+   
+  KeyValuePair._wrap(this._delegate);
+
+  String get fst =>
+      _delegate.fst;
+  
+  String get snd =>
+      _delegate.snd;
+  
+  int get hashCode =>
+      _delegate.hashCode;
+  
+  bool operator==(other) =>
+      _delegate == other;
   
   String toString() =>
-      _pairToString(this);
+      "$fst=$snd";
 }
