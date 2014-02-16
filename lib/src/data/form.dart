@@ -26,7 +26,7 @@ final Parser<Pair<String, String>> _FORM_PAIR =
 final Codec<String,String> _FORM_CODEC = utf8codec(QUERY_SAFE_CHARS.matches);
 
 
-abstract class Form implements ImmutableMultisetMultimap<String, String>, Persistent {
+abstract class Form implements ImmutableMultisetMultimap<String, String> {
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
   static final  Form EMPTY = new _FormImpl.empty();
   
@@ -50,7 +50,7 @@ class _FormImpl
   
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
   _FormImpl.empty() :
-    this.delegate = Persistent.EMPTY_MULTISET_MULTIMAP;
+    this.delegate = EMPTY_MULTISET_MULTIMAP;
   
   int get hashCode =>
       delegate.hashCode;

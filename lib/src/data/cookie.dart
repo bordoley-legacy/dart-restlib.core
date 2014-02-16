@@ -3,7 +3,7 @@ part of restlib.core.data;
 
 final Parser<SetCookie> SET_COOKIE =
   (COOKIE_PAIR + _SET_COOKIE_ATTRIBUTES).map((final Iterable e) =>
-      new SetCookie._internal(e.elementAt(0),Persistent.EMPTY_SET.addAll(e.elementAt(1))));
+      new SetCookie._internal(e.elementAt(0), EMPTY_SET.addAll(e.elementAt(1))));
   
 final Parser<Iterable<CookieAttribute>> _SET_COOKIE_ATTRIBUTES = 
   (SEMICOLON + _COOKIE_AV.sepBy(SEMICOLON)).map((final Iterable e) => 
@@ -81,7 +81,7 @@ class _CookieMultimap
   
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
   _CookieMultimap.empty() :
-    this.delegate = Persistent.EMPTY_SET_MULTIMAP;
+    this.delegate = EMPTY_SET_MULTIMAP;
   
   int get hashCode =>
       delegate.hashCode;

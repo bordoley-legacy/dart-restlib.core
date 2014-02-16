@@ -42,7 +42,7 @@ class _ByteStreamableMultipart<T extends ByteStreamable>
   Stream<List<int>> asByteStream() {
     final ImmutableSequence<Stream<List<int>>> streams =
         this
-          .fold(Persistent.EMPTY_SEQUENCE, (final ImmutableSequence sequence, final Part<ByteStreamable> part) =>
+          .fold(EMPTY_SEQUENCE, (final ImmutableSequence sequence, final Part<ByteStreamable> part) =>
               sequence
                 .add(valueAsStream(ASCII.encode("--$boundary\r\n")))
                 .add(valueAsStream(ASCII.encode(part.contentInfo.toString())))
@@ -83,7 +83,7 @@ class Part<T> {
   final T entity;
   
   Part(final ContentInfo contentInfo, this.entity):
-      this.contentInfo = new _PartContentInfo(Persistent.EMPTY_DICTIONARY, contentInfo) {
+      this.contentInfo = new _PartContentInfo(EMPTY_DICTIONARY, contentInfo) {
     checkNotNull(contentInfo);
     checkNotNull(entity);
   }
@@ -99,9 +99,9 @@ Future<Multipart> parseMultipartStream(
           .bind(msgStream)
           .map((final MimeMultipart multipart) =>
               new Part(new ContentInfo.wrapHeaders(
-                  Persistent.EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(multipart.headers)), 
+                  EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(multipart.headers)), 
               multipart))
-          .fold(Persistent.EMPTY_SEQUENCE, (final ImmutableSequence<Future> futureResults, final Part<Stream<List<int>>> part) => 
+          .fold(EMPTY_SEQUENCE, (final ImmutableSequence<Future> futureResults, final Part<Stream<List<int>>> part) => 
               partParserProvider(part.contentInfo)
                 .map((final PartParser parser) =>
                     futureResults.add(parser(part.contentInfo, part.entity)))

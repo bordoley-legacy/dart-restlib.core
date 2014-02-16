@@ -15,7 +15,7 @@ final Parser<Path> PATH =
 
 abstract class Path implements IPath {
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
-  static final Path EMPTY = new _Path(Persistent.EMPTY_SEQUENCE);
+  static final Path EMPTY = new _Path(EMPTY_SEQUENCE);
   
   Path get tail; 
   
@@ -39,7 +39,7 @@ abstract class Path implements IPath {
 }
 
 class _Path extends _IPathBase implements Path {
-  static final Path _FORWARD_SLASH_PATH = new _Path(Persistent.EMPTY_SEQUENCE.addAll(["",""]));
+  static final Path _FORWARD_SLASH_PATH = new _Path(EMPTY_SEQUENCE.addAll(["",""]));
   
   final ImmutableSequence<String> delegate;
   

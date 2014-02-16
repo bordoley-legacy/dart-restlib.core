@@ -22,10 +22,10 @@ RequestPreferences _requestPreferencesWith(
   }
   
   return new _RequestPreferencesImpl(
-      Persistent.EMPTY_SET.addAll(firstNotNull(acceptedCharsets, delegate.acceptedCharsets)), 
-      Persistent.EMPTY_SET.addAll(firstNotNull(acceptedEncodings, delegate.acceptedEncodings)), 
-      Persistent.EMPTY_SET.addAll(firstNotNull(acceptedLanguages, delegate.acceptedLanguages)), 
-      Persistent.EMPTY_SET.addAll(firstNotNull(acceptedMediaRanges, delegate.acceptedMediaRanges)), 
+      EMPTY_SET.addAll(firstNotNull(acceptedCharsets, delegate.acceptedCharsets)), 
+      EMPTY_SET.addAll(firstNotNull(acceptedEncodings, delegate.acceptedEncodings)), 
+      EMPTY_SET.addAll(firstNotNull(acceptedLanguages, delegate.acceptedLanguages)), 
+      EMPTY_SET.addAll(firstNotNull(acceptedMediaRanges, delegate.acceptedMediaRanges)), 
       computeIfEmpty(new Option(range), () => delegate.range));
 }
 
@@ -42,10 +42,10 @@ RequestPreferences _requestPreferencesWithout(
   }
   
   return new _RequestPreferencesImpl(
-      !acceptedCharsets ? Persistent.EMPTY_SET.addAll(delegate.acceptedCharsets) : Persistent.EMPTY_SET,
-      !acceptedEncodings ? Persistent.EMPTY_SET.addAll(delegate.acceptedEncodings) : Persistent.EMPTY_SET,
-      !acceptedLanguages ? Persistent.EMPTY_SET.addAll(delegate.acceptedLanguages) : Persistent.EMPTY_SET,
-      !acceptedMediaRanges ? Persistent.EMPTY_SET.addAll(delegate.acceptedMediaRanges) : Persistent.EMPTY_SET,
+      !acceptedCharsets ? EMPTY_SET.addAll(delegate.acceptedCharsets) : EMPTY_SET,
+      !acceptedEncodings ? EMPTY_SET.addAll(delegate.acceptedEncodings) : EMPTY_SET,
+      !acceptedLanguages ? EMPTY_SET.addAll(delegate.acceptedLanguages) : EMPTY_SET,
+      !acceptedMediaRanges ? EMPTY_SET.addAll(delegate.acceptedMediaRanges) : EMPTY_SET,
       !range ? delegate.range : Option.NONE);
 }
 
@@ -68,10 +68,10 @@ abstract class RequestPreferences {
     }
     
     return new _RequestPreferencesImpl(
-        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedCharsets, EMPTY_LIST)),
-        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedEncodings, EMPTY_LIST)),
-        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedLanguages, EMPTY_LIST)),
-        Persistent.EMPTY_SET.addAll(firstNotNull(acceptedMediaRanges, EMPTY_LIST)),
+        EMPTY_SET.addAll(firstNotNull(acceptedCharsets, EMPTY_LIST)),
+        EMPTY_SET.addAll(firstNotNull(acceptedEncodings, EMPTY_LIST)),
+        EMPTY_SET.addAll(firstNotNull(acceptedLanguages, EMPTY_LIST)),
+        EMPTY_SET.addAll(firstNotNull(acceptedMediaRanges, EMPTY_LIST)),
         new Option(range));
   }
   
@@ -106,10 +106,10 @@ abstract class RequestPreferences {
 }
 
 class _RequestPreferencesNone implements RequestPreferences {
-  final ImmutableSet<Preference<Charset>> acceptedCharsets = Persistent.EMPTY_SET;
-  final ImmutableSet<Preference<ContentEncoding>> acceptedEncodings = Persistent.EMPTY_SET;
-  final ImmutableSet<Preference<Language>> acceptedLanguages = Persistent.EMPTY_SET;
-  final ImmutableSet<Preference<MediaRange>> acceptedMediaRanges = Persistent.EMPTY_SET;
+  final ImmutableSet<Preference<Charset>> acceptedCharsets = EMPTY_SET;
+  final ImmutableSet<Preference<ContentEncoding>> acceptedEncodings = EMPTY_SET;
+  final ImmutableSet<Preference<Language>> acceptedLanguages = EMPTY_SET;
+  final ImmutableSet<Preference<MediaRange>> acceptedMediaRanges = EMPTY_SET;
   final Option<Range> range = Option.NONE;
   
   const _RequestPreferencesNone();
@@ -251,8 +251,8 @@ class _HeadersRequestPreferencesImpl
         _acceptedCharsets = 
             _parse(_ACCEPT_CHARSET, Header.ACCEPT_CHARSET)
               .map((final Iterable<Preference<Charset>> acceptedCharsets) => 
-                  Persistent.EMPTY_SET.addAll(acceptedCharsets))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(acceptedCharsets))
+              .orElse(EMPTY_SET);
         return _acceptedCharsets;
       });
   
@@ -261,8 +261,8 @@ class _HeadersRequestPreferencesImpl
         _acceptedEncodings = 
             _parse(_ACCEPT_ENCODING, Header.ACCEPT_ENCODING)
               .map((final Iterable<Preference<ContentEncoding>> acceptedEncodings) =>
-                  Persistent.EMPTY_SET.addAll(acceptedEncodings))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(acceptedEncodings))
+              .orElse(EMPTY_SET);
         return _acceptedEncodings;
       });
   
@@ -271,8 +271,8 @@ class _HeadersRequestPreferencesImpl
         _acceptedLanguages = 
             _parse(_ACCEPT_LANGUAGE, Header.ACCEPT_LANGUAGE)
               .map((final Iterable<Preference<Language>> acceptedLanguages) =>
-                  Persistent.EMPTY_SET.addAll(acceptedLanguages))
-              .orElse(Persistent.EMPTY_SET);    
+                  EMPTY_SET.addAll(acceptedLanguages))
+              .orElse(EMPTY_SET);    
             
         return _acceptedLanguages;
       });
@@ -282,8 +282,8 @@ class _HeadersRequestPreferencesImpl
         _acceptedMediaRanges = 
             _parse(_ACCEPT, Header.ACCEPT)
               .map((final Iterable<Preference<MediaRange>> acceptedMediaRanges) =>
-                  Persistent.EMPTY_SET.addAll(acceptedMediaRanges))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(acceptedMediaRanges))
+              .orElse(EMPTY_SET);
         
         return _acceptedMediaRanges;
       });

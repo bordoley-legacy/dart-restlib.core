@@ -77,26 +77,26 @@ Response _responseWith(
   }
   
   return new _ResponseImpl(
-      Persistent.EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, delegate.acceptedRangeUnits)),
+      EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, delegate.acceptedRangeUnits)),
       computeIfEmpty(new Option(age), () => delegate.age),
-      Persistent.EMPTY_SET.addAll(firstNotNull(allowedMethods, delegate.allowedMethods)),
-      Persistent.EMPTY_SET.addAll(firstNotNull(authenticationChallenges, delegate.authenticationChallenges)),
-      Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
+      EMPTY_SET.addAll(firstNotNull(allowedMethods, delegate.allowedMethods)),
+      EMPTY_SET.addAll(firstNotNull(authenticationChallenges, delegate.authenticationChallenges)),
+      EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
       firstNotNull(contentInfo, delegate.contentInfo),
-      Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, delegate.customHeaders)),
+      EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, delegate.customHeaders)),
       computeIfEmpty(new Option(date), () => delegate.date),
       computeIfEmpty(new Option(entity), () => delegate.entity),
       computeIfEmpty(new Option(entityTag), () => delegate.entityTag),
       computeIfEmpty(new Option(expires), () => delegate.expires),
       computeIfEmpty(new Option(lastModified), () => delegate.lastModified),
       computeIfEmpty(new Option(location), () => delegate.location),
-      Persistent.EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, delegate.proxyAuthenticationChallenges)),   
+      EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, delegate.proxyAuthenticationChallenges)),   
       computeIfEmpty(new Option(retryAfter), () => delegate.retryAfter),
       computeIfEmpty(new Option(server), () => delegate.server),
-      Persistent.EMPTY_SET.addAll(firstNotNull(setCookies, delegate.setCookies)),
+      EMPTY_SET.addAll(firstNotNull(setCookies, delegate.setCookies)),
       firstNotNull(status, delegate.status),
-      Persistent.EMPTY_SET.addAll(firstNotNull(vary, delegate.vary)),
-      Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(warnings, delegate.warnings)));
+      EMPTY_SET.addAll(firstNotNull(vary, delegate.vary)),
+      EMPTY_SEQUENCE.addAll(firstNotNull(warnings, delegate.warnings)));
 }
 
 Response _responseWithout(
@@ -121,26 +121,26 @@ Response _responseWithout(
   final bool vary,
   final bool warnings) =>
       new _ResponseImpl(
-          !acceptedRangeUnits ? Persistent.EMPTY_SET.addAll(delegate.acceptedRangeUnits) : Persistent.EMPTY_SET,
+          !acceptedRangeUnits ? EMPTY_SET.addAll(delegate.acceptedRangeUnits) : EMPTY_SET,
           !age ? delegate.age : Option.NONE, 
-          !allowedMethods ? Persistent.EMPTY_SET.addAll(delegate.allowedMethods) : Persistent.EMPTY_SET,
-          !authenticationChallenges ? Persistent.EMPTY_SET.addAll(delegate.authenticationChallenges) : Persistent.EMPTY_SET,
-          !cacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.authenticationChallenges) : Persistent.EMPTY_SET,
+          !allowedMethods ? EMPTY_SET.addAll(delegate.allowedMethods) : EMPTY_SET,
+          !authenticationChallenges ? EMPTY_SET.addAll(delegate.authenticationChallenges) : EMPTY_SET,
+          !cacheDirectives ? EMPTY_SET.addAll(delegate.authenticationChallenges) : EMPTY_SET,
           !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
-          !customHeaders ? Persistent.EMPTY_DICTIONARY.putAll(delegate.customHeaders) : Persistent.EMPTY_DICTIONARY,
+          !customHeaders ? EMPTY_DICTIONARY.putAll(delegate.customHeaders) : EMPTY_DICTIONARY,
           !date ? delegate.date : Option.NONE,
           !entity ? delegate.entity : Option.NONE,
           !entityTag ? delegate.entityTag : Option.NONE,
           !expires ? delegate.expires : Option.NONE,
           !lastModified ? delegate.lastModified : Option.NONE,
           !location ? delegate.location : Option.NONE,    
-          !proxyAuthenticationChallenges ? Persistent.EMPTY_SET.addAll(delegate.proxyAuthenticationChallenges) : Persistent.EMPTY_SET,
+          !proxyAuthenticationChallenges ? EMPTY_SET.addAll(delegate.proxyAuthenticationChallenges) : EMPTY_SET,
           !retryAfter ? delegate.retryAfter : Option.NONE,
           !server ? delegate.server : Option.NONE,
-          !setCookies ? Persistent.EMPTY_SET.addAll(delegate.setCookies) : Persistent.EMPTY_SET,    
+          !setCookies ? EMPTY_SET.addAll(delegate.setCookies) : EMPTY_SET,    
           delegate.status,
-          !vary ? Persistent.EMPTY_SET.addAll(delegate.vary) : Persistent.EMPTY_SET,
-          !warnings ? Persistent.EMPTY_SEQUENCE.addAll(delegate.warnings) :  Persistent.EMPTY_SEQUENCE);
+          !vary ? EMPTY_SET.addAll(delegate.vary) : EMPTY_SET,
+          !warnings ? EMPTY_SEQUENCE.addAll(delegate.warnings) :  EMPTY_SEQUENCE);
           
 abstract class Response<T> {  
   factory Response(
@@ -165,26 +165,26 @@ abstract class Response<T> {
     final Iterable<Header> vary,
     final Iterable<Warning> warnings}) =>
         new _ResponseImpl(
-            Persistent.EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, EMPTY_LIST)),
             new Option(age),
-            Persistent.EMPTY_SET.addAll(firstNotNull(allowedMethods, EMPTY_LIST)),
-            Persistent.EMPTY_SET.addAll(firstNotNull(authenticationChallenges, EMPTY_LIST)),
-            Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(allowedMethods, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(authenticationChallenges, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
             firstNotNull(contentInfo, ContentInfo.NONE),
-            Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, Persistent.EMPTY_DICTIONARY)),
+            EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, EMPTY_DICTIONARY)),
             new Option(date),
             new Option(entity),
             new Option(entityTag),
             new Option(expires),
             new Option(lastModified),
             new Option(location),
-            Persistent.EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, EMPTY_LIST)),
             new Option(retryAfter),
             new Option(server),
-            Persistent.EMPTY_SET.addAll(firstNotNull(setCookies, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(setCookies, EMPTY_LIST)),
             status,
-            Persistent.EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
-            Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
+            EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
+            EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
     
   FiniteSet<RangeUnit> get acceptedRangeUnits;
   

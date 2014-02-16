@@ -15,7 +15,7 @@ final Parser<IPath> _I_PATH =
 
 abstract class IPath implements ImmutableSequence<String> {
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
-  static final EMPTY = new _IPath(Persistent.EMPTY_SEQUENCE);
+  static final EMPTY = new _IPath(EMPTY_SEQUENCE);
   
   IPath get tail;
   
@@ -43,7 +43,7 @@ abstract class IPath implements ImmutableSequence<String> {
 }
 
 class _IPath extends _IPathBase {
-  static final IPath _FORWARD_SLASH_PATH = new _IPath(Persistent.EMPTY_SEQUENCE.addAll(["",""]));
+  static final IPath _FORWARD_SLASH_PATH = new _IPath(EMPTY_SEQUENCE.addAll(["",""]));
   
   final ImmutableSequence<String> delegate;
   

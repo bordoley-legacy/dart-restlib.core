@@ -4,7 +4,7 @@ void requestTests() {
   group("factory:wrapHeaders()", () {
     test("with no headers present", () { 
       final SequenceMultimap<Header, String> headers =
-          Persistent.EMPTY_SEQUENCE_MULTIMAP.put(Header.HOST, "example.com");
+          EMPTY_SEQUENCE_MULTIMAP.put(Header.HOST, "example.com");
  
       final Request request = new Request.wrapHeaders(Method.PUT, URI_.parse("http://example.com/test").value, headers);
       
@@ -39,28 +39,28 @@ void requestTests() {
       final String scheme = "https";
       
       final ImmutableSet<Preference<Charset>> acceptedCharsets =
-          Persistent.EMPTY_SET.addAll([new Preference(Charset.UTF_8), new Preference(Charset.US_ASCII)]);
+          EMPTY_SET.addAll([new Preference(Charset.UTF_8), new Preference(Charset.US_ASCII)]);
       
       final ImmutableSet<Preference<ContentEncoding>> acceptedEncodings =
-          Persistent.EMPTY_SET.addAll([]);     
+          EMPTY_SET.addAll([]);     
       
       final ImmutableSet<Preference<Language>> acceptedLanguages =
-          Persistent.EMPTY_SET.addAll([]);
+          EMPTY_SET.addAll([]);
       
       final ImmutableSet<Preference<MediaRange>> acceptedMediaRanges =
-          Persistent.EMPTY_SET.addAll([new Preference(APPLICATION_ATOM_XML), new Preference(APPLICATION_JSON)]);
+          EMPTY_SET.addAll([new Preference(APPLICATION_ATOM_XML), new Preference(APPLICATION_JSON)]);
 
       final ChallengeMessage authorizationCredentials =
           CHALLENGE_MESSAGE.parse("Basic dGVzdDp0ZXN0").value;
       
       ImmutableSet<CacheDirective> cacheDirectives =
-          Persistent.EMPTY_SET.addAll([CacheDirective.MUST_REVALIDATE, CacheDirective.PRIVATE]);
+          EMPTY_SET.addAll([CacheDirective.MUST_REVALIDATE, CacheDirective.PRIVATE]);
       
       ImmutableSequence<ContentEncoding> contenEncodings =
-          Persistent.EMPTY_SEQUENCE.addAll([]); 
+          EMPTY_SEQUENCE.addAll([]); 
       
       ImmutableSet<Language> contentLanguages =
-          Persistent.EMPTY_SET.addAll([]);
+          EMPTY_SET.addAll([]);
       
       final int contentLength = 10;
       final URI contentLocation = 
@@ -72,17 +72,17 @@ void requestTests() {
       ContentRange contentRange;
       
       ImmutableSet<Expectation> expectations =
-          Persistent.EMPTY_SET.addAll([Expectation.EXPECTS_100_CONTINUE]);
+          EMPTY_SET.addAll([Expectation.EXPECTS_100_CONTINUE]);
      
       final String host = "www.example.com:8080";
       
       final ImmutableSet<EntityTag> ifMatch =
-          Persistent.EMPTY_SET.addAll([ETAG.parse("\"abcd\"").value, ETAG.parse("W/\"efgh\"").value]);
+          EMPTY_SET.addAll([ETAG.parse("\"abcd\"").value, ETAG.parse("W/\"efgh\"").value]);
       
       DateTime ifModifiedSince;
       
       final ImmutableSet<EntityTag> ifNoneMatch =
-          Persistent.EMPTY_SET.addAll([ETAG.parse("\"abcd\"").value, ETAG.parse("W/\"efgh\"").value]);
+          EMPTY_SET.addAll([ETAG.parse("\"abcd\"").value, ETAG.parse("W/\"efgh\"").value]);
       
       final EntityTag ifRange = ETAG.parse("\"abcd\"").value;
       DateTime ifUnmodifiedSince;
@@ -91,7 +91,7 @@ void requestTests() {
       final String path = "/test";
       
       ImmutableSet<CacheDirective> pragmaCacheDirectives =
-          Persistent.EMPTY_SET.addAll([CacheDirective.PROXY_REVALIDATE, CacheDirective.NO_STORE]);
+          EMPTY_SET.addAll([CacheDirective.PROXY_REVALIDATE, CacheDirective.NO_STORE]);
       
       //final Range range = "";
       
@@ -103,7 +103,7 @@ void requestTests() {
       final UserAgent userAgent = USER_AGENT.parse("test/1.1").value;
       
       final Multimap<Header, String, dynamic> headers = 
-          Persistent.EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(
+          EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(
                 {Header.ACCEPT : acceptedMediaRanges,
                  Header.ACCEPT_CHARSET : acceptedCharsets,
                  Header.ACCEPT_ENCODING : acceptedEncodings,
@@ -163,7 +163,7 @@ void requestTests() {
     
     test("with if-Range as date string", () {
       final SequenceMultimap<Header, String> headers = 
-          Persistent.EMPTY_SEQUENCE_MULTIMAP.putAllFromMap({Header.IF_RANGE : ""});
+          EMPTY_SEQUENCE_MULTIMAP.putAllFromMap({Header.IF_RANGE : ""});
 
       final Request request = new Request.wrapHeaders(Method.PUT, URI_.parse("http://www.example.com").value, headers);
       // FIXME:

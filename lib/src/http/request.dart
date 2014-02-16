@@ -64,14 +64,14 @@ Request _requestWith(
   
   return new _RequestImpl(
       computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
-      Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
+      EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
       firstNotNull(contentInfo, delegate.contentInfo),
       CookieMultimap.EMPTY.putAll(firstNotNull(cookies, delegate.cookies)),
-      Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, delegate.customHeaders)),
+      EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, delegate.customHeaders)),
       computeIfEmpty(new Option(entity), () => delegate.entity),
-      Persistent.EMPTY_SET.addAll(firstNotNull(expectations, delegate.expectations)),
+      EMPTY_SET.addAll(firstNotNull(expectations, delegate.expectations)),
       firstNotNull(method, delegate.method),
-      Persistent.EMPTY_SET.addAll(firstNotNull(pragmaCacheDirectives, delegate.pragmaCacheDirectives)),
+      EMPTY_SET.addAll(firstNotNull(pragmaCacheDirectives, delegate.pragmaCacheDirectives)),
       firstNotNull(preconditions, delegate.preconditions),
       firstNotNull(preferences, delegate.preferences),
       computeIfEmpty(new Option(proxyAuthorizationCredentials), () => delegate.proxyAuthorizationCredentials),
@@ -97,14 +97,14 @@ Request _requestWithout(
   final bool userAgent) =>
       new _RequestImpl(
           !authorizationCredentials ? delegate.authorizationCredentials : Option.NONE,
-          !cacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.cacheDirectives) : Persistent.EMPTY_SET,
+          !cacheDirectives ? EMPTY_SET.addAll(delegate.cacheDirectives) : EMPTY_SET,
           !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
-          !cookies ? CookieMultimap.EMPTY.putAll(delegate.cookies) : Persistent.EMPTY_SET,   
-          !customHeaders ? Persistent.EMPTY_DICTIONARY.putAll(delegate.customHeaders) : Persistent.EMPTY_DICTIONARY,
+          !cookies ? CookieMultimap.EMPTY.putAll(delegate.cookies) : EMPTY_SET,   
+          !customHeaders ? EMPTY_DICTIONARY.putAll(delegate.customHeaders) : EMPTY_DICTIONARY,
           !entity ? delegate.entity : Option.NONE,
-          !expectations? Persistent.EMPTY_SET.addAll(delegate.expectations) : Persistent.EMPTY_SET,
+          !expectations? EMPTY_SET.addAll(delegate.expectations) : EMPTY_SET,
           delegate.method,
-          !pragmaCacheDirectives ? Persistent.EMPTY_SET.addAll(delegate.pragmaCacheDirectives) : Persistent.EMPTY_SET,
+          !pragmaCacheDirectives ? EMPTY_SET.addAll(delegate.pragmaCacheDirectives) : EMPTY_SET,
           !preconditions ? delegate.preconditions : RequestPreconditions.NONE,
           !preferences ? delegate.preferences : RequestPreferences.NONE,
           !proxyAuthorizationCredentials ? delegate.proxyAuthorizationCredentials : Option.NONE,
@@ -129,14 +129,14 @@ abstract class Request<T> {
     final UserAgent userAgent}) =>
         new _RequestImpl(
             new Option(authorizationCredentials),
-            Persistent.EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
             firstNotNull(contentInfo, ContentInfo.NONE),
             CookieMultimap.EMPTY.putAll(firstNotNull(cookies, EMPTY_LIST)),
-            Persistent.EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, Persistent.EMPTY_DICTIONARY)),
+            EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, EMPTY_DICTIONARY)),
             new Option(entity),
-            Persistent.EMPTY_SET.addAll(firstNotNull(expectations, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(expectations, EMPTY_LIST)),
             method,
-            Persistent.EMPTY_SET.addAll(firstNotNull(pragmaCacheDirectives, EMPTY_LIST)),
+            EMPTY_SET.addAll(firstNotNull(pragmaCacheDirectives, EMPTY_LIST)),
             firstNotNull(preconditions, RequestPreconditions.NONE),
             firstNotNull(preferences, RequestPreferences.NONE),
             new Option(proxyAuthorizationCredentials),
@@ -467,8 +467,8 @@ class _HeadersRequestWrapper
         _cacheDirectives = 
             _parse(_CACHE_CONTROL, Header.CACHE_CONTROL)
               .map((final Iterable<CacheDirective> cacheDirectives) =>
-                  Persistent.EMPTY_SET.addAll(cacheDirectives))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(cacheDirectives))
+              .orElse(EMPTY_SET);
             
         return _cacheDirectives;
       });
@@ -502,8 +502,8 @@ class _HeadersRequestWrapper
         _expectations = 
             _parse(_EXPECT, Header.EXPECT)
               .map((final Iterable<Expectation> expectations) =>
-                  Persistent.EMPTY_SET.addAll(expectations))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(expectations))
+              .orElse(EMPTY_SET);
             
         return _expectations;
       });
@@ -513,8 +513,8 @@ class _HeadersRequestWrapper
         _pragmaCacheDirectives = 
             _parse(_PRAGMA, Header.PRAGMA)
               .map((final Iterable<CacheDirective> pragmaCacheDirectives) =>
-                  Persistent.EMPTY_SET.addAll(pragmaCacheDirectives))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(pragmaCacheDirectives))
+              .orElse(EMPTY_SET);
         return _pragmaCacheDirectives;
       });
   
@@ -556,7 +556,7 @@ Request requestMethodOverride(final Request request) {
         .map((final String token) {
           final Method method = new Method.forName(token);
           final Dictionary<Header, dynamic> customHeaders =
-              Persistent.EMPTY_DICTIONARY
+              EMPTY_DICTIONARY
                 .putAll(request.customHeaders)
                 .removeAt(Header.X_HTTP_METHOD)
                 .removeAt(Header.X_HTTP_METHOD_OVERRIDE)

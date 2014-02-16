@@ -9,7 +9,7 @@ final Parser<UserAgent> USER_AGENT =
   (PRODUCT + _PRODUCT_OR_COMMENT.many())
     .map((final Iterable e) => 
         new UserAgent._internal(
-            Persistent.EMPTY_SEQUENCE
+            EMPTY_SEQUENCE
               .add(new Either.leftValue(e.elementAt(0)))
               .addAll(e.elementAt(1))));
 

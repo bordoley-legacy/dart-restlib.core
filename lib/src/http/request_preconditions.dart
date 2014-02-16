@@ -25,9 +25,9 @@ RequestPreconditions _requestPreconditionsWith(
   }
   
   return new _RequestPreconditionsImpl(
-      Persistent.EMPTY_SET.addAll(firstNotNull(ifMatch, delegate.ifMatch)),
+      EMPTY_SET.addAll(firstNotNull(ifMatch, delegate.ifMatch)),
       computeIfEmpty(new Option(ifModifiedSince), () => delegate.ifModifiedSince),
-      Persistent.EMPTY_SET.addAll(firstNotNull(ifNoneMatch, delegate.ifNoneMatch)),
+      EMPTY_SET.addAll(firstNotNull(ifNoneMatch, delegate.ifNoneMatch)),
       computeIfEmpty(new Option(ifRange), () => delegate.ifRange),
       computeIfEmpty(new Option(ifUnmodifiedSince), () => delegate.ifUnmodifiedSince));
 }
@@ -45,9 +45,9 @@ RequestPreconditions _requestPreconditionsWithout(
   }
   
   return new _RequestPreconditionsImpl(
-      !ifMatch ? Persistent.EMPTY_SET.addAll(delegate.ifMatch) : Persistent.EMPTY_SET,
+      !ifMatch ? EMPTY_SET.addAll(delegate.ifMatch) : EMPTY_SET,
       !ifModifiedSince ? delegate.ifModifiedSince : Option.NONE,
-      !ifNoneMatch ? Persistent.EMPTY_SET.addAll(delegate.ifNoneMatch) : Persistent.EMPTY_SET,
+      !ifNoneMatch ? EMPTY_SET.addAll(delegate.ifNoneMatch) : EMPTY_SET,
       !ifRange ? delegate.ifRange : Option.NONE,
       !ifUnmodifiedSince ? delegate.ifModifiedSince : Option.NONE);
 }
@@ -68,9 +68,9 @@ abstract class RequestPreconditions {
     }
 
     return new _RequestPreconditionsImpl(
-        Persistent.EMPTY_SET.addAll(firstNotNull(ifMatch, EMPTY_LIST)), 
+        EMPTY_SET.addAll(firstNotNull(ifMatch, EMPTY_LIST)), 
         new Option(ifModifiedSince), 
-        Persistent.EMPTY_SET.addAll(firstNotNull(ifNoneMatch,  EMPTY_LIST)), 
+        EMPTY_SET.addAll(firstNotNull(ifNoneMatch,  EMPTY_LIST)), 
         new Option(ifRange), 
         new Option(ifUnmodifiedSince));   
   }
@@ -106,9 +106,9 @@ abstract class RequestPreconditions {
 }
 
 class _RequestPreconditionsNone implements RequestPreconditions {
-  final ImmutableSet<EntityTag> ifMatch = Persistent.EMPTY_SET;
+  final ImmutableSet<EntityTag> ifMatch = EMPTY_SET;
   final Option<DateTime> ifModifiedSince = Option.NONE;
-  final ImmutableSet<EntityTag> ifNoneMatch = Persistent.EMPTY_SET;
+  final ImmutableSet<EntityTag> ifNoneMatch = EMPTY_SET;
   final Option<Either<EntityTag,DateTime>> ifRange = Option.NONE;
   final Option<DateTime> ifUnmodifiedSince = Option.NONE;
   
@@ -253,8 +253,8 @@ class _HeadersRequestPreconditionsImpl
         _ifMatch = 
             _parse(_IF_MATCH, Header.IF_MATCH)
               .map((final Iterable<EntityTag> ifMatch) =>
-                  Persistent.EMPTY_SET.addAll(ifMatch))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(ifMatch))
+              .orElse(EMPTY_SET);
         return _ifMatch;
       });
   
@@ -270,8 +270,8 @@ class _HeadersRequestPreconditionsImpl
         _ifNoneMatch = 
             _parse(_IF_NONE_MATCH, Header.IF_NONE_MATCH)
               .map((final Iterable<EntityTag> ifNoneMatch) => 
-                  Persistent.EMPTY_SET.addAll(ifNoneMatch))
-              .orElse(Persistent.EMPTY_SET);
+                  EMPTY_SET.addAll(ifNoneMatch))
+              .orElse(EMPTY_SET);
         return _ifNoneMatch;
       });
   

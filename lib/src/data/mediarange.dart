@@ -13,7 +13,7 @@ final Parser<MediaRange> MEDIA_RANGE =
       final String subtype = e.elementAt(2).toLowerCase();
       Option<Charset> charset = Option.NONE;
       final SetMultimap<String, String> parameters = 
-          Persistent.EMPTY_SET_MULTIMAP.putAll(
+          EMPTY_SET_MULTIMAP.putAll(
               e.elementAt(3).where((final KeyValuePair kvp) {                
                 final String key = kvp.fst.toLowerCase();
                 
@@ -48,9 +48,9 @@ class MediaRange implements Matcheable<MediaRange> {
     optionalCharset.map((final Charset charset) => 
         checkArgument(charset != Charset.ANY));
     
-    parameters = firstNotNull(parameters, Persistent.EMPTY_SET_MULTIMAP);
+    parameters = firstNotNull(parameters, EMPTY_SET_MULTIMAP);
     parameters = 
-        Persistent.EMPTY_SET_MULTIMAP.putAll(
+        EMPTY_SET_MULTIMAP.putAll(
             parameters.map((final Pair<String,String> kv) {
               checkArgument(TOKEN.parse(kv.fst).isNotEmpty);
               checkArgument(kv.fst.toLowerCase() != "q");
@@ -72,9 +72,9 @@ class MediaRange implements Matcheable<MediaRange> {
   // where we can strictly define the limits of use.
   const MediaRange.constant(this.type, this.subtype) :
     this.charset = Option.NONE,
-    this.parameters = Persistent.EMPTY_SET_MULTIMAP;
+    this.parameters = EMPTY_SET_MULTIMAP;
   
-  const MediaRange._internal(this.type, this.subtype, [this.charset = Option.NONE, this.parameters = Persistent.EMPTY_SET_MULTIMAP]);
+  const MediaRange._internal(this.type, this.subtype, [this.charset = Option.NONE, this.parameters = EMPTY_SET_MULTIMAP]);
   
   int get hashCode =>
       computeHashCode([type, subtype, charset, parameters]);

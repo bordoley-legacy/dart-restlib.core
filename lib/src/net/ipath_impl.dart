@@ -48,7 +48,7 @@ abstract class _IPathBase
             => segment.isEmpty)) {
           return forwardSlashPath;
         } else if (this.elementAt(1).isEmpty) {
-          return builder(Persistent.EMPTY_SEQUENCE.addAll(this.take(1)));
+          return builder(EMPTY_SEQUENCE.addAll(this.take(1)));
         } else {
           return this;
         }           
@@ -71,7 +71,7 @@ abstract class _IPathBase
           buffer.removeAt(buffer.length - 1);
         }
         
-        return builder(Persistent.EMPTY_SEQUENCE.addAll(buffer));
+        return builder(EMPTY_SEQUENCE.addAll(buffer));
       }
     }
   

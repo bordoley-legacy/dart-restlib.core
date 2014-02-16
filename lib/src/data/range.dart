@@ -19,7 +19,7 @@ final Parser<ByteRangesSpecifier> _BYTE_RANGES_SPECIFIER =
   (string(_BYTES_UNIT) + EQUALS + _BYTE_RANGE_SET)
     .map ((final Iterable e) => 
         // FIXME: Ideally this would be an ordered set
-        new ByteRangesSpecifier._internal(Persistent.EMPTY_SEQUENCE.addAll(e.elementAt(2))));
+        new ByteRangesSpecifier._internal(EMPTY_SEQUENCE.addAll(e.elementAt(2))));
 
 final Parser<OtherRangesSpecifier> _OTHER_RANGES_SPECIFIER =
   (TOKEN + EQUALS + CHAR.many1())

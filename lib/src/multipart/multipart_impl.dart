@@ -36,7 +36,7 @@ class _PartContentInfo
             location: location, 
             mediaRange: mediaRange, 
             range: range);
-    return new _PartContentInfo(Persistent.EMPTY_DICTIONARY.putAll(customHeaders), delegate);
+    return new _PartContentInfo(EMPTY_DICTIONARY.putAll(customHeaders), delegate);
   }
   
   ContentInfo without({
@@ -57,7 +57,7 @@ class _PartContentInfo
             mediaRange: mediaRange, 
             range: range);
     final ImmutableDictionary<Header, dynamic> newCustomHeaders =
-        !customHeaders ? this.customHeaders : Persistent.EMPTY_DICTIONARY;
+        !customHeaders ? this.customHeaders : EMPTY_DICTIONARY;
     return new _PartContentInfo (newCustomHeaders, delegate);
   }
 }

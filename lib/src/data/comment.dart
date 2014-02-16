@@ -13,7 +13,7 @@ final Parser<Comment> COMMENT =
   (OPEN_PARENTHESES + _COMMENT_SEGMENT.many() + CLOSE_PARENTHESES)
     .map((final Iterable e) =>
       new Comment._internal(
-        Persistent.EMPTY_SEQUENCE.addAll(e.elementAt(1))));
+        EMPTY_SEQUENCE.addAll(e.elementAt(1))));
 
 final Parser<Either<String, Comment>> _COMMENT_SEGMENT =
   (_COMMENT_TEXT ^ rec(() => COMMENT));

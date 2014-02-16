@@ -64,7 +64,7 @@ class Preference<T extends Matcheable<T>> {
           return null;
         }
         
-        return new Preference(value, qualityFactor: qfValue.value, parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP.putAll(parameters.skip(1)));        
+        return new Preference(value, qualityFactor: qfValue.value, parameters: EMPTY_SEQUENCE_MULTIMAP.putAll(parameters.skip(1)));        
       });
         
   }  
@@ -73,7 +73,7 @@ class Preference<T extends Matcheable<T>> {
   final int qualityFactor;
   final Multimap<String, String, dynamic> parameters;
   
-  Preference(T value, {int qualityFactor: 1000, Multimap<String, String, dynamic> parameters: Persistent.EMPTY_SEQUENCE_MULTIMAP}) :
+  Preference(T value, {int qualityFactor: 1000, Multimap<String, String, dynamic> parameters: EMPTY_SEQUENCE_MULTIMAP}) :
     this.value = value,
     this.qualityFactor = qualityFactor,
     this.parameters = parameters;

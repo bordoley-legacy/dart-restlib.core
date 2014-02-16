@@ -30,8 +30,8 @@ ContentInfo _contentInfoWith(
   }
   
   return new _ContentInfoImpl(
-      Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(encodings, delegate.encodings)), 
-      Persistent.EMPTY_SET.addAll(firstNotNull(languages, delegate.languages)), 
+      EMPTY_SEQUENCE.addAll(firstNotNull(encodings, delegate.encodings)), 
+      EMPTY_SET.addAll(firstNotNull(languages, delegate.languages)), 
       computeIfEmpty(new Option(length), () => delegate.length), 
       computeIfEmpty(new Option(location), () => delegate.location), 
       computeIfEmpty(new Option(mediaRange), () => delegate.mediaRange), 
@@ -52,8 +52,8 @@ ContentInfo _contentInfoWithout(
   }
   
   return new _ContentInfoImpl(
-      !encodings ? Persistent.EMPTY_SEQUENCE.addAll(delegate.encodings) : Persistent.EMPTY_SEQUENCE,
-      !languages ? Persistent.EMPTY_SET.addAll(delegate.languages) : Persistent.EMPTY_SET,
+      !encodings ? EMPTY_SEQUENCE.addAll(delegate.encodings) : EMPTY_SEQUENCE,
+      !languages ? EMPTY_SET.addAll(delegate.languages) : EMPTY_SET,
       !length ? delegate.length : Option.NONE,
       !location ? delegate.location : Option.NONE,
       !mediaRange ? delegate.mediaRange : Option.NONE,
@@ -80,8 +80,8 @@ abstract class ContentInfo {
       return ContentInfo.NONE;
     }
     return new _ContentInfoImpl(
-        Persistent.EMPTY_SEQUENCE.addAll(firstNotNull(encodings, EMPTY_LIST)), 
-        Persistent.EMPTY_SET.addAll(firstNotNull(languages, EMPTY_LIST)), 
+        EMPTY_SEQUENCE.addAll(firstNotNull(encodings, EMPTY_LIST)), 
+        EMPTY_SET.addAll(firstNotNull(languages, EMPTY_LIST)), 
         new Option(length), 
         new Option(location), 
         new Option(mediaRange), 
@@ -148,8 +148,8 @@ abstract class _ContentInfoMixin implements ContentInfo {
 }
 
 class _ContentInfoNone implements ContentInfo {
-  final ImmutableSequence<ContentEncoding> encodings = Persistent.EMPTY_SEQUENCE;
-  final FiniteSet<Language> languages = Persistent.EMPTY_SET;
+  final ImmutableSequence<ContentEncoding> encodings = EMPTY_SEQUENCE;
+  final FiniteSet<Language> languages = EMPTY_SET;
   final Option<int> length = Option.NONE;
   final Option<URI> location = Option.NONE;
   final Option<MediaRange> mediaRange = Option.NONE;
@@ -259,8 +259,8 @@ class _HeadersContentInfoImpl
         _encodings = 
             _parse(_CONTENT_ENCODING_HEADER, Header.CONTENT_ENCODING)
               .map((final Iterable<ContentEncoding> encodings) => 
-                  Persistent.EMPTY_SEQUENCE.addAll(encodings))
-              .orElse(Persistent.EMPTY_SEQUENCE);
+                  EMPTY_SEQUENCE.addAll(encodings))
+              .orElse(EMPTY_SEQUENCE);
             
         return _encodings;
       });
@@ -270,8 +270,8 @@ class _HeadersContentInfoImpl
         _languages = 
             _parse(_CONTENT_LANGUAGE, Header.CONTENT_LANGUAGE)
               .map((final Iterable<Language> languages) => 
-                  Persistent.EMPTY_SET.addAll(languages))
-              .orElse(Persistent.EMPTY_SET);    
+                  EMPTY_SET.addAll(languages))
+              .orElse(EMPTY_SET);    
             
         return _languages;
       });
