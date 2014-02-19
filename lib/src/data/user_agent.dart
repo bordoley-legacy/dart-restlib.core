@@ -1,37 +1,31 @@
 part of restlib.core.data;
 
-final Parser<Either<Product, Comment>> _PRODUCT_OR_COMMENT =
-  (RWS + (PRODUCT ^ COMMENT))
-    .map((final Iterable e) => 
-        e.elementAt(1));
+abstract class UserAgent implements ImmutableSequence<Either<Product, Comment>> {
+  static final UserAgent EMPTY = new UserAgentImpl(EMPTY_SEQUENCE);
 
-final Parser<UserAgent> USER_AGENT =
-  (PRODUCT + _PRODUCT_OR_COMMENT.many())
-    .map((final Iterable e) => 
-        new UserAgent._internal(
-            EMPTY_SEQUENCE
-              .add(new Either.leftValue(e.elementAt(0)))
-              .addAll(e.elementAt(1))));
+  UserAgent add(Either<Product, Comment> value);
 
-class UserAgent {    
-  final ImmutableSequence<Either<Product, Comment>> _productsAndComments;
-  
-  const UserAgent._internal(this._productsAndComments);
-  
-  int get hashCode => computeHashCode(_productsAndComments);
-  
-  bool operator==(other) {
-    if (identical(this, other)) {
-      return true;
-    } else if (other is UserAgent) {
-      return this._productsAndComments == other._productsAndComments;
-    } else {
-      return false;
-    }
-  }
-  
-  String toString() =>
-      _productsAndComments
-        .map((final Either<Product, Comment> either) =>
-            either.fold(objectToString, objectToString)).join(" ");
+  UserAgent addAll(Iterable<Either<Product, Comment>> elements);
+
+  Option<Either<Product, Comment>> call(final int key);
+
+  UserAgent remove(Either<Product, Comment> element);
+
+  UserAgent get tail;
+
+  UserAgent push(Either<Product, Comment> value);
+
+  UserAgent pushAll(final Iterable<Either<Product, Comment>> other);
+
+  UserAgent putAll(final Iterable<Pair<int, Either<Product, Comment>>> other);
+
+  UserAgent putAllFromMap(final Map<int,Either<Product, Comment>> map);
+
+  UserAgent put(final int key, final Either<Product, Comment> value);
+
+  UserAgent putPair(final Pair<int,Either<Product, Comment>> pair);
+
+  UserAgent removeAt(final int key);
+
+  UserAgent subSequence(int start, int length);
 }

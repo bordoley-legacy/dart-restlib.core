@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of restlib.core.data.internal;
 
 // FIXME: NPE when parsing "a=" kvp
 final Parser<KeyValuePair> KVP =

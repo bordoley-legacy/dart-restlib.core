@@ -1,31 +1,14 @@
 part of restlib.core.data;
 
-final Parser<Expectation> EXPECTATION =
-  KVP.sepBy1(OWS_SEMICOLON_OWS)
-    .map((final Iterable<KeyValuePair> kvp) =>
-        new Expectation._internal(EMPTY_SEQUENCE_MULTIMAP.putAll(kvp)));
-
-class Expectation {
+abstract class Expectation implements ImmutableSequenceMultimap<String,String> {
   static final Expectation EXPECTS_100_CONTINUE = 
-      new Expectation._internal(
+      new ExpectationImpl(
           EMPTY_SEQUENCE_MULTIMAP.put("100-continue",""));
   
-  final Multimap<String, String, dynamic> expectations;
-  
-  const Expectation._internal(this.expectations);
-  
-  int get hashCode => computeHashCode([expectations]);
-  
-  bool operator==(other) {
-    if (identical(this, other)) {
-      return true;
-    } else if(other is Expectation) {
-      return this.expectations == other.expectations;
-    } else {
-      return false;
-    }
-  }
-  
-  String toString() =>
-      pairIterableToString(expectations);
+  ImmutableSequence<String> call(String key);
+  Expectation put(final String key, final String value);
+  Expectation putAll(final Iterable<Pair<String, String>> other);
+  Expectation putAllFromMap(Map<String, String> map);
+  Expectation putPair(Pair<String, String> pair);
+  Expectation removeAt(final String key);
 }
