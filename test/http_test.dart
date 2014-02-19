@@ -7,6 +7,9 @@ import "package:restlib_testing/testing.dart";
 import "package:unittest/unittest.dart";
 
 import "package:restlib_core/data.dart";
+
+// FIXME: should not import this.
+import "package:restlib_core/data.internal.dart";
 import "package:restlib_core/http.dart";
 import "package:restlib_core/data.media_ranges.dart";
 import "package:restlib_core/net.dart";
