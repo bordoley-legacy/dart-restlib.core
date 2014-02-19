@@ -5,6 +5,9 @@ import "package:restlib_common/collections.immutable.dart";
 import "package:restlib_testing/testing.dart";
 
 import "package:restlib_core/data.dart";
+
+// FIXME: Really shouldn't need to test with data.internal
+import "package:restlib_core/data.internal.dart";
 import "package:restlib_core/data.media_ranges.dart";
 import "package:unittest/unittest.dart";
 
