@@ -2,7 +2,7 @@ part of restlib.core.data;
 
 abstract class CookieMultimap implements ImmutableSetMultimap<String, String> {
   static final  CookieMultimap EMPTY = new CookieMultimapImpl.empty();
-  
+
   CookieMultimap put(final String key, final String value);
   CookieMultimap putAll(final Iterable<Pair<String, String>> other);
   CookieMultimap putAllFromMap(final Map<String, String> map);
@@ -15,6 +15,9 @@ abstract class Cookie implements Pair<String, String> {
 }
 
 abstract class SetCookie {
+  static SetCookie parse(final String setCookie) =>
+      SET_COOKIE.parseValue(setCookie);
+
   Cookie get cookie;
   ImmutableSet<CookieAttribute> get attributes;
 }
@@ -23,30 +26,30 @@ abstract class SetCookie {
 abstract class CookieAttribute {
   static const CookieAttribute HTTP_ONLY = const CookieExtensionAttributeImpl("HttpOnly");
   static const CookieAttribute SECURE = const CookieExtensionAttributeImpl("Secure");
-  
+
   factory CookieAttribute.expiresOn(final DateTime date) =>
       new CookieExpiresAttributeImpl(checkNotNull(date));
-  
+
   factory CookieAttribute.extension(final String value) {
     checkNotNull(value);
-    checkArgument(!value.startsWith("Expires=") || 
+    checkArgument(!value.startsWith("Expires=") ||
         !value.startsWith("Max-Age=") ||
         !value.startsWith("Domain=") ||
         !value.startsWith("Path=") ||
         value != "Secure" ||
         value !="HttpOnly");
-    
+
     checkArgument(EXTENSION_VALUE.matchesAllOf(value));
-    
+
     return new CookieExtensionAttributeImpl(value);
   }
-  
+
   factory CookieAttribute.maxAge(final int maxAge) =>
       new CookieMaxAgeAttributeImpl(checkNotNull(maxAge));
-  
+
   factory CookieAttribute.domain(final DomainName domain) =>
       new CookieDomainAttributeImpl(checkNotNull(domain));
-  
+
   factory CookieAttribute.path(final Path path) =>
       new CookiePathAttributeImpl(checkNotNull(path));
 }
