@@ -2,8 +2,7 @@ part of restlib.core.data;
 
 
 abstract class ChallengeMessage {
-  static ChallengeMessage parse(final String challengeMessage) =>
-      CHALLENGE_MESSAGE.parseValue(challengeMessage);
+  static final Parser<ChallengeMessage> parser = CHALLENGE_MESSAGE;
 
   String get scheme;
 }

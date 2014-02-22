@@ -5,8 +5,7 @@ abstract class MediaRange implements Matcheable<MediaRange> {
   static const MediaRange APPLICATION_ANY = const MediaRangeImpl.constant("application", "*");
   static const MediaRange TEXT_ANY = const MediaRangeImpl.constant("text", "*");
 
-  static MediaRange parse(final String mediaRange) =>
-      MEDIA_RANGE.parseValue(mediaRange);
+  static final Parser<MediaRange> parser = MEDIA_RANGE;
 
   factory MediaRange(final String type, final String subtype, {final Charset charset, Multimap<String,String, dynamic> parameters}) {
     checkArgument(TOKEN.parse(type).isNotEmpty);

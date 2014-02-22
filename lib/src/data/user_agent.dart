@@ -3,8 +3,7 @@ part of restlib.core.data;
 abstract class UserAgent implements ImmutableSequence<Either<Product, Comment>> {
   static final UserAgent EMPTY = new UserAgentImpl(EMPTY_SEQUENCE);
 
-  static UserAgent parse(final String userAgent) =>
-      USER_AGENT.parseValue(userAgent);
+  static Parser<UserAgent> parser = USER_AGENT;
 
   UserAgent add(Either<Product, Comment> value);
 

@@ -15,8 +15,7 @@ abstract class Cookie implements Pair<String, String> {
 }
 
 abstract class SetCookie {
-  static SetCookie parse(final String setCookie) =>
-      SET_COOKIE.parseValue(setCookie);
+  static final Parser<SetCookie> parser = SET_COOKIE;
 
   Cookie get cookie;
   ImmutableSet<CookieAttribute> get attributes;
