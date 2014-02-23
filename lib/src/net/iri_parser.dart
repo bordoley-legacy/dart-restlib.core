@@ -1,7 +1,7 @@
 part of restlib.core.net;
 
-final Parser<IRI> IRI_ = _iriParser(
-    I_AUTHORITY,
+final Parser<IRI> _IRI_ = _iriParser(
+    _I_AUTHORITY,
     _I_PATH,
     _I_QUERY,
     _I_FRAGMENT,

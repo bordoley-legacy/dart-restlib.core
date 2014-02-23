@@ -5,7 +5,7 @@ final Parser<int> _WARN_CODE =
     .map((final Iterable e) =>
       e.elementAt(0) * 100 + e.elementAt(1)*10 + e.elementAt(2));
 
-final Parser<Authority> _HOST_PORT = AUTHORITY.map((final Authority authority) =>
+final Parser<Authority> _HOST_PORT = Authority.parser.map((final Authority authority) =>
     (authority.userInfo.isNotEmpty) ? null : authority);
 
 final Parser<Either<Authority, String>> _WARN_AGENT = (_HOST_PORT ^ TOKEN);
@@ -21,7 +21,7 @@ final Parser<Option<DateTime>> _SP_WARN_DATE =
 
 final Parser<Warning> WARNING =
   (_WARN_CODE + SP + _WARN_AGENT + SP + QUOTED_STRING + _SP_WARN_DATE)
-    .map((final Iterable e) => 
+    .map((final Iterable e) =>
         new WarningImpl(e.elementAt(0), e.elementAt(2), e.elementAt(4), e.elementAt(5)));
 
 class WarningImpl implements Warning {
@@ -29,12 +29,12 @@ class WarningImpl implements Warning {
   final int warnCode;
   final Option<DateTime> warnDate;
   final String warnText;
-  
+
   const WarningImpl(this.warnCode, this.warnAgent, this.warnText, this.warnDate);
-  
-  int get hashCode => 
+
+  int get hashCode =>
       computeHashCode([warnAgent, warnCode, warnDate, warnText]);
-  
+
   bool operator==(final other) {
     if (identical(this, other)) {
       return true;
@@ -47,7 +47,7 @@ class WarningImpl implements Warning {
       return true;
     }
   }
-  
+
   String toString() =>
       "$warnCode $warnAgent ${encodeQuotedString(warnText)}${warnDate.map(toHttpDate).orElse("")}";
 }

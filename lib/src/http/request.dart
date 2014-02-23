@@ -2,7 +2,7 @@ part of restlib.core.http;
 
 String _requestToString(final Request request) {
   final String requestLine = "${request.method} ${request.uri.path}${request.uri.query.isEmpty ? "" : "?${request.uri.query}"}""\r\n";
-    
+
   final StringBuffer buffer = (new StringBuffer()
     ..write(requestLine)
     ..write(Header.HOST.write(request.uri.authority.value))
@@ -17,18 +17,18 @@ String _requestToString(final Request request) {
     ..write(Header.PROXY_AUTHORIZATION.write(request.proxyAuthorizationCredentials))
     ..write(Header.REFERER.write(request.referer))
     ..write(Header.USER_AGENT.write(request.userAgent)));
-    
+
   request.customHeaders.forEach((final Pair<Header, dynamic> pair) =>
       buffer.write(pair.fst.write(pair.snd)));
-  
-  buffer.write(request.entity.map((final entity) => 
+
+  buffer.write(request.entity.map((final entity) =>
       "\r\n\r\n${entity.toString()}\r\n").orElse(""));
-    
+
   return buffer.toString();
-} 
+}
 
 Request _requestWith(
-    final Request delegate, 
+    final Request delegate,
     final ChallengeMessage authorizationCredentials,
     final Iterable<CacheDirective> cacheDirectives,
     final ContentInfo contentInfo,
@@ -56,12 +56,12 @@ Request _requestWith(
       isNull(preconditions) &&
       isNull(preferences) &&
       isNull(proxyAuthorizationCredentials) &&
-      isNull(referer) && 
+      isNull(referer) &&
       isNull(uri) &&
       isNull(userAgent)) {
     return delegate;
   }
-  
+
   return new _RequestImpl(
       computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
       EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
@@ -99,7 +99,7 @@ Request _requestWithout(
           !authorizationCredentials ? delegate.authorizationCredentials : Option.NONE,
           !cacheDirectives ? EMPTY_SET.addAll(delegate.cacheDirectives) : EMPTY_SET,
           !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
-          !cookies ? CookieMultimap.EMPTY.putAll(delegate.cookies) : EMPTY_SET,   
+          !cookies ? CookieMultimap.EMPTY.putAll(delegate.cookies) : EMPTY_SET,
           !customHeaders ? EMPTY_DICTIONARY.putAll(delegate.customHeaders) : EMPTY_DICTIONARY,
           !entity ? delegate.entity : Option.NONE,
           !expectations? EMPTY_SET.addAll(delegate.expectations) : EMPTY_SET,
@@ -112,7 +112,7 @@ Request _requestWithout(
           delegate.uri,
           !userAgent ? delegate.userAgent : Option.NONE);
 
-abstract class Request<T> {  
+abstract class Request<T> {
   factory Request(final Method method, final uri, {
     final ChallengeMessage authorizationCredentials,
     final Iterable<CacheDirective> cacheDirectives,
@@ -122,10 +122,10 @@ abstract class Request<T> {
     final T entity,
     final Iterable<Expectation> expectations,
     final Iterable<CacheDirective> pragmaCacheDirectives,
-    final RequestPreconditions preconditions,    
+    final RequestPreconditions preconditions,
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
-    final URI referer,    
+    final URI referer,
     final UserAgent userAgent}) =>
         new _RequestImpl(
             new Option(authorizationCredentials),
@@ -143,42 +143,42 @@ abstract class Request<T> {
             new Option(referer),
             uri,
             new Option(userAgent));
-  
+
   factory Request.wrapHeaders(final Method method, final URI uri, final Multimap<Header, String, dynamic> headers) =>
       new _HeadersRequestWrapper(headers, method, uri);
-  
+
   Option<ChallengeMessage> get authorizationCredentials;
-  
+
   FiniteSet<CacheDirective> get cacheDirectives;
-  
+
   ContentInfo get contentInfo;
-  
+
   CookieMultimap get cookies;
-  
+
   Dictionary<Header, dynamic> get customHeaders;
-  
+
   Option<T> get entity;
-  
+
   FiniteSet<Expectation> get expectations;
 
   Method get method;
-  
+
   FiniteSet<CacheDirective> get pragmaCacheDirectives;
-  
+
   RequestPreconditions get preconditions;
-  
+
   RequestPreferences get preferences;
-  
+
   Option<ChallengeMessage> get proxyAuthorizationCredentials;
-  
+
   Option<URI> get referer;
-  
+
   URI get uri;
-  
+
   Option<UserAgent> get userAgent;
-  
+
   String toString();
-  
+
   Request with_({
     ChallengeMessage authorizationCredentials,
     Iterable<CacheDirective> cacheDirectives,
@@ -195,7 +195,7 @@ abstract class Request<T> {
     URI referer,
     URI uri,
     UserAgent userAgent});
-  
+
   Request without({
     bool authorizationCredentials : false,
     bool cacheDirectives : false,
@@ -214,52 +214,52 @@ abstract class Request<T> {
 abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
   Option<ChallengeMessage> get authorizationCredentials =>
       delegate.authorizationCredentials;
-  
+
   FiniteSet<CacheDirective> get cacheDirectives =>
       delegate.cacheDirectives;
-  
+
   ContentInfo get contentInfo =>
       delegate.contentInfo;
-  
+
   CookieMultimap get cookies =>
       delegate.cookies;
-  
+
   Dictionary<Header, dynamic> get customHeaders =>
       delegate.customHeaders;
-  
+
   Option<T> get entity =>
       delegate.entity;
-  
+
   FiniteSet<Expectation> get expectations =>
       delegate.expectations;
-  
+
   Method get method =>
       delegate.method;
-  
+
   FiniteSet<CacheDirective> get pragmaCacheDirectives =>
       delegate.pragmaCacheDirectives;
-  
+
   RequestPreconditions get preconditions =>
       delegate.preconditions;
-  
+
   RequestPreferences get preferences =>
       delegate.preferences;
-  
+
   Option<ChallengeMessage> get proxyAuthorizationCredentials =>
       delegate.proxyAuthorizationCredentials;
-  
+
   Option<URI> get referer =>
       delegate.referer;
-  
+
   URI get uri =>
       delegate.uri;
-  
+
   Option<UserAgent> get userAgent =>
       delegate.userAgent;
-  
+
   String toString() =>
       _requestToString(this);
-  
+
   Request with_({
     final ChallengeMessage authorizationCredentials,
     final Iterable<CacheDirective> cacheDirectives,
@@ -279,7 +279,7 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
         _requestWith(
             this,
             authorizationCredentials,
-            cacheDirectives, 
+            cacheDirectives,
             contentInfo,
             cookies,
             customHeaders,
@@ -287,13 +287,13 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
             expectations,
             method,
             pragmaCacheDirectives,
-            preconditions, 
+            preconditions,
             preferences,
             proxyAuthorizationCredentials,
-            referer, 
+            referer,
             uri,
             userAgent);
-  
+
   Request without({
     final bool authorizationCredentials : false,
     final bool cacheDirectives : false,
@@ -311,24 +311,24 @@ abstract class ForwardingRequest<T> implements Forwarder, Request<T> {
         _requestWithout(
             this,
             authorizationCredentials,
-            cacheDirectives, 
+            cacheDirectives,
             contentInfo,
             cookies,
             customHeaders,
             entity,
             expectations,
             pragmaCacheDirectives,
-            preconditions, 
+            preconditions,
             preferences,
             proxyAuthorizationCredentials,
-            referer, 
+            referer,
             userAgent);
 }
 
 abstract class _RequestMixin<T> implements Request<T> {
   String toString() =>
       _requestToString(this);
-  
+
   Request with_({
     final ChallengeMessage authorizationCredentials,
     final Iterable<CacheDirective> cacheDirectives,
@@ -348,7 +348,7 @@ abstract class _RequestMixin<T> implements Request<T> {
         _requestWith(
             this,
             authorizationCredentials,
-            cacheDirectives, 
+            cacheDirectives,
             contentInfo,
             cookies,
             customHeaders,
@@ -356,13 +356,13 @@ abstract class _RequestMixin<T> implements Request<T> {
             expectations,
             method,
             pragmaCacheDirectives,
-            preconditions, 
+            preconditions,
             preferences,
             proxyAuthorizationCredentials,
-            referer, 
+            referer,
             uri,
             userAgent);
-  
+
   Request without({
     final bool authorizationCredentials : false,
     final bool cacheDirectives : false,
@@ -380,22 +380,22 @@ abstract class _RequestMixin<T> implements Request<T> {
         _requestWithout(
             this,
             authorizationCredentials,
-            cacheDirectives, 
+            cacheDirectives,
             contentInfo,
             cookies,
             customHeaders,
             entity,
             expectations,
             pragmaCacheDirectives,
-            preconditions, 
+            preconditions,
             preferences,
             proxyAuthorizationCredentials,
-            referer, 
+            referer,
             userAgent);
 }
 
-class _RequestImpl<T> 
-    extends Object 
+class _RequestImpl<T>
+    extends Object
     with _RequestMixin
     implements Request {
   final Option<ChallengeMessage> authorizationCredentials;
@@ -413,7 +413,7 @@ class _RequestImpl<T>
   final Option<URI> referer;
   final URI uri;
   final Option<UserAgent> userAgent;
-  
+
   _RequestImpl(
     this.authorizationCredentials,
     this.cacheDirectives,
@@ -429,11 +429,11 @@ class _RequestImpl<T>
     this.proxyAuthorizationCredentials,
     this.referer,
     this.uri,
-    this.userAgent);    
+    this.userAgent);
 }
-    
+
 class _HeadersRequestWrapper
-    extends Object 
+    extends Object
     with _RequestMixin,
       _Parseable
     implements Request {
@@ -461,75 +461,75 @@ class _HeadersRequestWrapper
         _authorizationCredentials = _parse(CHALLENGE_MESSAGE, Header.AUTHORIZATION);
         return _authorizationCredentials;
       });
-  
+
   ImmutableSet<CacheDirective> get cacheDirectives =>
       computeIfNull(_cacheDirectives, () {
-        _cacheDirectives = 
+        _cacheDirectives =
             _parse(_CACHE_CONTROL, Header.CACHE_CONTROL)
               .map((final Iterable<CacheDirective> cacheDirectives) =>
                   EMPTY_SET.addAll(cacheDirectives))
               .orElse(EMPTY_SET);
-            
+
         return _cacheDirectives;
       });
-  
+
   ContentInfo get contentInfo =>
       computeIfNull(_contentInfo, () {
         _contentInfo = new ContentInfo.wrapHeaders(_headers);
         return _contentInfo;
       });
-  
+
   CookieMultimap get cookies =>
       computeIfNull(_cookies, () {
-        _cookies = _parse(_COOKIE, Header.COOKIE).orElse(CookieMultimap.EMPTY);    
+        _cookies = _parse(_COOKIE, Header.COOKIE).orElse(CookieMultimap.EMPTY);
         return _cookies;
       });
-  
+
   Dictionary<Header, dynamic> get customHeaders =>
       computeIfNull(_customHeaders, () {
-        _customHeaders = 
+        _customHeaders =
             _headers.dictionary
-              .filterKeys((final Header header) => 
+              .filterKeys((final Header header) =>
                   !Header._standard.contains(header))
-              .mapValues((final Sequence<String> values) => 
+              .mapValues((final Sequence<String> values) =>
                 // FIXME: Verify this is correct.
                 values.join(","));
         return _customHeaders;
       });
-  
+
   ImmutableSet<Expectation> get expectations =>
       computeIfNull(_expectations, () {
-        _expectations = 
+        _expectations =
             _parse(_EXPECT, Header.EXPECT)
               .map((final Iterable<Expectation> expectations) =>
                   EMPTY_SET.addAll(expectations))
               .orElse(EMPTY_SET);
-            
+
         return _expectations;
       });
-  
+
   ImmutableSet<CacheDirective> get pragmaCacheDirectives =>
       computeIfNull(_pragmaCacheDirectives, () {
-        _pragmaCacheDirectives = 
+        _pragmaCacheDirectives =
             _parse(_PRAGMA, Header.PRAGMA)
               .map((final Iterable<CacheDirective> pragmaCacheDirectives) =>
                   EMPTY_SET.addAll(pragmaCacheDirectives))
               .orElse(EMPTY_SET);
         return _pragmaCacheDirectives;
       });
-  
+
   RequestPreconditions get preconditions =>
       computeIfNull(_preconditions, () {
         _preconditions = new RequestPreconditions.wrapHeaders(_headers);
         return _preconditions;
       });
-  
+
   RequestPreferences get preferences =>
       computeIfNull(_preferences, () {
         _preferences = new RequestPreferences.wrapHeaders(_headers);
         return _preferences;
       });
-  
+
   Option<ChallengeMessage> get proxyAuthorizationCredentials =>
       computeIfNull(_proxyAuthorizationCredentials, () {
         _proxyAuthorizationCredentials = _parse(CHALLENGE_MESSAGE, Header.PROXY_AUTHORIZATION);
@@ -539,18 +539,18 @@ class _HeadersRequestWrapper
   Option<URI> get referer =>
       computeIfNull(_referer, () {
         _referer = firstWhere(_headers[Header.REFERER], (final String uri) => true)
-            .flatMap(URI_.parse);
+            .flatMap(URI.parser.parse);
         return _referer;
       });
-  
+
   Option<UserAgent> get userAgent =>
       computeIfNull(_userAgent, () {
         _userAgent = _parse(USER_AGENT, Header.USER_AGENT);
-        return _userAgent;    
+        return _userAgent;
       });
 }
 
-Request requestMethodOverride(final Request request) {  
+Request requestMethodOverride(final Request request) {
   Request updateMethod(final Header header) =>
       TOKEN.parse(request.customHeaders(header).value)
         .map((final String token) {
@@ -563,7 +563,7 @@ Request requestMethodOverride(final Request request) {
                 .removeAt(Header.X_METHOD_OVERRIDE);
           return request.with_(method: method, customHeaders : customHeaders);
         }).orElse(request);
-  
+
   if (request.method != Method.POST) {
     return request;
   } else if (request.customHeaders.containsKey(Header.X_HTTP_METHOD)) {
