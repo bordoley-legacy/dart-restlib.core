@@ -18,7 +18,7 @@ preferenceTests() {
          new Preference("a", qualityFactor: 500, parameters: EMPTY_SEQUENCE_MULTIMAP.put("a", "b"))])           
     ..executeTestCase();
   
-  Parser prefParser = Preference.parser(CHARSET);
+  Parser prefParser = Preference._parser(CHARSET);
   
   doTestParse(String testCase, var expectedValue, int expectedQualityFactor, SequenceMultimap expectedParameters) =>
     test("test parsing $testCase",() {

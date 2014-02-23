@@ -1,13 +1,13 @@
 part of restlib.core.http;
 
-final Parser<Preference/*<Charset>*/> _CHARSET_PREFERENCE_PARSER = Preference.parser(CHARSET);
+final Parser<Preference/*<Charset>*/> _CHARSET_PREFERENCE_PARSER = _preferenceParser(CHARSET);
 
-final Parser<Preference/*<ContentEncoding>*/> _CONTENT_ENCODING_PREFERENCE_PARSER = Preference.parser(CONTENT_ENCODING);
+final Parser<Preference/*<ContentEncoding>*/> _CONTENT_ENCODING_PREFERENCE_PARSER = _preferenceParser(CONTENT_ENCODING);
 
-final Parser<Preference/*<Language>*/> _LANGUAGE_PREFERENCE_PARSER = Preference.parser(LANGUAGE);
+final Parser<Preference/*<Language>*/> _LANGUAGE_PREFERENCE_PARSER = _preferenceParser(LANGUAGE);
 
-final Parser<Preference/*<MediaRange>*/> _MEDIA_RANGE_PREFERENCE = Preference.parser(MEDIA_RANGE);
-    
+final Parser<Preference/*<MediaRange>*/> _MEDIA_RANGE_PREFERENCE = _preferenceParser(MEDIA_RANGE);
+
 final Parser<Iterable<Preference/*<MediaRange>*/>> _ACCEPT = _MEDIA_RANGE_PREFERENCE.sepBy1(OWS_COMMA_OWS);
 
 final Parser<Iterable<Preference/*<Charset>*/>> _ACCEPT_CHARSET = _CHARSET_PREFERENCE_PARSER.sepBy1(OWS_COMMA_OWS);
@@ -24,7 +24,7 @@ final Parser<Iterable<ContentEncoding>> _CONTENT_ENCODING_HEADER = CONTENT_ENCOD
 
 final Parser<Iterable<Language>> _CONTENT_LANGUAGE = LANGUAGE.sepBy(OWS_COMMA_OWS);
 
-final Parser<CookieMultimap> _COOKIE = 
+final Parser<CookieMultimap> _COOKIE =
   COOKIE_PAIR.sepBy(SEMICOLON + SP).map((final Iterable<Cookie> cookies) =>
       CookieMultimap.EMPTY.putAll(cookies));
 
