@@ -1,7 +1,7 @@
 part of restlib.core.data;
 
 abstract class CookieMultimap implements ImmutableSetMultimap<String, String> {
-  static final  CookieMultimap EMPTY = new CookieMultimapImpl.empty();
+  static final CookieMultimap EMPTY = new CookieMultimapImpl.empty();
 
   CookieMultimap put(final String key, final String value);
   CookieMultimap putAll(final Iterable<Pair<String, String>> other);
@@ -12,6 +12,7 @@ abstract class CookieMultimap implements ImmutableSetMultimap<String, String> {
 
 // cookie-pair
 abstract class Cookie implements Pair<String, String> {
+  static final Parser<Cookie> parser = COOKIE_PAIR;
 }
 
 abstract class SetCookie {

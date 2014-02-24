@@ -12,7 +12,7 @@ import "package:restlib_common/preconditions.dart";
 import "package:restlib_parsing/parsing.dart";
 
 import "data.dart";
-import "http_syntax.dart";
+import "http.internal.dart";
 import "net.dart";
 
 part "src/data/internal/cache_directive_impl.dart";

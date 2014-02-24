@@ -1,34 +1,34 @@
 part of restlib.core.http;
 
 String _responseToString(final Response response) {
-    final StringBuffer buffer = 
+    final StringBuffer buffer =
         (new StringBuffer()
           ..write("${response.status}\r\n")
-          ..write(Header.ACCEPT_RANGES.write(response.acceptedRangeUnits))
-          ..write(Header.AGE.write(response.age))
-          ..write(Header.ALLOW.write(response.allowedMethods))
-          ..write(Header.WWW_AUTHENTICATE.write(response.authenticationChallenges))
-          ..write(Header.CACHE_CONTROL.write(response.cacheDirectives))
+          ..write(_headerLine(ACCEPT_RANGES, response.acceptedRangeUnits))
+          ..write(_headerLine(AGE, response.age))
+          ..write(_headerLine(ALLOW, response.allowedMethods))
+          ..write(_headerLine(WWW_AUTHENTICATE, response.authenticationChallenges))
+          ..write(_headerLine(CACHE_CONTROL, response.cacheDirectives))
           ..write(response.contentInfo)
-          ..write(Header.DATE.write(response.date))
-          ..write(Header.ENTITY_TAG.write(response.entityTag))
-          ..write(Header.EXPIRES.write(response.expires))
-          ..write(Header.LAST_MODIFIED.write(response.lastModified))
-          ..write(Header.LOCATION.write(response.location))
-          ..write(Header.PROXY_AUTHENTICATE.write(response.proxyAuthenticationChallenges))
-          ..write(Header.RETRY_AFTER.write(response.retryAfter))
-          ..write(Header.SERVER.write(response.server))
-          ..write(response.setCookies.map(Header.SET_COOKIE.write).join())
-          ..write(Header.VARY.write(response.vary)));
-   
+          ..write(_headerLine(DATE, response.date))
+          ..write(_headerLine(ENTITY_TAG, response.entityTag))
+          ..write(_headerLine(EXPIRES, response.expires))
+          ..write(_headerLine(LAST_MODIFIED, response.lastModified))
+          ..write(_headerLine(LOCATION, response.location))
+          ..write(_headerLine(PROXY_AUTHENTICATE, response.proxyAuthenticationChallenges))
+          ..write(_headerLine(RETRY_AFTER, response.retryAfter))
+          ..write(_headerLine(SERVER, response.server))
+          ..write(response.setCookies.map((final SetCookie setCookie) => _headerLine(SET_COOKIE, setCookie)).join())
+          ..write(_headerLine(VARY, response.vary)));
+
   response.customHeaders.forEach((final Pair<Header, dynamic> header) =>
-      buffer.write(header.fst.write(header.snd)));      
-  
-  buffer.write(response.entity.map((final entity) => 
+      buffer.write(_headerLine(header.fst, header.snd)));
+
+  buffer.write(response.entity.map((final entity) =>
       "\r\n\r\n${entity.toString()}\r\n").orElse(""));
-    
+
   return buffer.toString();
-}   
+}
 
 Response _responseWith(
   final Response delegate,
@@ -52,7 +52,7 @@ Response _responseWith(
   final Status status,
   final Iterable<Header> vary,
   final Iterable<Warning> warnings) {
- 
+
   if(isNull(acceptedRangeUnits) &&
       isNull(age) &&
       isNull(allowedMethods) &&
@@ -75,7 +75,7 @@ Response _responseWith(
       isNull(warnings)) {
     return delegate;
   }
-  
+
   return new _ResponseImpl(
       EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, delegate.acceptedRangeUnits)),
       computeIfEmpty(new Option(age), () => delegate.age),
@@ -90,7 +90,7 @@ Response _responseWith(
       computeIfEmpty(new Option(expires), () => delegate.expires),
       computeIfEmpty(new Option(lastModified), () => delegate.lastModified),
       computeIfEmpty(new Option(location), () => delegate.location),
-      EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, delegate.proxyAuthenticationChallenges)),   
+      EMPTY_SET.addAll(firstNotNull(proxyAuthenticationChallenges, delegate.proxyAuthenticationChallenges)),
       computeIfEmpty(new Option(retryAfter), () => delegate.retryAfter),
       computeIfEmpty(new Option(server), () => delegate.server),
       EMPTY_SET.addAll(firstNotNull(setCookies, delegate.setCookies)),
@@ -122,7 +122,7 @@ Response _responseWithout(
   final bool warnings) =>
       new _ResponseImpl(
           !acceptedRangeUnits ? EMPTY_SET.addAll(delegate.acceptedRangeUnits) : EMPTY_SET,
-          !age ? delegate.age : Option.NONE, 
+          !age ? delegate.age : Option.NONE,
           !allowedMethods ? EMPTY_SET.addAll(delegate.allowedMethods) : EMPTY_SET,
           !authenticationChallenges ? EMPTY_SET.addAll(delegate.authenticationChallenges) : EMPTY_SET,
           !cacheDirectives ? EMPTY_SET.addAll(delegate.authenticationChallenges) : EMPTY_SET,
@@ -133,16 +133,16 @@ Response _responseWithout(
           !entityTag ? delegate.entityTag : Option.NONE,
           !expires ? delegate.expires : Option.NONE,
           !lastModified ? delegate.lastModified : Option.NONE,
-          !location ? delegate.location : Option.NONE,    
+          !location ? delegate.location : Option.NONE,
           !proxyAuthenticationChallenges ? EMPTY_SET.addAll(delegate.proxyAuthenticationChallenges) : EMPTY_SET,
           !retryAfter ? delegate.retryAfter : Option.NONE,
           !server ? delegate.server : Option.NONE,
-          !setCookies ? EMPTY_SET.addAll(delegate.setCookies) : EMPTY_SET,    
+          !setCookies ? EMPTY_SET.addAll(delegate.setCookies) : EMPTY_SET,
           delegate.status,
           !vary ? EMPTY_SET.addAll(delegate.vary) : EMPTY_SET,
           !warnings ? EMPTY_SEQUENCE.addAll(delegate.warnings) :  EMPTY_SEQUENCE);
-          
-abstract class Response<T> {  
+
+abstract class Response<T> {
   factory Response(
     final Status status, {
     final Iterable<RangeUnit> acceptedRangeUnits,
@@ -160,7 +160,7 @@ abstract class Response<T> {
     final URI location,
     final Iterable<ChallengeMessage> proxyAuthenticationChallenges,
     final DateTime retryAfter,
-    final UserAgent server, 
+    final UserAgent server,
     final Iterable<SetCookie> setCookies,
     final Iterable<Header> vary,
     final Iterable<Warning> warnings}) =>
@@ -185,49 +185,49 @@ abstract class Response<T> {
             status,
             EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
             EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
-    
+
   FiniteSet<RangeUnit> get acceptedRangeUnits;
-  
+
   Option<int> get age;
-  
+
   FiniteSet<Method> get allowedMethods;
-  
+
   FiniteSet<ChallengeMessage> get authenticationChallenges;
-  
+
   FiniteSet<CacheDirective> get cacheDirectives;
-  
+
   ContentInfo get contentInfo;
-  
+
   Dictionary<Header, dynamic> get customHeaders;
-  
+
   Option<DateTime> get date;
-  
+
   Option<T> get entity;
-  
+
   Option<EntityTag> get entityTag;
-  
+
   Option<DateTime> get expires;
-  
+
   Option<DateTime> get lastModified;
-  
+
   Option<URI> get location;
-  
+
   FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges;
-  
+
   Option<DateTime> get retryAfter;
-  
+
   Option<UserAgent> get server;
-  
+
   FiniteSet<SetCookie> get setCookies;
-  
+
   Status get status;
-  
+
   FiniteSet<Header> get vary;
-  
+
   Sequence<Warning> get warnings;
-  
+
   String toString();
-  
+
   Response with_({
     Iterable<RangeUnit> acceptedRangeUnits,
     int age,
@@ -249,7 +249,7 @@ abstract class Response<T> {
     Status status,
     Iterable<Header> vary,
     Iterable<Warning> warnings});
-  
+
   Response without({
     bool acceptedRangeUnits : false,
     bool age : false,
@@ -275,64 +275,64 @@ abstract class Response<T> {
 abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
   FiniteSet<RangeUnit> get acceptedRangeUnits =>
       delegate.acceptedRangeUnits;
-  
+
   Option<int> get age =>
       delegate.age;
-  
+
   FiniteSet<Method> get allowedMethods =>
       delegate.allowedMethods;
-  
+
   FiniteSet<ChallengeMessage> get authenticationChallenges =>
       delegate.authenticationChallenges;
-  
+
   FiniteSet<CacheDirective> get cacheDirectives =>
       delegate.cacheDirectives;
-  
+
   ContentInfo get contentInfo =>
       delegate.contentInfo;
-  
+
   Option<DateTime> get date =>
       delegate.date;
-  
+
   Option<T> get entity =>
       delegate.entity;
-  
+
   Option<EntityTag> get entityTag =>
       delegate.entityTag;
-  
+
   Option<DateTime> get expires =>
       delegate.expires;
-  
+
   Option<DateTime> get lastModified =>
       delegate.lastModified;
-  
+
   Option<URI> get location =>
       delegate.location;
-  
+
   FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges =>
       delegate.proxyAuthenticationChallenges;
-  
+
   Option<DateTime> get retryAfter =>
       delegate.retryAfter;
-  
+
   Option<UserAgent> get server =>
       delegate.server;
-  
+
   FiniteSet<SetCookie> get setCookies =>
       delegate.setCookies;
-  
+
   Status get status =>
       delegate.status;
-  
+
   FiniteSet<Header> get vary =>
       delegate.vary;
-  
+
   Sequence<Warning> get warnings =>
       delegate.warnings;
-  
+
   String toString() =>
       _responseToString(this);
-  
+
   Response with_({
     final Iterable<RangeUnit> acceptedRangeUnits,
     final int age,
@@ -355,13 +355,13 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
     final Iterable<Header> vary,
     final Iterable<Warning> warnings}) =>
         _responseWith(
-            this, 
-            acceptedRangeUnits, 
-            age, 
-            allowedMethods, 
-            authenticationChallenges, 
-            cacheDirectives, 
-            contentInfo, 
+            this,
+            acceptedRangeUnits,
+            age,
+            allowedMethods,
+            authenticationChallenges,
+            cacheDirectives,
+            contentInfo,
             customHeaders,
             date,
             entity,
@@ -376,7 +376,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
             status,
             vary,
             warnings);
-  
+
   Response without({
     final bool acceptedRangeUnits : false,
     final bool age : false,
@@ -398,13 +398,13 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
     final bool vary : false,
     final bool warnings : false}) =>
         _responseWithout(
-            this, 
-            acceptedRangeUnits, 
-            age, 
-            allowedMethods, 
-            authenticationChallenges, 
-            cacheDirectives, 
-            contentInfo, 
+            this,
+            acceptedRangeUnits,
+            age,
+            allowedMethods,
+            authenticationChallenges,
+            cacheDirectives,
+            contentInfo,
             customHeaders,
             date,
             entity,
@@ -423,7 +423,7 @@ abstract class ForwardingResponse<T> implements Forwarder, Response<T> {
 abstract class _ResponseMixin<T> implements Response<T> {
   String toString() =>
       _responseToString(this);
-  
+
   Response with_({
     final Iterable<RangeUnit> acceptedRangeUnits,
     final int age,
@@ -446,13 +446,13 @@ abstract class _ResponseMixin<T> implements Response<T> {
     final Iterable<Header> vary,
     final Iterable<Warning> warnings}) =>
         _responseWith(
-            this, 
-            acceptedRangeUnits, 
-            age, 
-            allowedMethods, 
-            authenticationChallenges, 
-            cacheDirectives, 
-            contentInfo, 
+            this,
+            acceptedRangeUnits,
+            age,
+            allowedMethods,
+            authenticationChallenges,
+            cacheDirectives,
+            contentInfo,
             customHeaders,
             date,
             entity,
@@ -467,7 +467,7 @@ abstract class _ResponseMixin<T> implements Response<T> {
             status,
             vary,
             warnings);
-  
+
   Response without({
     final bool acceptedRangeUnits : false,
     final bool age : false,
@@ -489,13 +489,13 @@ abstract class _ResponseMixin<T> implements Response<T> {
     final bool vary : false,
     final bool warnings : false}) =>
         _responseWithout(
-            this, 
-            acceptedRangeUnits, 
-            age, 
-            allowedMethods, 
-            authenticationChallenges, 
-            cacheDirectives, 
-            contentInfo, 
+            this,
+            acceptedRangeUnits,
+            age,
+            allowedMethods,
+            authenticationChallenges,
+            cacheDirectives,
+            contentInfo,
             customHeaders,
             date,
             entity,
@@ -511,8 +511,8 @@ abstract class _ResponseMixin<T> implements Response<T> {
             warnings);
 }
 
-class _ResponseImpl<T> 
-    extends Object 
+class _ResponseImpl<T>
+    extends Object
     with _ResponseMixin<T>
     implements Response<T> {
   final ImmutableSet<RangeUnit> acceptedRangeUnits;

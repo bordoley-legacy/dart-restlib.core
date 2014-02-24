@@ -4,7 +4,7 @@ void requestTests() {
   group("factory:wrapHeaders()", () {
     test("with no headers present", () {
       final SequenceMultimap<Header, String> headers =
-          EMPTY_SEQUENCE_MULTIMAP.put(Header.HOST, "example.com");
+          EMPTY_SEQUENCE_MULTIMAP.put(HOST, "example.com");
 
       final Request request = new Request.wrapHeaders(Method.PUT, URI.parser.parse("http://example.com/test").value, headers);
 
@@ -51,7 +51,7 @@ void requestTests() {
           EMPTY_SET.addAll([new Preference(APPLICATION_ATOM_XML), new Preference(APPLICATION_JSON)]);
 
       final ChallengeMessage authorizationCredentials =
-          CHALLENGE_MESSAGE.parse("Basic dGVzdDp0ZXN0").value;
+          ChallengeMessage.parser.parseValue("Basic dGVzdDp0ZXN0");
 
       ImmutableSet<CacheDirective> cacheDirectives =
           EMPTY_SET.addAll([CacheDirective.MUST_REVALIDATE, CacheDirective.PRIVATE]);
@@ -67,7 +67,7 @@ void requestTests() {
           URI.parser.parse("https://example.com/fake/content/location").value;
 
       final MediaRange contentMediaRange =
-          MEDIA_RANGE.parse("application/json; charset=\"UTF-8\"").value;
+          MediaRange.parser.parse("application/json; charset=\"UTF-8\"").value;
 
       ContentRange contentRange;
 
@@ -77,14 +77,14 @@ void requestTests() {
       final String host = "www.example.com:8080";
 
       final ImmutableSet<EntityTag> ifMatch =
-          EMPTY_SET.addAll([ETAG.parse("\"abcd\"").value, ETAG.parse("W/\"efgh\"").value]);
+          EMPTY_SET.addAll([EntityTag.parser.parseValue("\"abcd\""), EntityTag.parser.parseValue("W/\"efgh\"")]);
 
       DateTime ifModifiedSince;
 
       final ImmutableSet<EntityTag> ifNoneMatch =
-          EMPTY_SET.addAll([ETAG.parse("\"abcd\"").value, ETAG.parse("W/\"efgh\"").value]);
+          EMPTY_SET.addAll([EntityTag.parser.parseValue("\"abcd\""), EntityTag.parser.parseValue("W/\"efgh\"")]);
 
-      final EntityTag ifRange = ETAG.parse("\"abcd\"").value;
+      final EntityTag ifRange = EntityTag.parser.parseValue("\"abcd\"");
       DateTime ifUnmodifiedSince;
 
       final Method method = Method.PUT;
@@ -100,36 +100,36 @@ void requestTests() {
 
       final URI uri = URI.parser.parse("$scheme://$host$path").value;
 
-      final UserAgent userAgent = USER_AGENT.parse("test/1.1").value;
+      final UserAgent userAgent = UserAgent.parser.parse("test/1.1").value;
 
       final Multimap<Header, String, dynamic> headers =
           EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(
-                {Header.ACCEPT : acceptedMediaRanges,
-                 Header.ACCEPT_CHARSET : acceptedCharsets,
-                 Header.ACCEPT_ENCODING : acceptedEncodings,
-                 Header.ACCEPT_LANGUAGE : acceptedLanguages,
-                 Header.ACCEPT_RANGES : "", //FIXME:
-                 Header.AUTHORIZATION : authorizationCredentials,
-                 Header.CACHE_CONTROL : cacheDirectives,
-                 Header.CONTENT_ENCODING : contenEncodings,
-                 Header.CONTENT_LANGUAGE : contentLanguages,
-                 Header.CONTENT_LENGTH  : 10,
-                 Header.CONTENT_LOCATION : contentLocation,
-                 Header.CONTENT_MD5 : "", //FIXME:
-                 Header.CONTENT_RANGE : "", //FIXME:
-                 Header.CONTENT_TYPE : contentMediaRange,
-                 Header.EXPECT : expectations,
-                 Header.FROM : "", //FIXME:
-                 Header.HOST : host,
-                 Header.IF_MATCH : ifMatch,
-                 Header.IF_MODIFIED_SINCE : "", //FIXME:
-                 Header.IF_NONE_MATCH : ifNoneMatch,
-                 Header.IF_RANGE : ifRange,
-                 Header.IF_UNMODIFIED_SINCE : "", //FIXME:
-                 Header.PRAGMA : pragmaCacheDirectives,
-                 Header.PROXY_AUTHORIZATION : authorizationCredentials,
-                 Header.REFERER : referer,
-                 Header.USER_AGENT : userAgent}).mapValues(Header.asHeaderValue);
+                {ACCEPT : acceptedMediaRanges,
+                 ACCEPT_CHARSET : acceptedCharsets,
+                 ACCEPT_ENCODING : acceptedEncodings,
+                 ACCEPT_LANGUAGE : acceptedLanguages,
+                 ACCEPT_RANGES : "", //FIXME:
+                 AUTHORIZATION : authorizationCredentials,
+                 CACHE_CONTROL : cacheDirectives,
+                 CONTENT_ENCODING : contenEncodings,
+                 CONTENT_LANGUAGE : contentLanguages,
+                 CONTENT_LENGTH  : 10,
+                 CONTENT_LOCATION : contentLocation,
+                 CONTENT_MD5 : "", //FIXME:
+                 CONTENT_RANGE : "", //FIXME:
+                 CONTENT_TYPE : contentMediaRange,
+                 EXPECT : expectations,
+                 FROM : "", //FIXME:
+                 HOST : host,
+                 IF_MATCH : ifMatch,
+                 IF_MODIFIED_SINCE : "", //FIXME:
+                 IF_NONE_MATCH : ifNoneMatch,
+                 IF_RANGE : ifRange,
+                 IF_UNMODIFIED_SINCE : "", //FIXME:
+                 PRAGMA : pragmaCacheDirectives,
+                 PROXY_AUTHORIZATION : authorizationCredentials,
+                 REFERER : referer,
+                 USER_AGENT : userAgent}).mapValues(asHeaderValue);
 
       final Request request =
           new Request.wrapHeaders(Method.PUT, uri, headers);
@@ -163,7 +163,7 @@ void requestTests() {
 
     test("with if-Range as date string", () {
       final SequenceMultimap<Header, String> headers =
-          EMPTY_SEQUENCE_MULTIMAP.putAllFromMap({Header.IF_RANGE : ""});
+          EMPTY_SEQUENCE_MULTIMAP.putAllFromMap({IF_RANGE : ""});
 
       final Request request = new Request.wrapHeaders(Method.PUT, URI.parser.parse("http://www.example.com").value, headers);
       // FIXME:

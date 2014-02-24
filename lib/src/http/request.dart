@@ -5,21 +5,21 @@ String _requestToString(final Request request) {
 
   final StringBuffer buffer = (new StringBuffer()
     ..write(requestLine)
-    ..write(Header.HOST.write(request.uri.authority.value))
-    ..write(Header.AUTHORIZATION.write(request.authorizationCredentials))
-    ..write(Header.CACHE_CONTROL.write(request.cacheDirectives))
+    ..write(_headerLine(HOST, request.uri.authority.value))
+    ..write(_headerLine(AUTHORIZATION, request.authorizationCredentials))
+    ..write(_headerLine(CACHE_CONTROL, request.cacheDirectives))
     ..write(request.contentInfo)
-    ..write(Header.COOKIE.write(request.cookies.toString()))
-    ..write(Header.EXPECT.write(request.expectations))
-    ..write(Header.PRAGMA.write(request.pragmaCacheDirectives))
+    ..write(_headerLine(COOKIE, request.cookies.toString()))
+    ..write(_headerLine(EXPECT, request.expectations))
+    ..write(_headerLine(PRAGMA, request.pragmaCacheDirectives))
     ..write(request.preconditions)
     ..write(request.preferences)
-    ..write(Header.PROXY_AUTHORIZATION.write(request.proxyAuthorizationCredentials))
-    ..write(Header.REFERER.write(request.referer))
-    ..write(Header.USER_AGENT.write(request.userAgent)));
+    ..write(_headerLine(PROXY_AUTHORIZATION, request.proxyAuthorizationCredentials))
+    ..write(_headerLine(REFERER, request.referer))
+    ..write(_headerLine(USER_AGENT, request.userAgent)));
 
   request.customHeaders.forEach((final Pair<Header, dynamic> pair) =>
-      buffer.write(pair.fst.write(pair.snd)));
+      buffer.write(_headerLine(pair.fst, pair.snd)));
 
   buffer.write(request.entity.map((final entity) =>
       "\r\n\r\n${entity.toString()}\r\n").orElse(""));
@@ -458,14 +458,14 @@ class _HeadersRequestWrapper
 
   Option<ChallengeMessage> get authorizationCredentials =>
       computeIfNull(_authorizationCredentials, () {
-        _authorizationCredentials = _parse(CHALLENGE_MESSAGE, Header.AUTHORIZATION);
+        _authorizationCredentials = _parse(ChallengeMessage.parser, AUTHORIZATION);
         return _authorizationCredentials;
       });
 
   ImmutableSet<CacheDirective> get cacheDirectives =>
       computeIfNull(_cacheDirectives, () {
         _cacheDirectives =
-            _parse(_CACHE_CONTROL, Header.CACHE_CONTROL)
+            _parse(_CACHE_CONTROL, CACHE_CONTROL)
               .map((final Iterable<CacheDirective> cacheDirectives) =>
                   EMPTY_SET.addAll(cacheDirectives))
               .orElse(EMPTY_SET);
@@ -481,7 +481,7 @@ class _HeadersRequestWrapper
 
   CookieMultimap get cookies =>
       computeIfNull(_cookies, () {
-        _cookies = _parse(_COOKIE, Header.COOKIE).orElse(CookieMultimap.EMPTY);
+        _cookies = _parse(_COOKIE, COOKIE).orElse(CookieMultimap.EMPTY);
         return _cookies;
       });
 
@@ -490,7 +490,7 @@ class _HeadersRequestWrapper
         _customHeaders =
             _headers.dictionary
               .filterKeys((final Header header) =>
-                  !Header._standard.contains(header))
+                  !_standardHeaders.contains(header))
               .mapValues((final Sequence<String> values) =>
                 // FIXME: Verify this is correct.
                 values.join(","));
@@ -500,7 +500,7 @@ class _HeadersRequestWrapper
   ImmutableSet<Expectation> get expectations =>
       computeIfNull(_expectations, () {
         _expectations =
-            _parse(_EXPECT, Header.EXPECT)
+            _parse(_EXPECT, EXPECT)
               .map((final Iterable<Expectation> expectations) =>
                   EMPTY_SET.addAll(expectations))
               .orElse(EMPTY_SET);
@@ -511,7 +511,7 @@ class _HeadersRequestWrapper
   ImmutableSet<CacheDirective> get pragmaCacheDirectives =>
       computeIfNull(_pragmaCacheDirectives, () {
         _pragmaCacheDirectives =
-            _parse(_PRAGMA, Header.PRAGMA)
+            _parse(_PRAGMA, PRAGMA)
               .map((final Iterable<CacheDirective> pragmaCacheDirectives) =>
                   EMPTY_SET.addAll(pragmaCacheDirectives))
               .orElse(EMPTY_SET);
@@ -532,20 +532,20 @@ class _HeadersRequestWrapper
 
   Option<ChallengeMessage> get proxyAuthorizationCredentials =>
       computeIfNull(_proxyAuthorizationCredentials, () {
-        _proxyAuthorizationCredentials = _parse(CHALLENGE_MESSAGE, Header.PROXY_AUTHORIZATION);
+        _proxyAuthorizationCredentials = _parse(ChallengeMessage.parser, PROXY_AUTHORIZATION);
         return _proxyAuthorizationCredentials;
       });
 
   Option<URI> get referer =>
       computeIfNull(_referer, () {
-        _referer = firstWhere(_headers[Header.REFERER], (final String uri) => true)
+        _referer = firstWhere(_headers[REFERER], (final String uri) => true)
             .flatMap(URI.parser.parse);
         return _referer;
       });
 
   Option<UserAgent> get userAgent =>
       computeIfNull(_userAgent, () {
-        _userAgent = _parse(USER_AGENT, Header.USER_AGENT);
+        _userAgent = _parse(UserAgent.parser, USER_AGENT);
         return _userAgent;
       });
 }
@@ -558,20 +558,20 @@ Request requestMethodOverride(final Request request) {
           final Dictionary<Header, dynamic> customHeaders =
               EMPTY_DICTIONARY
                 .putAll(request.customHeaders)
-                .removeAt(Header.X_HTTP_METHOD)
-                .removeAt(Header.X_HTTP_METHOD_OVERRIDE)
-                .removeAt(Header.X_METHOD_OVERRIDE);
+                .removeAt(X_HTTP_METHOD)
+                .removeAt(X_HTTP_METHOD_OVERRIDE)
+                .removeAt(X_METHOD_OVERRIDE);
           return request.with_(method: method, customHeaders : customHeaders);
         }).orElse(request);
 
   if (request.method != Method.POST) {
     return request;
-  } else if (request.customHeaders.containsKey(Header.X_HTTP_METHOD)) {
-    return updateMethod(Header.X_HTTP_METHOD);
-  } else if (request.customHeaders.containsKey(Header.X_HTTP_METHOD_OVERRIDE)) {
-    return updateMethod(Header.X_HTTP_METHOD_OVERRIDE);
-  } else if (request.customHeaders.containsKey(Header.X_METHOD_OVERRIDE)) {
-    return updateMethod(Header.X_METHOD_OVERRIDE);
+  } else if (request.customHeaders.containsKey(X_HTTP_METHOD)) {
+    return updateMethod(X_HTTP_METHOD);
+  } else if (request.customHeaders.containsKey(X_HTTP_METHOD_OVERRIDE)) {
+    return updateMethod(X_HTTP_METHOD_OVERRIDE);
+  } else if (request.customHeaders.containsKey(X_METHOD_OVERRIDE)) {
+    return updateMethod(X_METHOD_OVERRIDE);
   } else {
     return request;
   }

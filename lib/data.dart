@@ -3,7 +3,6 @@ library restlib.core.data;
 import "dart:convert";
 
 import "package:restlib_common/collections.dart";
-import "package:restlib_common/collections.forwarding.dart";
 import "package:restlib_common/collections.immutable.dart";
 import "package:restlib_common/objects.dart";
 import "package:restlib_common/preconditions.dart";
@@ -12,7 +11,7 @@ import "package:restlib_parsing/parsing.dart";
 
 import "data.internal.dart";
 import "data.media_ranges.dart";
-import "http_syntax.dart";
+import "http.internal.dart";
 import "http.dart";
 import "net.dart";
 

@@ -9,8 +9,9 @@ import "package:restlib_common/preconditions.dart";
 import "package:restlib_parsing/parsing.dart";
 
 import "data.dart";
-import "data.internal.dart";
-import "http_syntax.dart";
+import "data.internal.dart" as DataInternal;
+import "http.headers.dart";
+import "http.internal.dart";
 import "net.dart";
 
 part "src/http/content_info.dart";
@@ -30,7 +31,7 @@ abstract class _Parseable {
 
   Option _parse(final Parser parser, final Header header) {
     // Special case Set-Cookie per RFC
-    if (header == Header.SET_COOKIE) {
+    if (header == SET_COOKIE) {
       final Iterable parsed =
           _headers[header].expand((final String setCookie) =>
               parser.parse(setCookie));

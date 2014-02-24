@@ -3,23 +3,23 @@ part of restlib.http_test;
 preferenceTests() {
   new EqualsTester()
     ..addEqualityGroup(
-        [new Preference("a"), 
+        [new Preference("a"),
          new Preference("a", qualityFactor: 1000),
          new Preference("a", qualityFactor: 1000, parameters: EMPTY_SEQUENCE_MULTIMAP)])
     ..addEqualityGroup(
-        [new Preference("b"), 
+        [new Preference("b"),
          new Preference("b", qualityFactor: 1000),
-         new Preference("b", qualityFactor: 1000, parameters: EMPTY_SEQUENCE_MULTIMAP)])   
-    ..addEqualityGroup( 
+         new Preference("b", qualityFactor: 1000, parameters: EMPTY_SEQUENCE_MULTIMAP)])
+    ..addEqualityGroup(
          [new Preference("a", qualityFactor: 500),
-         new Preference("a", qualityFactor: 500, parameters: EMPTY_SEQUENCE_MULTIMAP)])      
-    ..addEqualityGroup( 
+         new Preference("a", qualityFactor: 500, parameters: EMPTY_SEQUENCE_MULTIMAP)])
+    ..addEqualityGroup(
          [new Preference("a", qualityFactor: 500, parameters: EMPTY_SEQUENCE_MULTIMAP.put("a", "b")),
-         new Preference("a", qualityFactor: 500, parameters: EMPTY_SEQUENCE_MULTIMAP.put("a", "b"))])           
+         new Preference("a", qualityFactor: 500, parameters: EMPTY_SEQUENCE_MULTIMAP.put("a", "b"))])
     ..executeTestCase();
-  
-  Parser prefParser = Preference._parser(CHARSET);
-  
+
+  Parser prefParser = preferenceParser(Charset.parser);
+
   doTestParse(String testCase, var expectedValue, int expectedQualityFactor, SequenceMultimap expectedParameters) =>
     test("test parsing $testCase",() {
       Preference result = prefParser.parse(testCase).value;

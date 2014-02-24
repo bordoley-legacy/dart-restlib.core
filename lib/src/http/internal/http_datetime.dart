@@ -1,10 +1,10 @@
-part of restlib.core.http_syntax;
+part of restlib.core.http.internal;
 
 final Parser<String> _DAY_NAME =
   string("Mon") | string("Tue") | string("Wed") | string("Thu") | string("Fri") | string("Sat") | string("Sun");
 
 final Parser<int> _2_DIGIT =
-  (DIGIT + DIGIT).map((final Iterable e) => 
+  (DIGIT + DIGIT).map((final Iterable e) =>
       e.elementAt(0) * 10 + e.elementAt(1));
 
 final Parser<int> _MONTH =
@@ -45,20 +45,20 @@ final Parser<int> _MONTH =
         return 11;
       case "Dec":
         return 12;
-    }   
+    }
   });
 
 final Parser<int> _4_DIGIT =
-  (DIGIT + DIGIT + DIGIT + DIGIT).map((final Iterable e) => 
+  (DIGIT + DIGIT + DIGIT + DIGIT).map((final Iterable e) =>
       e.elementAt(0) * 1000 + e.elementAt(1) * 100 + e.elementAt(2) * 10 + e.elementAt(3));
 
-final Parser<Iterable> _TIME_OF_DAY = 
+final Parser<Iterable> _TIME_OF_DAY =
   _2_DIGIT + COLON + _2_DIGIT + COLON + _2_DIGIT;
 
 final Parser<Iterable> _DATE_1 =
   _2_DIGIT + SP + _MONTH + SP + _4_DIGIT;
 
-final Parser<DateTime> _IMF_FIX_DATE = 
+final Parser<DateTime> _IMF_FIX_DATE =
   (_DAY_NAME + COMMA + SP + _DATE_1 + SP + _TIME_OF_DAY + SP + string("GMT")).map((final Iterable e) {
     final int year = e.elementAt(7);
     final int month = e.elementAt(5);
@@ -66,7 +66,7 @@ final Parser<DateTime> _IMF_FIX_DATE =
     final int hour = e.elementAt(9);
     final int minute = e.elementAt(11);
     final int second = e.elementAt(13);
-    
+
     return new DateTime.utc(year, month, day, hour, minute, second);
   });
 
@@ -89,11 +89,11 @@ String _day(final DateTime date) {
     case DateTime.THURSDAY:
       return "Thu";
     case DateTime.FRIDAY:
-      return "Fri";  
+      return "Fri";
     case DateTime.SATURDAY:
-      return "Sat";    
+      return "Sat";
     case DateTime.SUNDAY:
-      return "Sun";  
+      return "Sun";
     default:
       throw new ArgumentError("Not a weekday");
    }
