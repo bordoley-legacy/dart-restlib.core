@@ -107,6 +107,9 @@ class CookieMultimapImpl
         .map((_) => new CookieMultimapImpl(delegate.removeAt(key)))
         .orElse(this);
 
+  String toHeaderString() =>
+      toString();
+
   String toString() =>
       join("; ");
 }

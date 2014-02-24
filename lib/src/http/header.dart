@@ -11,7 +11,7 @@ String asHeaderValue(final value) {
   }
 
   try {
-    return value.asHeaderString();
+    return value.toHeaderString();
   } on NoSuchMethodError {
     // ignore no such method error.
   }

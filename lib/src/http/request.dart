@@ -9,7 +9,7 @@ String _requestToString(final Request request) {
     ..write(_headerLine(AUTHORIZATION, request.authorizationCredentials))
     ..write(_headerLine(CACHE_CONTROL, request.cacheDirectives))
     ..write(request.contentInfo)
-    ..write(_headerLine(COOKIE, request.cookies.toString()))
+    ..write(_headerLine(COOKIE, request.cookies))
     ..write(_headerLine(EXPECT, request.expectations))
     ..write(_headerLine(PRAGMA, request.pragmaCacheDirectives))
     ..write(request.preconditions)

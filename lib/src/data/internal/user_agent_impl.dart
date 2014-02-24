@@ -63,6 +63,9 @@ class UserAgentImpl
   UserAgent subSequence(int start, int length) =>
       new UserAgentImpl(delegate.subSequence(start, length));
 
+  String toHeaderString() =>
+      toString();
+
   String toString() =>
       map((final Either<Product, Comment> either) =>
           either.fold(objectToString, objectToString)).join(" ");

@@ -46,6 +46,9 @@ class ExpectationImpl
   Expectation removeAt(final String key) =>
       new ExpectationImpl(delegate.removeAt(key));
 
+  String toHeaderString() =>
+      toString();
+
   String toString() =>
       pairIterableToString(this);
 }
