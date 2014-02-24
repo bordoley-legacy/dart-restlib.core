@@ -12,6 +12,7 @@ import "http.dart";
 
 part "src/http/internal/header_impl.dart";
 part "src/http/internal/http_datetime.dart";
+part "src/http/internal/method_impl.dart";
 part "src/http/internal/parsers.dart";
 part "src/http/internal/preference_impl.dart";
 part "src/http/internal/serializers.dart";

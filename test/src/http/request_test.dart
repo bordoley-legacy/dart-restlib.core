@@ -6,7 +6,7 @@ void requestTests() {
       final SequenceMultimap<Header, String> headers =
           EMPTY_SEQUENCE_MULTIMAP.put(HOST, "example.com");
 
-      final Request request = new Request.wrapHeaders(Method.PUT, URI.parser.parse("http://example.com/test").value, headers);
+      final Request request = new Request.wrapHeaders(PUT, URI.parser.parse("http://example.com/test").value, headers);
 
       expect(request.authorizationCredentials, isEmpty);
       expect(request.cacheDirectives, isEmpty);
@@ -18,7 +18,7 @@ void requestTests() {
       expect(request.contentInfo.range, isEmpty);
       expect(request.entity, isEmpty);
       expect(request.expectations, isEmpty);
-      expect(request.method, equals(Method.PUT));
+      expect(request.method, equals(PUT));
       expect(request.pragmaCacheDirectives, isEmpty);
       expect(request.preconditions.ifMatch, isEmpty);
       expect(request.preconditions.ifModifiedSince, isEmpty);
@@ -87,7 +87,7 @@ void requestTests() {
       final EntityTag ifRange = EntityTag.parser.parseValue("\"abcd\"");
       DateTime ifUnmodifiedSince;
 
-      final Method method = Method.PUT;
+      final Method method = PUT;
       final String path = "/test";
 
       ImmutableSet<CacheDirective> pragmaCacheDirectives =
@@ -132,7 +132,7 @@ void requestTests() {
                  USER_AGENT : userAgent}).mapValues(asHeaderValue);
 
       final Request request =
-          new Request.wrapHeaders(Method.PUT, uri, headers);
+          new Request.wrapHeaders(PUT, uri, headers);
 
       expect(request.authorizationCredentials.value, equals(authorizationCredentials));
       expect(request.cacheDirectives, equals(cacheDirectives));
@@ -165,7 +165,7 @@ void requestTests() {
       final SequenceMultimap<Header, String> headers =
           EMPTY_SEQUENCE_MULTIMAP.putAllFromMap({IF_RANGE : ""});
 
-      final Request request = new Request.wrapHeaders(Method.PUT, URI.parser.parse("http://www.example.com").value, headers);
+      final Request request = new Request.wrapHeaders(PUT, URI.parser.parse("http://www.example.com").value, headers);
       // FIXME:
       expect(request.preconditions.ifRange, isEmpty);
     });

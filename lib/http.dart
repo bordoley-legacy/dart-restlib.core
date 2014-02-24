@@ -12,6 +12,7 @@ import "data.dart";
 import "data.internal.dart" as DataInternal;
 import "http.headers.dart";
 import "http.internal.dart";
+import "http.methods.dart";
 import "net.dart";
 
 part "src/http/content_info.dart";
