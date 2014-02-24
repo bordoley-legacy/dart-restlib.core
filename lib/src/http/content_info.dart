@@ -184,6 +184,7 @@ class _ContentInfoNone implements ContentInfo {
         this;
 }
 
+
 class _ContentInfoImpl
     extends Object
     with _ContentInfoMixin
