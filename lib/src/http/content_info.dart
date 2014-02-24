@@ -184,47 +184,6 @@ class _ContentInfoNone implements ContentInfo {
         this;
 }
 
-abstract class ForwardingContentInfo implements Forwarder, ContentInfo {
-  Sequence<ContentEncoding> get encodings =>
-      delegate.encodings;
-
-  FiniteSet<Language> get languages =>
-      delegate.languages;
-
-  Option<int> get length =>
-      delegate.length;
-
-  Option<URI> get location =>
-      delegate.location;
-
-  Option<MediaRange> get mediaRange =>
-      delegate.mediaRange;
-
-  Option<ContentRange> get range =>
-      delegate.range;
-
-  String toString() =>
-      _contentInfoToString(this);
-
-  ContentInfo with_({
-    final Iterable<ContentEncoding> encodings,
-    final Iterable<Language> languages,
-    final int length,
-    final URI location,
-    final MediaRange mediaRange,
-    final ContentRange range}) =>
-        _contentInfoWith(this, encodings, languages, length, location, mediaRange, range);
-
-  ContentInfo without({
-    final bool encodings: false,
-    final bool languages: false,
-    final bool length: false,
-    final bool location: false,
-    final bool mediaRange:  false,
-    final bool range : false}) =>
-        _contentInfoWithout(this, encodings, languages, length, location, mediaRange, range);
-}
-
 class _ContentInfoImpl
     extends Object
     with _ContentInfoMixin

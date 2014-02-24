@@ -138,54 +138,6 @@ class _RequestPreferencesNone implements RequestPreferences {
         this;
 }
 
-abstract class ForwardingRequestPreferences implements Forwarder, RequestPreferences {
-  FiniteSet<Preference<Charset>> get acceptedCharsets =>
-      delegate.acceptedCharsets;
-
-  FiniteSet<Preference<ContentEncoding>> get acceptedEncodings =>
-      delegate.acceptedEncodings;
-
-  FiniteSet<Preference<Language>> get acceptedLanguages =>
-      delegate.acceptedLanguages;
-
-  FiniteSet<Preference<MediaRange>> get acceptedMediaRanges =>
-      delegate.acceptedMediaRanges;
-
-  Option<Range> get range =>
-      delegate.range;
-
-  String toString() =>
-      _requestPreferencesToString(this);
-
-  RequestPreferences with_({
-    final Iterable<Preference<Charset>> acceptedCharsets,
-    final Iterable<Preference<ContentEncoding>> acceptedEncodings,
-    final Iterable<Preference<Language>>  acceptedLanguages,
-    final Iterable<Preference<MediaRange>> acceptedMediaRanges,
-    final Range range}) =>
-        _requestPreferencesWith(
-            this,
-            acceptedCharsets,
-            acceptedEncodings,
-            acceptedLanguages,
-            acceptedMediaRanges,
-            range);
-
-  RequestPreferences without({
-    final bool acceptedCharsets : false,
-    final bool acceptedEncodings : false,
-    final bool acceptedLanguages : false,
-    final bool acceptedMediaRanges : false,
-    final bool range : false}) =>
-        _requestPreferencesWithout(
-            this,
-            acceptedCharsets,
-            acceptedEncodings,
-            acceptedLanguages,
-            acceptedMediaRanges,
-            range);
-}
-
 abstract class _RequestPreferencesMixin implements RequestPreferences{
   String toString() =>
       _requestPreferencesToString(this);

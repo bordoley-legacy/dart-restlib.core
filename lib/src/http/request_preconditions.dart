@@ -135,54 +135,6 @@ class _RequestPreconditionsNone implements RequestPreconditions {
         this;
 }
 
-abstract class ForwardingRequestPreconditions implements Forwarder, RequestPreconditions {
-  FiniteSet<EntityTag> get ifMatch =>
-      delegate.ifMatch;
-
-  Option<DateTime> get ifModifiedSince =>
-      delegate.ifModifiedSince;
-
-  FiniteSet<EntityTag> get ifNoneMatch =>
-      delegate.ifNoneMatch;
-
-  Option<Either<EntityTag,DateTime>> get ifRange =>
-      delegate.ifRange;
-
-  Option<DateTime> get ifUnmodifiedSince =>
-      delegate.ifUnmodifiedSince;
-
-  String toString() =>
-      _requestPreconditionsToString(this);
-
-  RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch,
-    final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch,
-    final Either<EntityTag,DateTime> ifRange,
-    final DateTime ifUnmodifiedSince}) =>
-        _requestPreconditionsWith(
-            this,
-            ifMatch,
-            ifModifiedSince,
-            ifNoneMatch,
-            ifRange,
-            ifUnmodifiedSince);
-
-  RequestPreconditions without({
-    final bool ifMatch : false,
-    final bool ifModifiedSince : false,
-    final bool ifNoneMatch : false,
-    final bool ifRange : false,
-    final bool ifUnmodifiedSince : false}) =>
-        _requestPreconditionsWithout(
-            this,
-            ifMatch,
-            ifModifiedSince,
-            ifNoneMatch,
-            ifRange,
-            ifUnmodifiedSince);
-}
-
 abstract class _RequestPreconditionsMixin implements RequestPreconditions {
   String toString() =>
       _requestPreconditionsToString(this);
