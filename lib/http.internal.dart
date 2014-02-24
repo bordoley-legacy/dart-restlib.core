@@ -17,3 +17,4 @@ part "src/http/internal/parsers.dart";
 part "src/http/internal/preference_impl.dart";
 part "src/http/internal/serializers.dart";
 part "src/http/internal/quoted_string_parser.dart";
+part "src/http/internal/status_impl.dart";

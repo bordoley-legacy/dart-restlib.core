@@ -2,6 +2,7 @@ library restlib.core.http.future_responses;
 
 import "dart:async";
 import "http.dart";
+import "http.statuses.dart" as Status;
 
 /**
  * The request could not be understood by the server due to malformed syntax.
