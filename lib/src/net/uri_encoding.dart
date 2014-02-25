@@ -2,7 +2,7 @@ part of restlib.core.net;
 
 const _UriDecoder _URI_DECODER = const _UriDecoder();
 
-final querySafeUtf8UriCodec = utf8UriCodec(_QUERY_SAFE_CHARS.matches);
+final Codec<String, String> querySafeUtf8UriCodec = utf8UriCodec(_QUERY_SAFE_CHARS.matches);
 
 Codec<String, String> utf8UriCodec(bool safeCodepoints(int codePoint)) =>
     uriCodec(safeCodepoints, UTF8);
