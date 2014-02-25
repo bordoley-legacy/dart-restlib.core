@@ -1,6 +1,6 @@
 part of restlib.core.net;
 
-final Parser<String> _PATH_SEGMENT = PCHAR.orElse("");
+final Parser<String> _PATH_SEGMENT = _PCHAR.orElse("");
 final Parser<Path> _PATH =
   _PATH_SEGMENT
     .sepBy(FORWARD_SLASH)
@@ -15,6 +15,7 @@ final Parser<Path> _PATH =
 
 abstract class Path implements IPath {
   static final Parser<Path> parser = _PATH;
+  static final Parser<String> segmentParser = _PCHAR;
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
   static final Path EMPTY = new _Path(EMPTY_SEQUENCE);
 

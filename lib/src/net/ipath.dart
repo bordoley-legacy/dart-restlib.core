@@ -15,6 +15,7 @@ final Parser<IPath> _I_PATH =
 
 abstract class IPath implements ImmutableSequence<String> {
   static final Parser<IPath> parser = _I_PATH;
+  static final Parser<String> segmentParser = _I_PCHAR;
 
   // FIXME: Should be const: https://code.google.com/p/dart/issues/detail?id=9745
   static final IPath EMPTY = new _IPath(EMPTY_SEQUENCE);
