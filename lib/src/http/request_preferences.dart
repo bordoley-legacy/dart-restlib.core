@@ -200,43 +200,25 @@ class _HeadersRequestPreferencesImpl
 
   ImmutableSet<Preference<Charset>> get acceptedCharsets =>
       computeIfNull(_acceptedCharsets, () {
-        _acceptedCharsets =
-            _parse(_ACCEPT_CHARSET, ACCEPT_CHARSET)
-              .map((final Iterable<Preference<Charset>> acceptedCharsets) =>
-                  EMPTY_SET.addAll(acceptedCharsets))
-              .orElse(EMPTY_SET);
+        _acceptedCharsets = _parse(_ACCEPT_CHARSET, ACCEPT_CHARSET).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _acceptedCharsets;
       });
 
   ImmutableSet<Preference<ContentEncoding>> get acceptedEncodings =>
       computeIfNull(_acceptedEncodings, () {
-        _acceptedEncodings =
-            _parse(_ACCEPT_ENCODING, ACCEPT_ENCODING)
-              .map((final Iterable<Preference<ContentEncoding>> acceptedEncodings) =>
-                  EMPTY_SET.addAll(acceptedEncodings))
-              .orElse(EMPTY_SET);
+        _acceptedEncodings = _parse(_ACCEPT_ENCODING, ACCEPT_ENCODING).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _acceptedEncodings;
       });
 
   ImmutableSet<Preference<Language>> get acceptedLanguages =>
       computeIfNull(_acceptedLanguages, () {
-        _acceptedLanguages =
-            _parse(_ACCEPT_LANGUAGE, ACCEPT_LANGUAGE)
-              .map((final Iterable<Preference<Language>> acceptedLanguages) =>
-                  EMPTY_SET.addAll(acceptedLanguages))
-              .orElse(EMPTY_SET);
-
+        _acceptedLanguages = _parse(_ACCEPT_LANGUAGE, ACCEPT_LANGUAGE).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _acceptedLanguages;
       });
 
   ImmutableSet<Preference<MediaRange>> get acceptedMediaRanges =>
       computeIfNull(_acceptedMediaRanges, () {
-        _acceptedMediaRanges =
-            _parse(_ACCEPT, ACCEPT)
-              .map((final Iterable<Preference<MediaRange>> acceptedMediaRanges) =>
-                  EMPTY_SET.addAll(acceptedMediaRanges))
-              .orElse(EMPTY_SET);
-
+        _acceptedMediaRanges = _parse(_ACCEPT, ACCEPT).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _acceptedMediaRanges;
       });
 

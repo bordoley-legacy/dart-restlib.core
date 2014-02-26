@@ -216,23 +216,13 @@ class _HeadersContentInfoImpl
 
   ImmutableSequence<ContentEncoding> get encodings =>
       computeIfNull(_encodings, () {
-        _encodings =
-            _parse(_CONTENT_ENCODING_HEADER, CONTENT_ENCODING)
-              .map((final Iterable<ContentEncoding> encodings) =>
-                  EMPTY_SEQUENCE.addAll(encodings))
-              .orElse(EMPTY_SEQUENCE);
-
+        _encodings = _parse(_CONTENT_ENCODING_HEADER, CONTENT_ENCODING).map(EMPTY_SEQUENCE.addAll).orElse(EMPTY_SEQUENCE);
         return _encodings;
       });
 
   ImmutableSet<Language> get languages =>
       computeIfNull(_languages, () {
-        _languages =
-            _parse(_CONTENT_LANGUAGE, CONTENT_LANGUAGE)
-              .map((final Iterable<Language> languages) =>
-                  EMPTY_SET.addAll(languages))
-              .orElse(EMPTY_SET);
-
+        _languages = _parse(_CONTENT_LANGUAGE, CONTENT_LANGUAGE).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _languages;
       });
 
@@ -244,8 +234,7 @@ class _HeadersContentInfoImpl
 
   Option<URI> get location =>
       computeIfNull(_location, () {
-        _location = firstWhere(_headers.call(CONTENT_LOCATION), (final String uri) => true)
-            .flatMap(URI.parser.parse);
+        _location = firstWhere(_headers[CONTENT_LOCATION], (final String uri) => true).flatMap(URI.parser.parse);
         return _location;
       });
 

@@ -186,6 +186,9 @@ abstract class Response<T> {
             EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
             EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
 
+  factory Response.wrapHeaders(final Status status, final Multimap<Header, String, dynamic> headers) =>
+       new _HeadersResponseWrapper(status, headers);
+
   FiniteSet<RangeUnit> get acceptedRangeUnits;
 
   Option<int> get age;
@@ -409,4 +412,105 @@ class _ResponseImpl<T>
     this.status,
     this.vary,
     this.warnings);
+}
+
+class _HeadersResponseWrapper<T>
+    extends Object
+    with _ResponseMixin,
+      _Parseable
+    implements Response<T> {
+  final Status status;
+  final Multimap<Header, String, dynamic> _headers;
+
+  ImmutableSet<RangeUnit> _acceptedRangeUnits;
+  Option<int> _age;
+  ImmutableSet<Method> _allowedMethods;
+  ImmutableSet<ChallengeMessage> _authenticationChallenges;
+  ImmutableSet<CacheDirective> _cacheDirectives;
+  ContentInfo _contentInfo;
+  ImmutableDictionary<Header, dynamic> _customHeaders;
+  Option<DateTime> _date;
+  Option<T> entity = Option.NONE;
+  Option<EntityTag> _entityTag;
+  Option<DateTime> _expires;
+  Option<DateTime> _lastModified;
+  Option<URI> _location;
+  ImmutableSet<ChallengeMessage> _proxyAuthenticationChallenges;
+  Option<DateTime> _retryAfter;
+  Option<UserAgent> _server;
+  FiniteSet<SetCookie> _setCookies;
+  ImmutableSet<Header> _vary;
+  ImmutableSequence<Warning> _warnings;
+
+  _HeadersResponseWrapper(this._headers, this.status);
+
+  FiniteSet<RangeUnit> get acceptedRangeUnits;
+
+  Option<int> get age;
+
+  FiniteSet<Method> get allowedMethods;
+
+  FiniteSet<ChallengeMessage> get authenticationChallenges;
+
+  FiniteSet<CacheDirective> get cacheDirectives =>
+      computeIfNull(_cacheDirectives, () {
+        _cacheDirectives = _parse(_CACHE_CONTROL, CACHE_CONTROL).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
+        return _cacheDirectives;
+      });
+
+  ContentInfo get contentInfo =>
+      computeIfNull(_contentInfo, () {
+        _contentInfo = new ContentInfo.wrapHeaders(_headers);
+        return _contentInfo;
+      });
+
+  Dictionary<Header, dynamic> get customHeaders =>
+      computeIfNull(_customHeaders, () {
+        _customHeaders =
+            _headers.dictionary
+              .filterKeys((final Header header) =>
+                  !_standardHeaders.contains(header))
+              .mapValues((final Sequence<String> values) =>
+                  // FIXME: Verify this is correct.
+                  values.join(","));
+        return _customHeaders;
+      });
+
+  Option<DateTime> get date;
+
+  Option<EntityTag> get entityTag;
+
+  Option<DateTime> get expires;
+
+  Option<DateTime> get lastModified;
+
+  Option<URI> get location =>
+      computeIfNull(_location, () {
+        _location = firstWhere(_headers[LOCATION], (final String uri) => true).flatMap(URI.parser.parse);
+        return _location;
+      });
+
+  FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges;
+
+  Option<DateTime> get retryAfter;
+
+  Option<UserAgent> get server =>
+      computeIfNull(_server, () {
+        _server = _parse(UserAgent.parser, SERVER);
+        return _server;
+      });
+
+  FiniteSet<SetCookie> get setCookies;
+
+  FiniteSet<Header> get vary =>
+      computeIfNull(_vary, () {
+        _vary = _parse(_VARY, VARY).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
+        return _vary;
+      });
+
+  Sequence<Warning> get warnings =>
+      computeIfNull(_warnings, () {
+        _warnings = _parse(_WARNING, WARNING).map(EMPTY_SEQUENCE.addAll).orElse(EMPTY_SEQUENCE);
+        return _warnings;
+      });
 }

@@ -350,12 +350,7 @@ class _HeadersRequestWrapper
 
   ImmutableSet<CacheDirective> get cacheDirectives =>
       computeIfNull(_cacheDirectives, () {
-        _cacheDirectives =
-            _parse(_CACHE_CONTROL, CACHE_CONTROL)
-              .map((final Iterable<CacheDirective> cacheDirectives) =>
-                  EMPTY_SET.addAll(cacheDirectives))
-              .orElse(EMPTY_SET);
-
+        _cacheDirectives = _parse(_CACHE_CONTROL, CACHE_CONTROL).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _cacheDirectives;
       });
 
@@ -385,22 +380,13 @@ class _HeadersRequestWrapper
 
   ImmutableSet<Expectation> get expectations =>
       computeIfNull(_expectations, () {
-        _expectations =
-            _parse(_EXPECT, EXPECT)
-              .map((final Iterable<Expectation> expectations) =>
-                  EMPTY_SET.addAll(expectations))
-              .orElse(EMPTY_SET);
-
+        _expectations = _parse(_EXPECT, EXPECT).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _expectations;
       });
 
   ImmutableSet<CacheDirective> get pragmaCacheDirectives =>
       computeIfNull(_pragmaCacheDirectives, () {
-        _pragmaCacheDirectives =
-            _parse(_PRAGMA, PRAGMA)
-              .map((final Iterable<CacheDirective> pragmaCacheDirectives) =>
-                  EMPTY_SET.addAll(pragmaCacheDirectives))
-              .orElse(EMPTY_SET);
+        _pragmaCacheDirectives = _parse(_PRAGMA, PRAGMA).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _pragmaCacheDirectives;
       });
 

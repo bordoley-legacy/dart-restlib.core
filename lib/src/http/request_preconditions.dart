@@ -199,28 +199,19 @@ class _HeadersRequestPreconditionsImpl
 
   ImmutableSet<EntityTag> get ifMatch =>
       computeIfNull(_ifMatch, () {
-        _ifMatch =
-            _parse(_IF_MATCH, IF_MATCH)
-              .map((final Iterable<EntityTag> ifMatch) =>
-                  EMPTY_SET.addAll(ifMatch))
-              .orElse(EMPTY_SET);
+        _ifMatch = _parse(_IF_MATCH, IF_MATCH).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _ifMatch;
       });
 
   Option<DateTime> get ifModifiedSince =>
       computeIfNull(_ifModifiedSince, () {
-        _ifModifiedSince =
-            _parse(HTTP_DATE_TIME, IF_MODIFIED_SINCE);
+        _ifModifiedSince = _parse(HTTP_DATE_TIME, IF_MODIFIED_SINCE);
         return _ifModifiedSince;
       });
 
   ImmutableSet<EntityTag> get ifNoneMatch =>
       computeIfNull(_ifNoneMatch, () {
-        _ifNoneMatch =
-            _parse(_IF_NONE_MATCH, IF_NONE_MATCH)
-              .map((final Iterable<EntityTag> ifNoneMatch) =>
-                  EMPTY_SET.addAll(ifNoneMatch))
-              .orElse(EMPTY_SET);
+        _ifNoneMatch = _parse(_IF_NONE_MATCH, IF_NONE_MATCH).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _ifNoneMatch;
       });
 

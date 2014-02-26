@@ -35,3 +35,7 @@ final Parser<Iterable<EntityTag>> _IF_MATCH = EntityTag.parser.sepBy(OWS_COMMA_O
 final Parser<Iterable<EntityTag>> _IF_NONE_MATCH = _IF_MATCH;
 
 final Parser<Iterable<CacheDirective>> _PRAGMA = _CACHE_CONTROL;
+
+final Parser<Iterable<Header>> _VARY = Header.parser.sepBy(OWS_COMMA_OWS);
+
+final Parser<Iterable<Warning>> _WARNING = Warning.parser.sepBy(OWS_COMMA_OWS);
