@@ -1,8 +1,8 @@
 part of restlib.core.http;
 
 abstract class Status {
-  factory Status(code, message, reason) {
-    return new StatusImpl(code, message, reason, new StatusClass.forCode(code));
+  factory Status(code, reason, message) {
+    return new StatusImpl(code, reason, message, new StatusClass.forCode(code));
   }
 
   int get code;

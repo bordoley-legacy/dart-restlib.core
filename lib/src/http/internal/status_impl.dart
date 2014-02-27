@@ -21,10 +21,10 @@ class StatusImpl implements Status {
   }
 
   Response toResponse() {
-    return new Response(this, entity : this.reason);
+    return new Response(this, entity : this.message);
   }
 
   String toString() {
-    return "$code $message";
+    return "$code $reason";
   }
 }
