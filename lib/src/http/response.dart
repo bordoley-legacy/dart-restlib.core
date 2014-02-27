@@ -187,7 +187,7 @@ abstract class Response<T> {
             EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
 
   factory Response.wrapHeaders(final Status status, final Multimap<Header, String, dynamic> headers) =>
-       new _HeadersResponseWrapper(status, headers);
+       new _HeadersResponseWrapper(headers, status);
 
   FiniteSet<RangeUnit> get acceptedRangeUnits;
 
