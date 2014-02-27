@@ -444,13 +444,17 @@ class _HeadersResponseWrapper<T>
 
   _HeadersResponseWrapper(this._headers, this.status);
 
-  FiniteSet<RangeUnit> get acceptedRangeUnits;
+  FiniteSet<RangeUnit> get acceptedRangeUnits =>
+      EMPTY_SET;
 
-  Option<int> get age;
+  Option<int> get age =>
+      Option.NONE; // FIXME
 
-  FiniteSet<Method> get allowedMethods;
+  FiniteSet<Method> get allowedMethods =>
+      EMPTY_SET;
 
-  FiniteSet<ChallengeMessage> get authenticationChallenges;
+  FiniteSet<ChallengeMessage> get authenticationChallenges =>
+      EMPTY_SET;
 
   FiniteSet<CacheDirective> get cacheDirectives =>
       computeIfNull(_cacheDirectives, () {
@@ -476,13 +480,17 @@ class _HeadersResponseWrapper<T>
         return _customHeaders;
       });
 
-  Option<DateTime> get date;
+  Option<DateTime> get date =>
+      Option.NONE; // FIXME
 
-  Option<EntityTag> get entityTag;
+  Option<EntityTag> get entityTag =>
+      Option.NONE; // FIXME
 
-  Option<DateTime> get expires;
+  Option<DateTime> get expires =>
+      Option.NONE; // FIXME
 
-  Option<DateTime> get lastModified;
+  Option<DateTime> get lastModified =>
+      Option.NONE; // FIXME
 
   Option<URI> get location =>
       computeIfNull(_location, () {
@@ -490,9 +498,11 @@ class _HeadersResponseWrapper<T>
         return _location;
       });
 
-  FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges;
+  FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges =>
+      EMPTY_SET;
 
-  Option<DateTime> get retryAfter;
+  Option<DateTime> get retryAfter =>
+      Option.NONE; // FIXME
 
   Option<UserAgent> get server =>
       computeIfNull(_server, () {
@@ -500,7 +510,8 @@ class _HeadersResponseWrapper<T>
         return _server;
       });
 
-  FiniteSet<SetCookie> get setCookies;
+  FiniteSet<SetCookie> get setCookies =>
+      EMPTY_SET;
 
   FiniteSet<Header> get vary =>
       computeIfNull(_vary, () {
