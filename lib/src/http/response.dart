@@ -428,7 +428,7 @@ class _HeadersResponseWrapper<T>
   ImmutableSet<ChallengeMessage> _authenticationChallenges;
   ImmutableSet<CacheDirective> _cacheDirectives;
   ContentInfo _contentInfo;
-  ImmutableDictionary<Header, dynamic> _customHeaders;
+  Dictionary<Header, dynamic> _customHeaders;
   Option<DateTime> _date;
   Option<T> entity = Option.NONE;
   Option<EntityTag> _entityTag;
