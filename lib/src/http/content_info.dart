@@ -1,14 +1,21 @@
 part of restlib.core.http;
 
-String _contentInfoToString(final ContentInfo contentInfo) =>
-    (new StringBuffer()
-      ..write(_headerLine(CONTENT_ENCODING, contentInfo.encodings))
-      ..write(_headerLine(CONTENT_LANGUAGE, contentInfo.languages))
-      ..write(_headerLine(CONTENT_LENGTH, contentInfo.length))
-      ..write(_headerLine(CONTENT_LOCATION, contentInfo.location))
-      ..write(_headerLine(CONTENT_TYPE, contentInfo.mediaRange))
-      ..write(_headerLine(CONTENT_RANGE, contentInfo.range))
-    ).toString();
+void _writeContentInfo(final ContentInfo contentInfo, void writeHeaderLine(final String header, final String value)) {
+  _writeHeader(CONTENT_ENCODING, contentInfo.encodings, writeHeaderLine);
+  _writeHeader(CONTENT_LANGUAGE, contentInfo.languages, writeHeaderLine);
+  _writeHeader(CONTENT_LENGTH, contentInfo.length, writeHeaderLine);
+  _writeHeader(CONTENT_LOCATION, contentInfo.location, writeHeaderLine);
+  _writeHeader(CONTENT_RANGE, contentInfo.range, writeHeaderLine);
+  _writeHeader(CONTENT_TYPE, contentInfo.mediaRange, writeHeaderLine);
+}
+
+String _contentInfoToString(final ContentInfo contentInfo) {
+  final StringBuffer buffer = new StringBuffer();
+
+  _writeContentInfo(contentInfo, _writeHeaderToBuffer(buffer));
+
+  return buffer.toString();
+}
 
 ContentInfo _contentInfoWith(
   final ContentInfo delegate,

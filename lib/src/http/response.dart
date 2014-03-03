@@ -1,28 +1,38 @@
 part of restlib.core.http;
 
-String _responseToString(final Response response) {
-    final StringBuffer buffer =
-        (new StringBuffer()
-          ..write("${response.status}\r\n")
-          ..write(_headerLine(ACCEPT_RANGES, response.acceptedRangeUnits))
-          ..write(_headerLine(AGE, response.age))
-          ..write(_headerLine(ALLOW, response.allowedMethods))
-          ..write(_headerLine(WWW_AUTHENTICATE, response.authenticationChallenges))
-          ..write(_headerLine(CACHE_CONTROL, response.cacheDirectives))
-          ..write(response.contentInfo)
-          ..write(_headerLine(DATE, response.date))
-          ..write(_headerLine(ENTITY_TAG, response.entityTag))
-          ..write(_headerLine(EXPIRES, response.expires))
-          ..write(_headerLine(LAST_MODIFIED, response.lastModified))
-          ..write(_headerLine(LOCATION, response.location))
-          ..write(_headerLine(PROXY_AUTHENTICATE, response.proxyAuthenticationChallenges))
-          ..write(_headerLine(RETRY_AFTER, response.retryAfter))
-          ..write(_headerLine(SERVER, response.server))
-          ..write(response.setCookies.map((final SetCookie setCookie) => _headerLine(SET_COOKIE, setCookie)).join())
-          ..write(_headerLine(VARY, response.vary)));
+void writeResponseHeaders(final Response response, void writeHeaderLine(final String header, final String value)) {
+  _writeHeader(ACCEPT_RANGES, response.acceptedRangeUnits, writeHeaderLine);
+  _writeHeader(AGE, response.age, writeHeaderLine);
+  _writeHeader(ALLOW, response.allowedMethods, writeHeaderLine);
+  _writeHeader(CACHE_CONTROL, response.cacheDirectives, writeHeaderLine);
+  _writeContentInfo(response.contentInfo, writeHeaderLine);
+  _writeHeader(DATE, response.date, writeHeaderLine);
+  _writeHeader(ENTITY_TAG, response.entityTag, writeHeaderLine);
+  _writeHeader(EXPIRES, response.expires, writeHeaderLine);
+  _writeHeader(LAST_MODIFIED, response.lastModified, writeHeaderLine);
+  _writeHeader(LOCATION, response.location, writeHeaderLine);
+  _writeHeader(PROXY_AUTHENTICATE, response.proxyAuthenticationChallenges, writeHeaderLine);
+  _writeHeader(RETRY_AFTER, response.retryAfter, writeHeaderLine);
+  _writeHeader(SERVER, response.server, writeHeaderLine);
+
+  response.setCookies.forEach((final SetCookie setCookie) =>
+      _writeHeader(SET_COOKIE, setCookie, writeHeaderLine));
+
+  _writeHeader(VARY, response.vary, writeHeaderLine);
+  _writeHeader(WARNING, response.warnings, writeHeaderLine);
+  _writeHeader(WWW_AUTHENTICATE, response.authenticationChallenges, writeHeaderLine);
 
   response.customHeaders.forEach((final Pair<Header, dynamic> header) =>
-      buffer.write(_headerLine(header.fst, header.snd)));
+      _writeHeader(header.fst, header.snd, writeHeaderLine));
+}
+
+String _responseToString(final Response response) {
+  final StringBuffer buffer = new StringBuffer();
+
+  _WriteHeaderLine writeHeaderLine = _writeHeaderToBuffer(buffer);
+  buffer.write("${response.status}\r\n");
+
+  writeResponseHeaders(response, writeHeaderLine);
 
   buffer.write(response.entity.map((final entity) =>
       "\r\n\r\n${entity.toString()}\r\n").orElse(""));

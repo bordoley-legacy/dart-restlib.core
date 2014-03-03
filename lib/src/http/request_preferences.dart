@@ -1,13 +1,21 @@
 part of restlib.core.http;
 
-String _requestPreferencesToString(final RequestPreferences requestPreferences) =>
-    (new StringBuffer()
-      ..write(_headerLine(ACCEPT_CHARSET, requestPreferences.acceptedCharsets))
-      ..write(_headerLine(ACCEPT_ENCODING, requestPreferences.acceptedEncodings))
-      ..write(_headerLine(ACCEPT_LANGUAGE, requestPreferences.acceptedLanguages))
-      ..write(_headerLine(ACCEPT, requestPreferences.acceptedMediaRanges))
-      ..write(_headerLine(RANGE, requestPreferences.range))
-    ).toString();
+void _writeRequestPreferences(final RequestPreferences preferences, void writeHeaderLine(final String header, final String value)) {
+  _writeHeader(ACCEPT_CHARSET, preferences.acceptedCharsets, writeHeaderLine);
+  _writeHeader(ACCEPT_ENCODING, preferences.acceptedEncodings, writeHeaderLine);
+  _writeHeader(ACCEPT_LANGUAGE, preferences.acceptedLanguages, writeHeaderLine);
+  _writeHeader(ACCEPT, preferences.acceptedMediaRanges, writeHeaderLine);
+  _writeHeader(RANGE, preferences.range, writeHeaderLine);
+}
+
+String _requestPreferencesToString(final RequestPreferences preferences) {
+  final StringBuffer buffer = new StringBuffer();
+  _WriteHeaderLine writeHeaderLine = _writeHeaderToBuffer(buffer);
+
+  _writeRequestPreferences(preferences, writeHeaderLine);
+
+  return buffer.toString();
+}
 
 RequestPreferences _requestPreferencesWith(
   final RequestPreferences delegate,

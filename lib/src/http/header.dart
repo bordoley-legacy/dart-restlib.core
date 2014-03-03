@@ -1,8 +1,19 @@
 part of restlib.core.http;
 
-String _headerLine(final Header header, final value) {
+typedef void _WriteHeaderLine(final String header, final String value);
+
+_WriteHeaderLine _writeHeaderToBuffer(final StringBuffer buffer) =>
+    (final String header, final String value) =>
+        buffer.write(_headerLineAsString(header, value));
+
+String _headerLineAsString(final String header, final String value) =>
+    "$header: ${value}\r\n";
+
+void _writeHeader(final Header header, final value, void writeHeaderLine(final String header, final String value)) {
   final String headerValue = asHeaderValue(value);
-  return headerValue.isNotEmpty ? "$header: ${headerValue}\r\n" : "";
+  if (value.isNotEmpty) {
+    writeHeaderLine(header.toString(), headerValue);
+  }
 }
 
 String asHeaderValue(final value) {

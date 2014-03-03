@@ -1,25 +1,31 @@
 part of restlib.core.http;
 
+void writeRequestHeaders(final Request request, void writeHeaderLine(final String header, final String value)) {
+  _writeHeader(AUTHORIZATION, request.authorizationCredentials, writeHeaderLine);
+  _writeHeader(CACHE_CONTROL, request.cacheDirectives, writeHeaderLine);
+  _writeContentInfo(request.contentInfo, writeHeaderLine);
+  _writeHeader(COOKIE, request.cookies, writeHeaderLine);
+  _writeHeader(EXPECT, request.expectations, writeHeaderLine);
+  _writeHeader(PRAGMA, request.pragmaCacheDirectives, writeHeaderLine);
+  _writeRequestPreconditions(request.preconditions, writeHeaderLine);
+  _writeRequestPreferences(request.preferences, writeHeaderLine);
+  _writeHeader(PROXY_AUTHORIZATION, request.proxyAuthorizationCredentials, writeHeaderLine);
+  _writeHeader(REFERER, request.referer, writeHeaderLine);
+  _writeHeader(USER_AGENT, request.userAgent, writeHeaderLine);
+
+  request.customHeaders.forEach((final Pair<Header, dynamic> header) =>
+     _writeHeader(header.fst, header.snd, writeHeaderLine));
+}
+
 String _requestToString(final Request request) {
+  final StringBuffer buffer = new StringBuffer();
+
+  _WriteHeaderLine writeHeaderLine = _writeHeaderToBuffer(buffer);
+
   final String requestLine = "${request.method} ${request.uri.path}${request.uri.query.isEmpty ? "" : "?${request.uri.query}"}""\r\n";
+  buffer.write(requestLine);
 
-  final StringBuffer buffer = (new StringBuffer()
-    ..write(requestLine)
-    ..write(_headerLine(HOST, request.uri.authority.value))
-    ..write(_headerLine(AUTHORIZATION, request.authorizationCredentials))
-    ..write(_headerLine(CACHE_CONTROL, request.cacheDirectives))
-    ..write(request.contentInfo)
-    ..write(_headerLine(COOKIE, request.cookies))
-    ..write(_headerLine(EXPECT, request.expectations))
-    ..write(_headerLine(PRAGMA, request.pragmaCacheDirectives))
-    ..write(request.preconditions)
-    ..write(request.preferences)
-    ..write(_headerLine(PROXY_AUTHORIZATION, request.proxyAuthorizationCredentials))
-    ..write(_headerLine(REFERER, request.referer))
-    ..write(_headerLine(USER_AGENT, request.userAgent)));
-
-  request.customHeaders.forEach((final Pair<Header, dynamic> pair) =>
-      buffer.write(_headerLine(pair.fst, pair.snd)));
+  writeRequestHeaders(request, writeHeaderLine);
 
   buffer.write(request.entity.map((final entity) =>
       "\r\n\r\n${entity.toString()}\r\n").orElse(""));

@@ -1,13 +1,21 @@
 part of restlib.core.http;
 
-String _requestPreconditionsToString(final RequestPreconditions delegate) =>
-    (new StringBuffer()
-      ..write(_headerLine(IF_MATCH, delegate.ifMatch))
-      ..write(_headerLine(IF_MODIFIED_SINCE, delegate.ifModifiedSince))
-      ..write(_headerLine(IF_NONE_MATCH, delegate.ifNoneMatch))
-      ..write(_headerLine(IF_RANGE, delegate.ifRange.map((final Either<EntityTag, DateTime> ifRange) => ifRange.value)))
-      ..write(_headerLine(IF_UNMODIFIED_SINCE, delegate.ifUnmodifiedSince))
-    ).toString();
+void _writeRequestPreconditions(final RequestPreconditions preconditions, void writeHeaderLine(final String header, final String value)) {
+  _writeHeader(IF_MATCH, preconditions.ifMatch, writeHeaderLine);
+  _writeHeader(IF_MODIFIED_SINCE, preconditions.ifModifiedSince, writeHeaderLine);
+  _writeHeader(IF_NONE_MATCH, preconditions.ifNoneMatch, writeHeaderLine);
+  _writeHeader(IF_RANGE, preconditions.ifRange.map((final Either<EntityTag, DateTime> ifRange) => ifRange.value), writeHeaderLine);
+  _writeHeader(IF_UNMODIFIED_SINCE, preconditions.ifUnmodifiedSince, writeHeaderLine);
+}
+
+String _requestPreconditionsToString(final RequestPreconditions delegate) {
+  final StringBuffer buffer = new StringBuffer();
+  _WriteHeaderLine writeHeaderLine = _writeHeaderToBuffer(buffer);
+
+  _writeRequestPreconditions(delegate, writeHeaderLine);
+
+  return buffer.toString();
+}
 
 RequestPreconditions _requestPreconditionsWith(
   final RequestPreconditions delegate,
