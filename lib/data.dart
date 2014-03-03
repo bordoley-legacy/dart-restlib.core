@@ -36,8 +36,7 @@ part "src/data/warning.dart";
 
 
 
-final Dictionary<String, MediaRange> DEFAULT_EXTENSION_MAP = new Dictionary.wrapMap(_DEFAUlT_EXTENSION_MAP);
-const Map<String, MediaRange> _DEFAUlT_EXTENSION_MAP = const <String, MediaRange>{
+const Dictionary<String, MediaRange> DEFAULT_EXTENSION_MAP = const Dictionary.wrapMap(const <String, MediaRange>{
 "123" : APPLICATION_VND_LOTUS_1_2_3,
 "3dml" : TEXT_VND_IN3D_3DML,
 "3ds" : IMAGE_X_3DS,
@@ -1019,5 +1018,5 @@ const Map<String, MediaRange> _DEFAUlT_EXTENSION_MAP = const <String, MediaRange
 "zir" : APPLICATION_VND_ZUL,
 "zirz" : APPLICATION_VND_ZUL,
 "zmm" : APPLICATION_VND_HANDHELD_ENTERTAINMENT_XML,
-};
+});
 
