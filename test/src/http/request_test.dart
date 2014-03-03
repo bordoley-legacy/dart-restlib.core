@@ -56,7 +56,7 @@ void requestTests() {
       ImmutableSet<CacheDirective> cacheDirectives =
           EMPTY_SET.addAll([CacheDirective.MUST_REVALIDATE, CacheDirective.PRIVATE]);
 
-      ImmutableSequence<ContentEncoding> contenEncodings =
+      ImmutableSequence<ContentEncoding> contentEncodings =
           EMPTY_SEQUENCE.addAll([]);
 
       ImmutableSet<Language> contentLanguages =
@@ -102,41 +102,49 @@ void requestTests() {
 
       final UserAgent userAgent = UserAgent.parser.parse("test/1.1").value;
 
-      final Multimap<Header, String, dynamic> headers =
-          EMPTY_SEQUENCE_MULTIMAP.putAllFromMap(
-                {ACCEPT : acceptedMediaRanges,
-                 ACCEPT_CHARSET : acceptedCharsets,
-                 ACCEPT_ENCODING : acceptedEncodings,
-                 ACCEPT_LANGUAGE : acceptedLanguages,
-                 ACCEPT_RANGES : "", //FIXME:
-                 AUTHORIZATION : authorizationCredentials,
-                 CACHE_CONTROL : cacheDirectives,
-                 CONTENT_ENCODING : contenEncodings,
-                 CONTENT_LANGUAGE : contentLanguages,
-                 CONTENT_LENGTH  : 10,
-                 CONTENT_LOCATION : contentLocation,
-                 CONTENT_MD5 : "", //FIXME:
-                 CONTENT_RANGE : "", //FIXME:
-                 CONTENT_TYPE : contentMediaRange,
-                 EXPECT : expectations,
-                 FROM : "", //FIXME:
-                 HOST : host,
-                 IF_MATCH : ifMatch,
-                 IF_MODIFIED_SINCE : "", //FIXME:
-                 IF_NONE_MATCH : ifNoneMatch,
-                 IF_RANGE : ifRange,
-                 IF_UNMODIFIED_SINCE : "", //FIXME:
-                 PRAGMA : pragmaCacheDirectives,
-                 PROXY_AUTHORIZATION : authorizationCredentials,
-                 REFERER : referer,
-                 USER_AGENT : userAgent}).mapValues(asHeaderValue);
+      final Request test =
+          new Request(GET, uri,
+              authorizationCredentials: authorizationCredentials,
+              cacheDirectives: cacheDirectives,
+              contentInfo: new ContentInfo(
+                  encodings: contentEncodings,
+                  languages: contentLanguages,
+                  length: contentLength,
+                  location: contentLocation,
+                  mediaRange: contentMediaRange,
+                  range: contentRange),
+              cookies :null,
+              customHeaders: null,
+              entity: null,
+              expectations: expectations,
+              pragmaCacheDirectives: pragmaCacheDirectives,
+              preconditions: new RequestPreconditions(
+                  ifMatch: ifMatch,
+                  ifModifiedSince: null,
+                  ifNoneMatch: ifNoneMatch,
+                  ifRange: new Either.leftValue(ifRange),
+                  ifUnmodifiedSince: null),
+              preferences: new RequestPreferences(
+                  acceptedCharsets: acceptedCharsets,
+                  acceptedEncodings: acceptedEncodings,
+                  acceptedLanguages: acceptedLanguages,
+                  acceptedMediaRanges: acceptedMediaRanges,
+                  range: null),
+              proxyAuthorizationCredentials: authorizationCredentials,
+              referer: referer,
+              userAgent: userAgent);
+
+      final MutableMultimap<Header, String, dynamic> headers = new MutableSequenceMultimap.hash();
+      writeRequestHeaders(test, (final String header, final String value) {
+        headers.put(new Header(header), value);
+      });
 
       final Request request =
           new Request.wrapHeaders(PUT, uri, headers);
 
       expect(request.authorizationCredentials.value, equals(authorizationCredentials));
       expect(request.cacheDirectives, equals(cacheDirectives));
-      expect(request.contentInfo.encodings, equals(contenEncodings));
+      expect(request.contentInfo.encodings, equals(contentEncodings));
       expect(request.contentInfo.languages, equals(contentLanguages));
       expect(request.contentInfo.length.value, equals(contentLength));
       expect(request.contentInfo.location.value, equals(contentLocation));

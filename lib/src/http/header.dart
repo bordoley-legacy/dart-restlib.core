@@ -10,13 +10,13 @@ String _headerLineAsString(final String header, final String value) =>
     "$header: ${value}\r\n";
 
 void _writeHeader(final Header header, final value, void writeHeaderLine(final String header, final String value)) {
-  final String headerValue = asHeaderValue(value);
+  final String headerValue = _asHeaderValue(value);
   if (value.isNotEmpty) {
     writeHeaderLine(header.toString(), headerValue);
   }
 }
 
-String asHeaderValue(final value) {
+String _asHeaderValue(final value) {
   if (value is String) {
     return value;
   }
@@ -28,7 +28,7 @@ String asHeaderValue(final value) {
   }
 
   if (value is Option) {
-    return value.map(asHeaderValue).orElse("");
+    return value.map(_asHeaderValue).orElse("");
   } else if (value is Iterable) {
     return value.isEmpty ? "" : value.join(", ");
   } else if (value is DateTime) {

@@ -1,7 +1,7 @@
 part of restlib.core.http.internal;
 
 String encodeQuotedString(final String val) {
-  final StringBuffer retval = new StringBuffer(val.length * 2 + 2);
+  final StringBuffer retval = new StringBuffer();
 
   void write(final int codepoint) =>
       retval.write(new String.fromCharCode(codepoint));
@@ -19,6 +19,7 @@ String encodeQuotedString(final String val) {
     }
   });
 
+  write(_DQUOTE_CHAR);
   return retval.toString();
 }
 
