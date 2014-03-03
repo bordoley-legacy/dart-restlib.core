@@ -426,7 +426,7 @@ class _ResponseImpl<T>
 
 class _HeadersResponseWrapper<T>
     extends Object
-    with _ResponseMixin,
+    with _ResponseMixin<T>,
       _Parseable
     implements Response<T> {
   final Status status;
