@@ -6,7 +6,7 @@ class StatusImpl implements Status {
   final String reason;
   final StatusClass statusClass;
 
-  const StatusImpl(this.code, this.message, this.reason, this.statusClass);
+  const StatusImpl(this.code, this.reason, this.message,  this.statusClass);
 
   int get hashCode => computeHashCode([code]);
 
