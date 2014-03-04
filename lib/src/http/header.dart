@@ -11,7 +11,7 @@ String _headerLineAsString(final String header, final String value) =>
 
 void _writeHeader(final Header header, final value, void writeHeaderLine(final String header, final String value)) {
   final String headerValue = _asHeaderValue(value);
-  if (value.isNotEmpty) {
+  if (headerValue.isNotEmpty) {
     writeHeaderLine(header.toString(), headerValue);
   }
 }
