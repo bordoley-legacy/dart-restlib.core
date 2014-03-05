@@ -1,6 +1,7 @@
 library net;
 
 import "dart:convert";
+import "package:collection/equality.dart";
 
 import "package:restlib_common/collections.dart";
 import "package:restlib_common/collections.forwarding.dart";
