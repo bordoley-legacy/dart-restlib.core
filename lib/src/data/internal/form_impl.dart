@@ -68,5 +68,5 @@ class FormImpl
 
   String toString() =>
       map((final Pair<String, String> pair) =>
-          "${querySafeUtf8UriCodec.encode(pair.fst)}=${querySafeUtf8UriCodec.encode(pair.snd)}".replaceAll("%20", "+")).join("&");
+          "${querySafeUtf8UriCodec.encode(pair.e0)}=${querySafeUtf8UriCodec.encode(pair.e1)}".replaceAll("%20", "+")).join("&");
 }

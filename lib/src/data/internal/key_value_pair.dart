@@ -8,46 +8,46 @@ final Parser<KeyValuePair> KVP =
 
 final Parser<String> _OPTIONAL_VALUE =
   (OWS + EQUALS + OWS + OPTIONAL_WORD)
-    .map((final Iterable elements) => 
+    .map((final Iterable elements) =>
         elements.elementAt(3))
     .orElse("");
 
 final Parser<KeyValuePair> KVP_NOT_Q =
   KVP.map((final KeyValuePair kvp) =>
-    (kvp.fst.toLowerCase() != "q") ? kvp : null);
+    (kvp.e0.toLowerCase() != "q") ? kvp : null);
 
-String pairIterableToString(final Iterable<Pair> entries) => 
-    entries.map(_pairToString).join(";"); 
+String pairIterableToString(final Iterable<Pair> entries) =>
+    entries.map(_pairToString).join(";");
 
 String _pairToString(final Pair pair) {
-  final String value = pair.snd.toString();
+  final String value = pair.e1.toString();
   if (value.isEmpty) {
-    return pair.fst.toString();
+    return pair.e0.toString();
   } else {
-    return "${pair.fst.toString()}=${value}";
+    return "${pair.e0.toString()}=${value}";
   }
 }
 
-class KeyValuePair implements Pair<String, String>  {   
-  final Pair<String, String> _delegate;
-   
-  KeyValuePair._internal(final String fst, final String snd) : 
-     _delegate = new Pair(fst, snd);
-   
-  KeyValuePair._wrap(this._delegate);
+class KeyValuePair extends Object with ForwardingIterable implements Pair<String, String>  {
+  final Pair<String, String> delegate;
 
-  String get fst =>
-      _delegate.fst;
-  
-  String get snd =>
-      _delegate.snd;
-  
+  KeyValuePair._internal(final String fst, final String snd) :
+     delegate = new Pair(fst, snd);
+
+  KeyValuePair._wrap(this.delegate);
+
+  String get e0 =>
+      delegate.e0;
+
+  String get e1 =>
+      delegate.e1;
+
   int get hashCode =>
-      _delegate.hashCode;
-  
+      delegate.hashCode;
+
   bool operator==(other) =>
-      _delegate == other;
-  
+      delegate == other;
+
   String toString() =>
-      "$fst=$snd";
+      "$e0=$e1";
 }

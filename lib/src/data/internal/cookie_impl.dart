@@ -114,28 +114,28 @@ class CookieMultimapImpl
       join("; ");
 }
 
-class CookieImpl implements Cookie {
-  final Pair<String, String> _delegate;
+class CookieImpl extends Object with ForwardingIterable implements Cookie {
+  final Pair<String, String> delegate;
 
-  CookieImpl._internal(final String fst, final String snd) :
-    _delegate = new Pair(fst, snd);
+  CookieImpl._internal(final String e0, final String e1) :
+    delegate = new Pair(e0, e1);
 
-  CookieImpl._wrap(this._delegate);
+  CookieImpl._wrap(this.delegate);
 
-  String get fst =>
-      _delegate.fst;
+  String get e0 =>
+      delegate.e0;
 
-  String get snd =>
-      _delegate.snd;
+  String get e1 =>
+      delegate.e1;
 
   int get hashCode =>
-      _delegate.hashCode;
+      delegate.hashCode;
 
   bool operator==(other) =>
-      _delegate == other;
+      delegate == other;
 
   String toString() =>
-      "$fst=$snd";
+      "$e0=$e1";
 }
 
 class _SetCookie implements SetCookie{

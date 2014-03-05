@@ -1,8 +1,8 @@
 part of data.internal;
 
-final Parser<Iterable<KeyValuePair>> _PARAMETERS = 
+final Parser<Iterable<KeyValuePair>> _PARAMETERS =
 (OWS_SEMICOLON_OWS + KVP_NOT_Q.sepBy(OWS_SEMICOLON_OWS))
-  .map((final Iterable e) => 
+  .map((final Iterable e) =>
       e.elementAt(1))
   .orElse(EMPTY_LIST);
 
@@ -12,48 +12,48 @@ final Parser<MediaRange> MEDIA_RANGE =
       final String type = e.elementAt(0).toLowerCase();
       final String subtype = e.elementAt(2).toLowerCase();
       Option<Charset> charset = Option.NONE;
-      final SetMultimap<String, String> parameters = 
+      final SetMultimap<String, String> parameters =
           EMPTY_SET_MULTIMAP.putAll(
-              e.elementAt(3).where((final KeyValuePair kvp) {                
-                final String key = kvp.fst.toLowerCase();
-                
+              e.elementAt(3).where((final KeyValuePair kvp) {
+                final String key = kvp.e0.toLowerCase();
+
                 // Parse the first valid charset in the parameters. Skip the rest.
                 if (key == "charset") {
                   if (charset.isEmpty) {
-                    charset = CHARSET.parse(kvp.snd);
+                    charset = CHARSET.parse(kvp.e1);
                     charset = (charset.isNotEmpty && (charset.value == Charset.ANY)) ?
                       Option.NONE : charset;
                   }
-                  
+
                   return false;
                 } else {
                   return true;
                 }
               }));
-      
-      return new MediaRangeImpl(type, subtype, charset, parameters); 
+
+      return new MediaRangeImpl(type, subtype, charset, parameters);
     });
 
-class MediaRangeImpl implements MediaRange {  
+class MediaRangeImpl implements MediaRange {
   final Option<Charset> charset;
   final String type;
   final String subtype;
   final Multimap<String, String, dynamic> parameters;
-  
+
   // FIXME: Making this public so that we can have a library of media ranges. Maybe this should be in a internal library
   // where we can strictly define the limits of use.
   const MediaRangeImpl.constant(this.type, this.subtype) :
     this.charset = Option.NONE,
     this.parameters = EMPTY_SET_MULTIMAP;
-  
+
   const MediaRangeImpl(this.type, this.subtype, [this.charset = Option.NONE, this.parameters = EMPTY_SET_MULTIMAP]);
-  
+
   int get hashCode =>
       computeHashCode([type, subtype, charset, parameters]);
-  
+
   int match(final MediaRange that) {
-    //if(this.charset.isDefined) { 
-    //  throw new StateError("Invalid to call match on MediaRange with a defined charset."); 
+    //if(this.charset.isDefined) {
+    //  throw new StateError("Invalid to call match on MediaRange with a defined charset.");
     //}
 
     if (this == that) {
@@ -61,7 +61,7 @@ class MediaRangeImpl implements MediaRange {
     } else if (this == MediaRange.ANY) {
       return 250;
     } else if (this.type != that.type) {
-      return 0;            
+      return 0;
     } else if (this.subtype =="*") {
       return 500;
     } else if (this.subtype != that.subtype) {
@@ -74,7 +74,7 @@ class MediaRangeImpl implements MediaRange {
       return 0;
     }
   }
-  
+
   bool operator==(other) {
     if (identical(this, other)) {
       return true;
@@ -87,38 +87,38 @@ class MediaRangeImpl implements MediaRange {
       return false;
     }
   }
-  
+
   MediaRange with_({final Charset charset, final Multimap<String, String, dynamic> parameters}) {
     checkState((type != "*") && (subtype != "*"));
     checkArgument(charset != Charset.ANY);
 
     final Charset newCharset = computeIfNull(charset, () => this.charset.nullableValue);
     final Multimap<String, String, dynamic> newParameters = firstNotNull(parameters, this.parameters);
-    
+
     return new MediaRange(this.type, this.subtype, charset: newCharset, parameters: newParameters);
   }
-  
-  String toString() {        
+
+  String toString() {
     StringBuffer buffer = new StringBuffer();
     buffer
       ..write(this.type)
       ..write('/')
       ..write(this.subtype);
-    
+
     this.charset.map(
-        (final Charset charset) => 
+        (final Charset charset) =>
             buffer
               ..write("; ")
               ..write("charset")
               ..write('=')
               ..write(charset));
-    
+
     if (!this.parameters.isEmpty) {
       buffer
         ..write("; ")
         ..write(pairIterableToString(this.parameters));
     }
-    
+
     return buffer.toString();
   }
 }

@@ -93,7 +93,7 @@ abstract class _IPathBase
 
   IPath putAll(final Iterable<Pair<int, String>> other) =>
       builder(delegate.putAll(other.map((final Pair<int, String> pair) {
-        segmentParser.parse(pair.snd).value;
+        segmentParser.parse(pair.e1).value;
         return pair;
       })));
 
@@ -110,7 +110,7 @@ abstract class _IPathBase
       builder(delegate.put(key, segmentParser.parse(value).value));
 
   IPath putPair(final Pair<int,String> pair) =>
-      builder(delegate.put(pair.fst, segmentParser.parse(pair.snd).value));
+      builder(delegate.put(pair.e0, segmentParser.parse(pair.e1).value));
 
   IPath removeAt(final int key) =>
       builder(delegate.removeAt(key));

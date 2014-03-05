@@ -23,7 +23,7 @@ void writeResponseHeaders(final Response response, void writeHeaderLine(final St
   _writeHeader(WWW_AUTHENTICATE, response.authenticationChallenges, writeHeaderLine);
 
   response.customHeaders.forEach((final Pair<Header, dynamic> header) =>
-      _writeHeader(header.fst, header.snd, writeHeaderLine));
+      _writeHeader(header.e0, header.e1, writeHeaderLine));
 }
 
 String _responseToString(final Response response) {

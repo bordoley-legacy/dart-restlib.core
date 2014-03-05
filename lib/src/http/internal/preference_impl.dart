@@ -38,11 +38,11 @@ Parser<Preference> preferenceParser(final Parser<Matcheable> valueParser) {
         }
 
         final KeyValuePair qfPair = parameters.first;
-        if (qfPair.fst.toLowerCase() != "q") {
+        if (qfPair.e0.toLowerCase() != "q") {
           return null;
         }
 
-        final Option<int> qfValue = QF_PARSER.parse(qfPair.snd);
+        final Option<int> qfValue = QF_PARSER.parse(qfPair.e1);
         if (qfValue.isEmpty) {
           return null;
         }

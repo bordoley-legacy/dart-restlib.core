@@ -14,7 +14,7 @@ void writeRequestHeaders(final Request request, void writeHeaderLine(final Strin
   _writeHeader(USER_AGENT, request.userAgent, writeHeaderLine);
 
   request.customHeaders.forEach((final Pair<Header, dynamic> header) =>
-     _writeHeader(header.fst, header.snd, writeHeaderLine));
+     _writeHeader(header.e0, header.e1, writeHeaderLine));
 }
 
 String _requestToString(final Request request) {

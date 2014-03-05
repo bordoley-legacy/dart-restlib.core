@@ -19,11 +19,11 @@ abstract class MediaRange implements Matcheable<MediaRange> {
     parameters =
         EMPTY_SET_MULTIMAP.putAll(
             parameters.map((final Pair<String,String> kv) {
-              checkArgument(TOKEN.parse(kv.fst).isNotEmpty);
-              checkArgument(kv.fst.toLowerCase() != "q");
-              checkArgument(kv.fst.toLowerCase() != "charset");
-              checkArgument(QUOTABLE.matchesAllOf(kv.snd));
-              return new Pair(kv.fst.toLowerCase(), kv.snd);
+              checkArgument(TOKEN.parse(kv.e0).isNotEmpty);
+              checkArgument(kv.e0.toLowerCase() != "q");
+              checkArgument(kv.e0.toLowerCase() != "charset");
+              checkArgument(QUOTABLE.matchesAllOf(kv.e1));
+              return new Pair(kv.e0.toLowerCase(), kv.e1);
             }));
 
     return new MediaRangeImpl(

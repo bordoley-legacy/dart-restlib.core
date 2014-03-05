@@ -8,16 +8,16 @@ final Parser<ChallengeMessage> CHALLENGE_MESSAGE =
     .map((final Iterable e) {
       final String scheme = e.elementAt(0);
       return e.elementAt(2).fold(
-          (final String base64) => 
+          (final String base64) =>
               new _Base64ChallengeMessage._internal(scheme, base64),
-          (final Iterable<Option<KeyValuePair>> pairs) => 
+          (final Iterable<Option<KeyValuePair>> pairs) =>
               new _ParametersChallengeMessage._internal(
-                  scheme, 
+                  scheme,
                   EMPTY_DICTIONARY.putAll(
                       pairs
-                        .where((final Option<KeyValuePair> optionalPair) => 
+                        .where((final Option<KeyValuePair> optionalPair) =>
                             optionalPair.isNotEmpty)
-                        .map((final Option<KeyValuePair> optionalPair) => 
+                        .map((final Option<KeyValuePair> optionalPair) =>
                             optionalPair.value))));
     });
 
@@ -25,12 +25,12 @@ final Parser<ChallengeMessage> CHALLENGE_MESSAGE =
 class _Base64ChallengeMessage implements Base64ChallengeMessage {
   final String data;
   final String scheme;
-  
+
   _Base64ChallengeMessage._internal(this.scheme, this.data);
-  
+
   int get hashCode => computeHashCode([scheme, data]);
-  
-  bool operator==(other) {    
+
+  bool operator==(other) {
     if (identical(this, other)) {
       return true;
     } else if (other is Base64ChallengeMessage) {
@@ -40,20 +40,20 @@ class _Base64ChallengeMessage implements Base64ChallengeMessage {
       return false;
     }
   }
-  
+
   String toString() =>
-      "$scheme $data"; 
+      "$scheme $data";
 }
 
 class _ParametersChallengeMessage implements ParametersChallengeMessage {
   final Dictionary<String, String> parameters;
   final String scheme;
-  
+
   const _ParametersChallengeMessage._internal(this.scheme, this.parameters);
 
   int get hashCode => computeHashCode([scheme, parameters]);
-  
-  bool operator==(other) {    
+
+  bool operator==(other) {
     if (identical(this, other)) {
       return true;
     } else if (other is ParametersChallengeMessage) {
@@ -63,15 +63,15 @@ class _ParametersChallengeMessage implements ParametersChallengeMessage {
       return false;
     }
   }
-  
+
   String toString() =>
       scheme + " " + parameters.map((final Pair<String, String> entry) {
-        if(entry.snd.isEmpty) {
-          return entry.fst;
-        } else if(entry.fst == "realm") {
-          return "${entry.fst}=\"${encodeQuotedString(entry.snd)}\"";
+        if(entry.e1.isEmpty) {
+          return entry.e0;
+        } else if(entry.e0 == "realm") {
+          return "${entry.e0}=\"${encodeQuotedString(entry.e1)}\"";
         } else {
-          return "${entry.fst}=${encodeWord(entry.snd)}";
+          return "${entry.e0}=${encodeWord(entry.e1)}";
         }
       }).join(", ");
 }

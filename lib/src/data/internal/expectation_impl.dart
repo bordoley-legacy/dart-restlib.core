@@ -41,7 +41,7 @@ class ExpectationImpl
   }
 
   Expectation putPair(Pair<String, String> pair) =>
-      put(pair.fst, pair.snd);
+      put(pair.e0, pair.e1);
 
   Expectation removeAt(final String key) =>
       new ExpectationImpl(delegate.removeAt(key));

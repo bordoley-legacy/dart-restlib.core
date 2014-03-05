@@ -160,7 +160,7 @@ class _Comment
   }
 
   Comment putPair(final Pair<int,Either<String, Comment>> pair) =>
-      put(pair.fst, pair.snd);
+      put(pair.e0, pair.e1);
 
   Comment removeAt(final int key) =>
       new _Comment(delegate.removeAt(key));
