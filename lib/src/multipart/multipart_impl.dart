@@ -1,4 +1,4 @@
-part of restlib.core.multipart;
+part of multipart;
 
 class _Multipart<T>
     extends Object

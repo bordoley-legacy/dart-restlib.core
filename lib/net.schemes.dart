@@ -1,4 +1,4 @@
-library restlib.core.net.schemes;
+library net.schemes;
 /**
  * Diameter Protocol
  * @see <a href="http://www.rfc-editor.org/rfc/rfc3588.txt">RFC3588</a>

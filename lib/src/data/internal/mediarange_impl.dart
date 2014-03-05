@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<Iterable<KeyValuePair>> _PARAMETERS = 
 (OWS_SEMICOLON_OWS + KVP_NOT_Q.sepBy(OWS_SEMICOLON_OWS))

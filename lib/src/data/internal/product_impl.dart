@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<String> _OPTIONAL_FORWARD_SLASH_TOKEN =
   (FORWARD_SLASH + TOKEN)

@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class Form implements ImmutableMultisetMultimap<String, String> {
   static Parser<Form> parser = FORM;

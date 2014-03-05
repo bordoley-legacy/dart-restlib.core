@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 const String _WEAK_TAG_STR = "W/";
 

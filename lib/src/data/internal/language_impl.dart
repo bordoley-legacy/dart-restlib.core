@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<Language> LANGUAGE =
   TOKEN.map((final String language) => 

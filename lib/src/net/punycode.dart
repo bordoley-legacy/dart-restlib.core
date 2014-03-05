@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 // see: https://github.com/bestiejs/punycode.js/blob/master/punycode.js
 

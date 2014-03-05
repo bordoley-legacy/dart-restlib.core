@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<Expectation> EXPECTATION =
   KVP.sepBy1(OWS_SEMICOLON_OWS)

@@ -1,4 +1,4 @@
-part of restlib.core.http.internal;
+part of http.internal;
 
 // FIXME: String copy is unfortunate
 final Parser<String> BASE64 =

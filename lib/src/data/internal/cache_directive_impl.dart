@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<CacheDirective> CACHE_DIRECTIVE =
   KVP.map((final KeyValuePair kvp) { 

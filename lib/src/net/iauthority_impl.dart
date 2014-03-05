@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 final Parser<int> _PORT = INTEGER.map((final int port) => 
     (port < 1 || port > 65535) ? null : port);

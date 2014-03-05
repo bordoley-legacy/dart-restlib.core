@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 final Parser<Preference/*<Charset>*/> _CHARSET_PREFERENCE_PARSER = preferenceParser(Charset.parser);
 

@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 const String _CLOSE_PARENTHESES_CHAR = ")";
 const int _CLOSE_PARENTHESES_CHAR_CODE = 41;

@@ -1,4 +1,4 @@
-part of restlib.core.http.internal;
+part of http.internal;
 
 Parser<Preference> preferenceParser(final Parser<Matcheable> valueParser) {
     final Parser<Iterable<KeyValuePair>> KEY_VALUE_PAIRS =

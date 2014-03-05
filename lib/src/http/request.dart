@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 void writeRequestHeaders(final Request request, void writeHeaderLine(final String header, final String value)) {
   _writeHeader(AUTHORIZATION, request.authorizationCredentials, writeHeaderLine);

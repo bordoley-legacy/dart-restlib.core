@@ -1,4 +1,4 @@
-library restlib.core.net;
+library net;
 
 import "dart:convert";
 

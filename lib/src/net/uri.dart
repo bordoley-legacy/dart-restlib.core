@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 abstract class URI extends IRI {
   static final Parser<URI> parser = _URI_;

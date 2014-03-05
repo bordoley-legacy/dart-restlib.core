@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class CookieMultimap implements ImmutableSetMultimap<String, String> {
   static final CookieMultimap EMPTY = new CookieMultimapImpl.empty();

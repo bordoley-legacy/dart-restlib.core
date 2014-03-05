@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 const String _BYTES_UNIT = "bytes";
 

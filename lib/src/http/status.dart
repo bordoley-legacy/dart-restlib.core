@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 abstract class Status {
   factory Status(code, reason, message) {

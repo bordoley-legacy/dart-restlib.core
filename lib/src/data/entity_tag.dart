@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class EntityTag {
   static final Parser<EntityTag> parser = ETAG;

@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class RangeUnit {
   static final Parser<RangeUnit> parser = RANGE_UNIT;

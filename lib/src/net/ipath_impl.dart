@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 abstract class _IPathBase 
     extends Object

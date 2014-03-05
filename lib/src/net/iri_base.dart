@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 Parser<IRI> _iriParser(final Parser<Authority> authority,
     final Parser<Iterable<String>> path,

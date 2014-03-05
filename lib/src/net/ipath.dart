@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 final Parser<String> _I_PATH_SEGMENT = _I_PCHAR;
 final Parser<IPath> _I_PATH =

@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 final Parser<String> _PATH_SEGMENT = _PCHAR.orElse("");
 final Parser<Path> _PATH =

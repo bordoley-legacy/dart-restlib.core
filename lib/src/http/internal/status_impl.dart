@@ -1,4 +1,4 @@
-part of restlib.core.http.internal;
+part of http.internal;
 
 class StatusImpl implements Status {
   final int code;

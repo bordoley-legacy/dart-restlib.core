@@ -1,4 +1,4 @@
-library restlib.core.data.internal;
+library data.internal;
 
 import "dart:collection";
 import "dart:convert";

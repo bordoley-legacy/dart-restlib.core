@@ -1,4 +1,4 @@
-library restlib.core.data;
+library data;
 
 import "dart:convert";
 

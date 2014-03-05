@@ -1,4 +1,4 @@
-library restlib.core.http.methods;
+library http.methods;
 
 import "http.dart";
 import "http.internal.dart";

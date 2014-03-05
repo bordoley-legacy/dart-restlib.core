@@ -1,4 +1,4 @@
-part of restlib.core.http.internal;
+part of http.internal;
 
 String encodeQuotedString(final String val) {
   final StringBuffer retval = new StringBuffer();

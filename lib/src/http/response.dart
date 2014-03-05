@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 void writeResponseHeaders(final Response response, void writeHeaderLine(final String header, final String value)) {
   _writeHeader(ACCEPT_RANGES, response.acceptedRangeUnits, writeHeaderLine);

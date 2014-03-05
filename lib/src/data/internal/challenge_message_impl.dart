@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<String> _BASE64_DATA =
   BASE64.followedBy((OWS + COMMA) ^ EOF);

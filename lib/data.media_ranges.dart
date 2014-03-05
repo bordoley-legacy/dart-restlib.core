@@ -1,4 +1,4 @@
-library restlib.core.data.media_ranges;
+library data.media_ranges;
 
 import "data.dart";
 import "data.internal.dart";

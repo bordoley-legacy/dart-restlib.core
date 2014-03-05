@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 final Codec<String, String> _USER_INFO_CODEC = utf8UriCodec(_USER_INFO_SAFE_CHARS.matches);
 final Codec<String, String> _QUERY_CODEC = utf8UriCodec(_QUERY_SAFE_CHARS.matches);

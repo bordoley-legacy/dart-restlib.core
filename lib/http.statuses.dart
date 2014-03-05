@@ -1,4 +1,4 @@
-library restlib.core.http.statuses;
+library http.statuses;
 
 import "http.dart";
 import "http.internal.dart";

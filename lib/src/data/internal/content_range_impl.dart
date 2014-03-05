@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<UnsatisfiedRange> _UNSATISFIED_CONTENT_RANGE =
   (ASTERISK + FORWARD_SLASH + INTEGER)

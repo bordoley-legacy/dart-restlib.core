@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class ContentRange {
   static final Parser<ContentRange> parser = CONTENT_RANGE;

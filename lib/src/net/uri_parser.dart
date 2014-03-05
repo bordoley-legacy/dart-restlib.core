@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 final Parser<URI> _URI_ = _iriParser(
     _AUTHORITY,

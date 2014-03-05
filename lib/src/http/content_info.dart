@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 void _writeContentInfo(final ContentInfo contentInfo, void writeHeaderLine(final String header, final String value)) {
   _writeHeader(CONTENT_ENCODING, contentInfo.encodings, writeHeaderLine);

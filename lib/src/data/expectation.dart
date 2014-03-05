@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class Expectation implements ImmutableSequenceMultimap<String,String> {
   static final Parser<Expectation> parser = EXPECTATION;

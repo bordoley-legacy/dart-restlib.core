@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 class _Authority extends _IAuthorityBase implements Authority {
   final Either<DomainName, IPAddress> host;

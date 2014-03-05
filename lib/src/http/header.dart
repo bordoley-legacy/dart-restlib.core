@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 typedef void _WriteHeaderLine(final String header, final String value);
 

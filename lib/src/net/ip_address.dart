@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 // FIXME: IPv6 support
 final Parser<IPAddress> _IP_ADDRESS = _IP_V4_ADDRESS;

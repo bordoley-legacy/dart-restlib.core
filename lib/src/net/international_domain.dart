@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 final RuneMatcher _I_REG_NAME_SAFE_CHARS = _I_UNRESERVED | _SUB_DELIMS;
 final Parser<InternationalDomainName> _INTERNATIONAL_DOMAIN_NAME = _I_REG_NAME;

@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class CacheDirective implements Pair<String,String> {
   static const String _MAX_AGE_NAME = "max-age";

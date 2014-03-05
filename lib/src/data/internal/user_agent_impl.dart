@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<Either<Product, Comment>> _PRODUCT_OR_COMMENT =
   (RWS + (PRODUCT ^ COMMENT))

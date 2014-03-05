@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 void _writeRequestPreferences(final RequestPreferences preferences, void writeHeaderLine(final String header, final String value)) {
   _writeHeader(ACCEPT_CHARSET, preferences.acceptedCharsets, writeHeaderLine);

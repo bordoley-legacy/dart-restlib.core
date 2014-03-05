@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 // http://tools.ietf.org/html/rfc6265
 

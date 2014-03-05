@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 abstract class Preference<T extends Matcheable<T>> {
   static Option/*<T>*/ bestMatch(Iterable<Preference/*<T>*/> preferred, Iterable/*<T>*/ available) {

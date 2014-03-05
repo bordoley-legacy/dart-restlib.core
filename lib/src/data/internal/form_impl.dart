@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<Form> FORM =
   _FORM_PAIR.sepBy(AMPERSAND).map((final Iterable<Pair<String, String>> pairs) =>

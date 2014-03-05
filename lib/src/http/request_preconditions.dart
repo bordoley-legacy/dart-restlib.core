@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 void _writeRequestPreconditions(final RequestPreconditions preconditions, void writeHeaderLine(final String header, final String value)) {
   _writeHeader(IF_MATCH, preconditions.ifMatch, writeHeaderLine);

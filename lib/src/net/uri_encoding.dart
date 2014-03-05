@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 const _UriDecoder _URI_DECODER = const _UriDecoder();
 

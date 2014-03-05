@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 class _IRI extends _IRIBase implements IRI { 
   static IRI _builder(final String scheme, final Option<Authority> authority, 

@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 typedef Request RequestFilter(Request request); 
 typedef Response ResponseFilter(Response response); 

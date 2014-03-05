@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class Language implements Matcheable<Language> {
   static final Parser<Language> parser = LANGUAGE;

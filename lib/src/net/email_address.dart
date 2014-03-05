@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 Parser<EmailAddress> _EMAIL_ADDRESS;
 

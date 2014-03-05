@@ -1,4 +1,4 @@
-library restlib.core.http.headers;
+library http.headers;
 
 import "http.dart";
 import "http.internal.dart";

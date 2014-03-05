@@ -1,4 +1,4 @@
-library restlib.core.http;
+library http;
 
 import "package:restlib_common/collections.dart";
 import "package:restlib_common/collections.immutable.dart";

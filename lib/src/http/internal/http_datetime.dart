@@ -1,4 +1,4 @@
-part of restlib.core.http.internal;
+part of http.internal;
 
 final Parser<String> _DAY_NAME =
   string("Mon") | string("Tue") | string("Wed") | string("Thu") | string("Fri") | string("Sat") | string("Sun");

@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 final Parser<Authority> _AUTHORITY =
   _authorityParser(_USER_INFO, _HOST, Authority._builder);

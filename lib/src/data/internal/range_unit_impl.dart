@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final Parser<RangeUnit> BYTES_UNIT =
   string("bytes")

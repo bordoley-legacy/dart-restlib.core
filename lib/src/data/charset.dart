@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class Charset implements Matcheable<Charset> {
   static final Parser<Charset> parser = CHARSET;

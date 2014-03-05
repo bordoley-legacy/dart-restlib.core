@@ -1,4 +1,4 @@
-part of restlib.core.http;
+part of http;
 
 final MutableDictionary<Method,Method> _registry =
     (new MutableDictionary.hash()

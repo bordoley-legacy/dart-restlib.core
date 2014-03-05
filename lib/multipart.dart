@@ -1,4 +1,4 @@
-library restlib.core.multipart;
+library multipart;
 
 import "dart:async";
 import "dart:convert";

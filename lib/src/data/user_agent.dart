@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class UserAgent implements ImmutableSequence<Either<Product, Comment>> {
   static final UserAgent EMPTY = new UserAgentImpl(EMPTY_SEQUENCE);

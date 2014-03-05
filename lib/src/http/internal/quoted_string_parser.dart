@@ -1,4 +1,4 @@
-part of restlib.core.http.internal;
+part of http.internal;
 
 const int _DQUOTE_CHAR = 34;
 const int _ESCAPE_CHAR = 92;

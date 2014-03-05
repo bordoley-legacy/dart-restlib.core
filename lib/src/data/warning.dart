@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class Warning {
   static final Parser<Warning> parser = WARNING;

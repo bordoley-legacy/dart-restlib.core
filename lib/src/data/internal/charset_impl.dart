@@ -1,4 +1,4 @@
-part of restlib.core.data.internal;
+part of data.internal;
 
 final PatternMatcher<Charset> _charsetMatcher =
   new PatternMatcher<Charset>(

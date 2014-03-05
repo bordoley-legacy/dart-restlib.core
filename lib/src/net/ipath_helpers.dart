@@ -1,4 +1,4 @@
-part of restlib.core.net;
+part of net;
 
 
 bool _isPathAbEmpty(final IPath path) =>

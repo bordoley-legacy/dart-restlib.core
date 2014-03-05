@@ -1,4 +1,4 @@
-part of restlib.core.data;
+part of data;
 
 abstract class Matcheable<T> {
   // Defines the quality of the match of this to that. For instance,

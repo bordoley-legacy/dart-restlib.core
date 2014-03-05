@@ -1,4 +1,4 @@
-library restlib.core.http.future_responses;
+library http.future_responses;
 
 import "dart:async";
 import "http.dart";
