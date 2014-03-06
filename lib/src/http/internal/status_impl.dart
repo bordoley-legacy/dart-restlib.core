@@ -1,6 +1,8 @@
 part of http.internal;
 
 class StatusImpl implements Status {
+  static final MutableDictionary<Status, Response> _statusResponses = new MutableDictionary.hash();
+
   final int code;
   final String message;
   final String reason;
@@ -20,9 +22,13 @@ class StatusImpl implements Status {
     }
   }
 
-  Response toResponse() {
-    return new Response(this, entity : this.message);
-  }
+  Response toResponse() =>
+      _statusResponses[this].orCompute(() {
+        final Response response = new Response(this, entity : this.message);
+        _statusResponses[this] = response;
+        return response;
+      });
+
 
   String toString() {
     return "$code $reason";
