@@ -52,10 +52,10 @@ final Parser<int> _4_DIGIT =
   (DIGIT + DIGIT + DIGIT + DIGIT).map((final Tuple4<int,int,int,int> e) =>
       e.e0 * 1000 + e.e1 * 100 + e.e2 * 10 + e.e3);
 
-final Parser<Tuple5<int, int, int, int, int>> _TIME_OF_DAY =
+final Parser<Tuple> _TIME_OF_DAY =
   _2_DIGIT + COLON + _2_DIGIT + COLON + _2_DIGIT;
 
-final Parser<Tuple5<int, int, int, int, int>> _DATE_1 =
+final Parser<Tuple> _DATE_1 =
   _2_DIGIT + SP + _MONTH + SP + _4_DIGIT;
 
 final Parser<DateTime> _IMF_FIX_DATE =
