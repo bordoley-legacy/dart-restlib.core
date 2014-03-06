@@ -89,7 +89,7 @@ abstract class _IPathBase
 
 
   IPath push(final String segment) =>
-      builder(delegate.push(segmentParser.parse(segment).value));
+      builder(delegate.push(segmentParser.parseValue(segment)));
 
   IPath putAll(final Iterable<Pair<int, String>> other) =>
       builder(delegate.putAll(other.map((final Pair<int, String> pair) {
@@ -100,7 +100,7 @@ abstract class _IPathBase
   IPath putAllFromMap(final Map<int,String> map) {
     ImmutableSequence<String> newDelegate = this.delegate;
     map.forEach((final int key, final String value){
-      newDelegate = newDelegate.put(key, segmentParser.parse(value).value);
+      newDelegate = newDelegate.put(key, segmentParser.parseValue(value));
     });
 
     return builder(newDelegate);
@@ -116,8 +116,7 @@ abstract class _IPathBase
       builder(delegate.removeAt(key));
 
   IPath pushAll(Iterable<String> value) =>
-      builder(delegate.pushAll(value.map((final String value) =>
-          segmentParser.parse(value).value)));
+      builder(delegate.pushAll(value.map(segmentParser.parseValue)));
 
   String toString() =>
       this.join("/");
