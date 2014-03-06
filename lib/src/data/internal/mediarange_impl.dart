@@ -2,19 +2,18 @@ part of data.internal;
 
 final Parser<Iterable<KeyValuePair>> _PARAMETERS =
 (OWS_SEMICOLON_OWS + KVP_NOT_Q.sepBy(OWS_SEMICOLON_OWS))
-  .map((final Iterable e) =>
-      e.elementAt(1))
+  .map((final Pair<String, Iterable<KeyValuePair>> e) => e.e1)
   .orElse(EMPTY_LIST);
 
 final Parser<MediaRange> MEDIA_RANGE =
   (TOKEN + FORWARD_SLASH + TOKEN + _PARAMETERS)
-    .map((final Iterable e) {
-      final String type = e.elementAt(0).toLowerCase();
-      final String subtype = e.elementAt(2).toLowerCase();
+    .map((final Tuple4<String, int, String, Iterable<KeyValuePair>> e) {
+      final String type = e.e0.toLowerCase();
+      final String subtype = e.e2.toLowerCase();
       Option<Charset> charset = Option.NONE;
       final SetMultimap<String, String> parameters =
           EMPTY_SET_MULTIMAP.putAll(
-              e.elementAt(3).where((final KeyValuePair kvp) {
+              e.e3.where((final KeyValuePair kvp) {
                 final String key = kvp.e0.toLowerCase();
 
                 // Parse the first valid charset in the parameters. Skip the rest.

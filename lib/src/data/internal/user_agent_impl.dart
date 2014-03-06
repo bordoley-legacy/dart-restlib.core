@@ -2,16 +2,16 @@ part of data.internal;
 
 final Parser<Either<Product, Comment>> _PRODUCT_OR_COMMENT =
   (RWS + (PRODUCT ^ COMMENT))
-    .map((final Iterable e) =>
-        e.elementAt(1));
+    .map((final Pair<IterableString, Either<Product, Comment>> e) =>
+        e.e1);
 
 final Parser<UserAgent> USER_AGENT =
   (PRODUCT + _PRODUCT_OR_COMMENT.many())
-    .map((final Iterable e) =>
+    .map((final Pair<Product, Iterable<Either<Product,Comment>>> e) =>
         new UserAgentImpl(
             EMPTY_SEQUENCE
-              .add(new Either.leftValue(e.elementAt(0)))
-              .addAll(e.elementAt(1))));
+              .add(new Either.leftValue(e.e0))
+              .addAll(e.e1)));
 
 class UserAgentImpl
     extends Object

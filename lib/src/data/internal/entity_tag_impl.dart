@@ -5,10 +5,10 @@ const String _WEAK_TAG_STR = "W/";
 final Parser<String> _WEAK_TAG = string(_WEAK_TAG_STR);
 final Parser<EntityTag> ETAG =
   (_WEAK_TAG.optional() + DQUOTE + ETAGC.many1().map(objectToString) + DQUOTE)
-    .map((final Iterable e) =>
-        e.elementAt(0).isEmpty ?
-            new EntityTag.strong(e.elementAt(2)) :
-              new EntityTag.weak(e.elementAt(2)));
+    .map((final Tuple4<Option<String>, int, String, int> e) =>
+        e.e0.isEmpty ?
+            new EntityTag.strong(e.e2) :
+              new EntityTag.weak(e.e2));
 
 class EntityTagImpl implements EntityTag {
   final String value;

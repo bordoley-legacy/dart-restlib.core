@@ -2,25 +2,23 @@ part of data.internal;
 
 final Parser<String> _OPTIONAL_FORWARD_SLASH_TOKEN =
   (FORWARD_SLASH + TOKEN)
-    .optional()  
-    .map((final Option<Iterable> opt) => 
-      opt.map((final Iterable e) =>
-          e.elementAt(1)  
-      ).orElse(""));
+    .optional()
+    .map((final Option<Pair<int,String>> opt) =>
+        opt.map((final Pair<int,String> e) => e.e1).orElse(""));
 
-final Parser<Product> PRODUCT = 
+final Parser<Product> PRODUCT =
   (TOKEN + _OPTIONAL_FORWARD_SLASH_TOKEN)
-    .map((final Iterable e) => 
-        new ProductImpl._internal(e.elementAt(0), e.elementAt(1)));
+    .map((final Pair<String, String> e) =>
+        new ProductImpl._internal(e.e0, e.e1));
 
-class ProductImpl implements Product {  
+class ProductImpl implements Product {
   final String name;
   final String version;
-  
+
   ProductImpl._internal(this.name, this.version);
 
   int get hashCode => computeHashCode([name, version]);
-  
+
   bool operator==(other) {
     if (identical(this, other)) {
       return true;
@@ -31,7 +29,7 @@ class ProductImpl implements Product {
       return false;
     }
   }
-  
+
   String toString() =>
     name + (version.isEmpty ? "" : "/"  + version);
 }

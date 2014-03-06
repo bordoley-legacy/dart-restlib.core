@@ -4,8 +4,8 @@ final Parser<String> _DAY_NAME =
   string("Mon") | string("Tue") | string("Wed") | string("Thu") | string("Fri") | string("Sat") | string("Sun");
 
 final Parser<int> _2_DIGIT =
-  (DIGIT + DIGIT).map((final Iterable e) =>
-      e.elementAt(0) * 10 + e.elementAt(1));
+  (DIGIT + DIGIT).map((final Pair<int, int> e) =>
+      e.e0 * 10 + e.e1);
 
 final Parser<int> _MONTH =
   (string("Jan") |
@@ -49,13 +49,13 @@ final Parser<int> _MONTH =
   });
 
 final Parser<int> _4_DIGIT =
-  (DIGIT + DIGIT + DIGIT + DIGIT).map((final Iterable e) =>
-      e.elementAt(0) * 1000 + e.elementAt(1) * 100 + e.elementAt(2) * 10 + e.elementAt(3));
+  (DIGIT + DIGIT + DIGIT + DIGIT).map((final Tuple4<int,int,int,int> e) =>
+      e.e0 * 1000 + e.e1 * 100 + e.e2 * 10 + e.e3);
 
-final Parser<Iterable> _TIME_OF_DAY =
+final Parser<Tuple5<int, int, int, int, int>> _TIME_OF_DAY =
   _2_DIGIT + COLON + _2_DIGIT + COLON + _2_DIGIT;
 
-final Parser<Iterable> _DATE_1 =
+final Parser<Tuple5<int, int, int, int, int>> _DATE_1 =
   _2_DIGIT + SP + _MONTH + SP + _4_DIGIT;
 
 final Parser<DateTime> _IMF_FIX_DATE =

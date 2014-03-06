@@ -3,31 +3,31 @@ part of data.internal;
 // http://tools.ietf.org/html/rfc6265
 
 final Parser<SetCookie> SET_COOKIE =
-  (COOKIE_PAIR + _SET_COOKIE_ATTRIBUTES).map((final Iterable e) =>
-      new _SetCookie._internal(e.elementAt(0), EMPTY_SET.addAll(e.elementAt(1))));
+  (COOKIE_PAIR + _SET_COOKIE_ATTRIBUTES).map((final Pair<Cookie, Iterable<CookieAttribute>> e) =>
+      new _SetCookie._internal(e.e0, EMPTY_SET.addAll(e.e1)));
 
 final Parser<Iterable<CookieAttribute>> _SET_COOKIE_ATTRIBUTES =
-  (SEMICOLON + _COOKIE_AV.sepBy(SEMICOLON)).map((final Iterable e) =>
-      e.elementAt(1)).orElse(EMPTY_LIST);
+  (SEMICOLON + _COOKIE_AV.sepBy(SEMICOLON)).map((final Pair<int, Iterable<CookieAttribute>> e) =>
+      e.e1).orElse(EMPTY_LIST);
 
 final Parser<CookieAttribute> _COOKIE_AV =
   _EXPIRES_AV | _MAX_AGE_AV | _DOMAIN_AV | _PATH_AV | _SECURE_AV | _HTTP_ONLY_AV | _EXTENSION_AV;
 
 final Parser<CookieAttribute> _EXPIRES_AV =
-  (string("Expires=") + HTTP_DATE_TIME).map((final Iterable e) =>
-      new CookieExpiresAttributeImpl(e.elementAt(1)));
+  (string("Expires=") + HTTP_DATE_TIME).map((final Pair<String, DateTime> e) =>
+      new CookieExpiresAttributeImpl(e.e1));
 
 final Parser<CookieAttribute> _MAX_AGE_AV =
-  (string("Max-Age=") + INTEGER).map((final Iterable e) =>
-      new CookieMaxAgeAttributeImpl(e.elementAt(1)));
+  (string("Max-Age=") + INTEGER).map((final Pair<String, int> e) =>
+      new CookieMaxAgeAttributeImpl(e.e1));
 
 final Parser<CookieAttribute> _DOMAIN_AV =
-  (string("Domain=") + DomainName.parser).map((final Iterable e) =>
-      new CookieDomainAttributeImpl(e.elementAt(1)));
+  (string("Domain=") + DomainName.parser).map((final Pair<String, DomainName> e) =>
+      new CookieDomainAttributeImpl(e.e1));
 
 final Parser<CookieAttribute> _PATH_AV =
-  (string("Path=") + Path.parser).map((final Iterable e) =>
-      new CookiePathAttributeImpl(e.elementAt(1)));
+  (string("Path=") + Path.parser).map((final Pair<String, Path> e) =>
+      new CookiePathAttributeImpl(e.e1));
 
 final Parser<CookieAttribute> _HTTP_ONLY_AV =
   string(CookieAttribute.HTTP_ONLY.toString()).map((_) =>
@@ -43,13 +43,13 @@ final Parser<CookieAttribute> _EXTENSION_AV =
 
 final Parser<Cookie> COOKIE_PAIR =
   (TOKEN + EQUALS + _COOKIE_VALUE)
-    .map((final Iterable e) =>
-        new CookieImpl._internal(e.elementAt(0), e.elementAt(2)));
+    .map((final Tuple3<String, int, String> e) =>
+        new CookieImpl._internal(e.e0, e.e2));
 
 final Parser<String> _COOKIE_VALUE = (_COOKIE_OCTET.many() | _QUOTED_COOKIE_OCTET).map(objectToString);
 
 final Parser<IterableString> _QUOTED_COOKIE_OCTET =
-  (DQUOTE + _COOKIE_OCTET.many() + DQUOTE).map((final Iterable e) =>
+  (DQUOTE + _COOKIE_OCTET.many() + DQUOTE).map((final Tuple3<int, IterableString, int> e) =>
       e.elementAt(1));
 
 final RuneMatcher _COOKIE_OCTET =

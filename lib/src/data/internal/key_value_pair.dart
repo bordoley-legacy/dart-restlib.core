@@ -3,13 +3,12 @@ part of data.internal;
 // FIXME: NPE when parsing "a=" kvp
 final Parser<KeyValuePair> KVP =
   (TOKEN + _OPTIONAL_VALUE)
-    .map((final Iterable elements) =>
-      new KeyValuePair._internal(elements.elementAt(0), elements.elementAt(1)));
+    .map((final Pair<String, String> e) =>
+      new KeyValuePair._internal(e.e0, e.e1));
 
 final Parser<String> _OPTIONAL_VALUE =
   (OWS + EQUALS + OWS + OPTIONAL_WORD)
-    .map((final Iterable elements) =>
-        elements.elementAt(3))
+    .map((final Tuple4<IterableString, int, IterableString, String> e) => e.e3)
     .orElse("");
 
 final Parser<KeyValuePair> KVP_NOT_Q =

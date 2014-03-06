@@ -11,8 +11,8 @@ const int _OPEN_PARENTHESES_CHAR_CODE = 40;
 
 final Parser<Comment> COMMENT =
   (OPEN_PARENTHESES + _COMMENT_SEGMENT.many() + CLOSE_PARENTHESES)
-    .map((final Iterable e) =>
-        _Comment.EMPTY.addAll(e.elementAt(1)));
+    .map((final Tuple3<int, Iterable<Either<String, Comment>>, int> e) =>
+        _Comment.EMPTY.addAll(e.e1));
 
 final Parser<Either<String, Comment>> _COMMENT_SEGMENT =
   (_COMMENT_TEXT ^ rec(() => COMMENT));

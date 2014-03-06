@@ -3,8 +3,8 @@ part of http.internal;
 // FIXME: String copy is unfortunate
 final Parser<String> BASE64 =
   ((ALPHA_NUMERIC | anyOf("-._~+/")).many1() + EQUALS.many())
-    .map((final Iterable<IterableString> e) =>
-        e.elementAt(0).toString() + e.elementAt(1).toString());
+    .map((final Pair<IterableString, IterableString> e) =>
+        e.e0.toString() + e.e1.toString());
 
 final Parser<IterableString> BWS = OWS;
 
@@ -49,9 +49,9 @@ final Parser<String> OPTIONAL_WORD = WORD.orElse("");
 
 final Parser<IterableString> OWS = WSP.many();
 
-final Parser<String> OWS_SEMICOLON_OWS = (OWS + SEMICOLON + OWS).map((val) => ";");
+final Parser<String> OWS_SEMICOLON_OWS = (OWS + SEMICOLON + OWS).map((_) => ";");
 
-final Parser<String> OWS_COMMA_OWS = (OWS + COMMA + OWS).map((val) => ",");
+final Parser<String> OWS_COMMA_OWS = (OWS + COMMA + OWS).map((_) => ",");
 
 final RuneMatcher REASON_PHRASE =
   WSP | VCHAR | OBS_TEXT;

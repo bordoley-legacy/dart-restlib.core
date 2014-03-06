@@ -5,9 +5,9 @@ final Parser<String> _BASE64_DATA =
 
 final Parser<ChallengeMessage> CHALLENGE_MESSAGE =
   (TOKEN + SP.many1() + (_BASE64_DATA ^ KVP.optional().sepBy1(OWS_COMMA_OWS)))
-    .map((final Iterable e) {
-      final String scheme = e.elementAt(0);
-      return e.elementAt(2).fold(
+    .map((final Tuple3<String, IterableString, Either<String, Iterable<Option<KeyValuePair>>>> e) {
+      final String scheme = e.e0;
+      return e.e2.fold(
           (final String base64) =>
               new _Base64ChallengeMessage._internal(scheme, base64),
           (final Iterable<Option<KeyValuePair>> pairs) =>
