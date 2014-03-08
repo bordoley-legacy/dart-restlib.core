@@ -5,8 +5,8 @@ final Parser<IPAddress> _IP_ADDRESS = _IP_V4_ADDRESS;
 
 final Parser<IPv4Address> _IP_V4_ADDRESS  =
   (_DEC_OCTET + PERIOD + _DEC_OCTET + PERIOD + _DEC_OCTET + PERIOD + _DEC_OCTET)
-    .map((final TupleRest<int, int, int, int, int, int, Pair<int, int>> e) =>
-        new IPv4Address._internal(e.e0, e.e2, e.e4, e.rest.e1));
+    .map((final Tuple7<int, int, int, int, int, int, int> e) =>
+        new IPv4Address._internal(e.e0, e.e2, e.e4, e.e6));
 
 final Parser<int> _DEC_OCTET = INTEGER.map((final int result) =>
     (result >=0 && result <= 255) ? result : null);
