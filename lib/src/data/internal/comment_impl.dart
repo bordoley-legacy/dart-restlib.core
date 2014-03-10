@@ -28,7 +28,7 @@ class _CommentTextParser extends AbstractParser<String> {
 
     createBuffer() {
       if (sb == null) {
-        sb = new StringBuffer(itr.substring(startIndex +1, itr.index - 1));
+        sb = new StringBuffer(itr.iterable.substring(startIndex +1, itr.index - 1).toString());
       }
     }
 
@@ -57,7 +57,7 @@ class _CommentTextParser extends AbstractParser<String> {
     if (sb != null) {
       return new Option(sb.toString());
     } else if (startIndex + 1 < endIndex){
-      return new Option(itr.substring(startIndex +1, endIndex));
+      return new Option(itr.iterable.substring(startIndex +1, endIndex).toString());
     } else {
       return Option.NONE;
     }

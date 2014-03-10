@@ -119,7 +119,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
       endIndex = itr.index + 1;
     }
 
-    final String result = itr.substring(startIndex, endIndex);
+    final String result = itr.iterable.substring(startIndex, endIndex).toString();
 
     try {
       _URI_DECODER.convert(result);
@@ -148,7 +148,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
     }
 
     itr.index = endIndex - 1;
-    final String retval = itr.substring(startIndex, endIndex);
+    final String retval = itr.iterable.substring(startIndex, endIndex).toString();
     if (retval.isEmpty) {
       return Option.NONE;
     }

@@ -30,7 +30,7 @@ class _QuotedStringParser extends AbstractParser<String> {
         // Create a new buffer if needed and copy all of the already parsed string
         // into the buffer.
         if (buffer == null) {
-          buffer = new StringBuffer(itr.substring(startIndex, endIndex));
+          buffer = new StringBuffer(itr.iterable.substring(startIndex, endIndex).toString());
         }
 
         if (!itr.moveNext()) {
@@ -47,7 +47,7 @@ class _QuotedStringParser extends AbstractParser<String> {
           return new Option(buffer.toString());
         } else {
           endIndex++;
-          return new Option(itr.substring(startIndex + 2, endIndex + 1));
+          return new Option(itr.iterable.substring(startIndex + 2, endIndex + 1).toString());
         }
       } else {
         return Option.NONE;

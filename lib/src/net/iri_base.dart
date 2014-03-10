@@ -235,6 +235,6 @@ class _SchemeParser extends AbstractParser<String> {
     int endIndex = itr.index;
     itr.movePrevious();
 
-    return new Option(itr.substring(startIndex, endIndex));
+    return new Option(itr.iterable.substring(startIndex, endIndex).toString());
   }
 }
