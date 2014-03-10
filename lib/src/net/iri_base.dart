@@ -217,7 +217,7 @@ class _SchemeParser extends AbstractParser<String> {
 
   _SchemeParser();
 
-  Option<String> doParse(final StringIterator itr) {
+  Option<String> doParse(final CodePointIterator itr) {
     final int startIndex = itr.index + 1;
 
     if (!itr.moveNext()) {
@@ -235,6 +235,6 @@ class _SchemeParser extends AbstractParser<String> {
     int endIndex = itr.index;
     itr.movePrevious();
 
-    return new Option(itr.string.substring(startIndex, endIndex));
+    return new Option(itr.substring(startIndex, endIndex));
   }
 }

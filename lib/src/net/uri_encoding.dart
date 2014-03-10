@@ -90,7 +90,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
 
   const _PercentEncodedStringParser(this.safeCodePoints);
 
-  bool parsePercentEncoded(final StringIterator itr) {
+  bool parsePercentEncoded(final CodePointIterator itr) {
     final int startIndex = itr.index;
     int endIndex = startIndex;
 
@@ -119,7 +119,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
       endIndex = itr.index + 1;
     }
 
-    final String result = itr.string.substring(startIndex, endIndex);
+    final String result = itr.substring(startIndex, endIndex);
 
     try {
       _URI_DECODER.convert(result);
@@ -130,7 +130,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
     return true;
   }
 
-  Option<String> doParse(final StringIterator itr) {
+  Option<String> doParse(final CodePointIterator itr) {
     final int startIndex = itr.index + 1;
     int endIndex = startIndex;
 
@@ -148,7 +148,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
     }
 
     itr.index = endIndex - 1;
-    final String retval = itr.string.substring(startIndex, endIndex);
+    final String retval = itr.substring(startIndex, endIndex);
     if (retval.isEmpty) {
       return Option.NONE;
     }

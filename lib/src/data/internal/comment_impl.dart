@@ -22,14 +22,13 @@ const Parser<String> _COMMENT_TEXT = const _CommentTextParser();
 class _CommentTextParser extends AbstractParser<String> {
   const _CommentTextParser();
 
-  Option<String> doParse(final StringIterator itr) {
+  Option<String> doParse(final CodePointIterator itr) {
     StringBuffer sb = null;
     final int startIndex = itr.index;
 
     createBuffer() {
       if (sb == null) {
-        sb = new StringBuffer(
-            itr.string.substring(startIndex + 1 , itr.index - 1));
+        sb = new StringBuffer(itr.substring(startIndex +1, itr.index - 1));
       }
     }
 
@@ -58,7 +57,7 @@ class _CommentTextParser extends AbstractParser<String> {
     if (sb != null) {
       return new Option(sb.toString());
     } else if (startIndex + 1 < endIndex){
-      return new Option(itr.string.substring(startIndex+1, endIndex));
+      return new Option(itr.substring(startIndex +1, endIndex));
     } else {
       return Option.NONE;
     }

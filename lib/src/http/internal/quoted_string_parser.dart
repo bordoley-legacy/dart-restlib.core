@@ -6,7 +6,7 @@ const int _ESCAPE_CHAR = 92;
 class _QuotedStringParser extends AbstractParser<String> {
   const _QuotedStringParser();
 
-  Option<String> doParse(final StringIterator itr) {
+  Option<String> doParse(final CodePointIterator itr) {
     int startIndex = itr.index;
     int endIndex = startIndex;
 
@@ -30,7 +30,7 @@ class _QuotedStringParser extends AbstractParser<String> {
         // Create a new buffer if needed and copy all of the already parsed string
         // into the buffer.
         if (buffer == null) {
-          buffer = new StringBuffer(itr.string.substring(startIndex, endIndex));
+          buffer = new StringBuffer(itr.substring(startIndex, endIndex));
         }
 
         if (!itr.moveNext()) {
@@ -47,7 +47,7 @@ class _QuotedStringParser extends AbstractParser<String> {
           return new Option(buffer.toString());
         } else {
           endIndex++;
-          return new Option(itr.string.substring(startIndex + 2, endIndex + 1));
+          return new Option(itr.substring(startIndex + 2, endIndex + 1));
         }
       } else {
         return Option.NONE;
