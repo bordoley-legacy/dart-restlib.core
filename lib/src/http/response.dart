@@ -196,8 +196,8 @@ abstract class Response<T> {
             EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
             EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
 
-  factory Response.wrapHeaders(final Status status, final Multimap<Header, String, dynamic> headers) =>
-       new _HeadersResponseWrapper(headers, status);
+  factory Response.wrapHeaders(final Status status, final Multimap<Header, String, dynamic> headers, [final T entity = null]) =>
+       new _HeadersResponseWrapper(headers, status, new Option(entity));
 
   FiniteSet<RangeUnit> get acceptedRangeUnits;
 
@@ -440,7 +440,7 @@ class _HeadersResponseWrapper<T>
   ContentInfo _contentInfo;
   Dictionary<Header, dynamic> _customHeaders;
   Option<DateTime> _date;
-  Option<T> entity = Option.NONE;
+  Option<T> entity;
   Option<EntityTag> _entityTag;
   Option<DateTime> _expires;
   Option<DateTime> _lastModified;
@@ -452,7 +452,7 @@ class _HeadersResponseWrapper<T>
   ImmutableSet<Header> _vary;
   ImmutableSequence<Warning> _warnings;
 
-  _HeadersResponseWrapper(this._headers, this.status);
+  _HeadersResponseWrapper(this._headers, this.status, this.entity);
 
   FiniteSet<RangeUnit> get acceptedRangeUnits =>
       EMPTY_SET;
