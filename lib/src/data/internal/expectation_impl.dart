@@ -21,7 +21,7 @@ class ExpectationImpl
       delegate == other;
 
   Expectation put(final String key, final String value) {
-    checkArgument(TOKEN.parse(key).isNotEmpty);
+    checkArgument(TOKEN.parse(key).left.isNotEmpty);
     checkArgument(QUOTABLE.matchesAllOf(value));
 
     return new ExpectationImpl(delegate.put(key, value));

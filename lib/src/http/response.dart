@@ -504,7 +504,8 @@ class _HeadersResponseWrapper<T>
 
   Option<URI> get location =>
       computeIfNull(_location, () {
-        _location = firstWhere(_headers[LOCATION], (final String uri) => true).flatMap(URI.parser.parse);
+        _location = first(_headers[LOCATION]).flatMap((final String uri) =>
+            URI.parser.parse(uri).left);
         return _location;
       });
 

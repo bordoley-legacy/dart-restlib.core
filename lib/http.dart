@@ -36,10 +36,10 @@ abstract class _Parseable {
     if (header == SET_COOKIE) {
       final Iterable parsed =
           _headers[header].expand((final String setCookie) =>
-              parser.parse(setCookie));
+              parser.parse(setCookie).left);
       return parsed.isEmpty ? Option.NONE : new Option(parsed);
     } else {
-      return parser.parse(_headers[header].join(","));
+      return parser.parse(_headers[header].join(",")).left;
     }
   }
 }

@@ -41,7 +41,7 @@ Parser<Preference> preferenceParser(final Parser<Matcheable> valueParser) {
           return null;
         }
 
-        final Option<int> qfValue = QF_PARSER.parse(qfPair.e1);
+        final Option<int> qfValue = QF_PARSER.parse(qfPair.e1).left;
         if (qfValue.isEmpty) {
           return null;
         }

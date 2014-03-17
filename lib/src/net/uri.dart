@@ -25,15 +25,15 @@ abstract class URI extends IRI {
     checkNotNull(fragment);
 
     if (scheme.isNotEmpty) {
-      checkArgument(_SCHEME.parse(scheme).isNotEmpty);
+      checkArgument(_SCHEME.parse(scheme).left.isNotEmpty);
     }
 
     if(query.isNotEmpty) {
-      checkArgument(_QUERY.parse(query).isNotEmpty);
+      checkArgument(_QUERY.parse(query).left.isNotEmpty);
     }
 
     if(fragment.isNotEmpty) {
-      checkArgument(_FRAGMENT.parse(query).isNotEmpty);
+      checkArgument(_FRAGMENT.parse(query).left.isNotEmpty);
     }
 
     path = firstNotNull(path, Path.EMPTY);

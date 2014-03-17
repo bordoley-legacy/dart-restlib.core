@@ -7,8 +7,7 @@ mediaRangeTests() {
               Option<Charset> charset,
               ImmutableSetMultimap<String, String> parameters) =>
     test("parse: $testCase", () {
-      Option<MediaRange> resultOption = MEDIA_RANGE.parse(testCase);
-      MediaRange result = resultOption.value;
+      MediaRange result = MEDIA_RANGE.parseValue(testCase);
 
       expect(result.type, equals(type));
       expect(result.subtype, equals(subtype));

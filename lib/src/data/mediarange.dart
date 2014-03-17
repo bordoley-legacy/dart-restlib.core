@@ -8,8 +8,8 @@ abstract class MediaRange implements Matcheable<MediaRange> {
   static final Parser<MediaRange> parser = MEDIA_RANGE;
 
   factory MediaRange(final String type, final String subtype, {final Charset charset, Multimap<String,String, dynamic> parameters}) {
-    checkArgument(TOKEN.parse(type).isNotEmpty);
-    checkArgument(TOKEN.parse(subtype).isNotEmpty);
+    checkArgument(TOKEN.parse(type).left.isNotEmpty);
+    checkArgument(TOKEN.parse(subtype).left.isNotEmpty);
     Option<Charset> optionalCharset = new Option(charset);
 
     optionalCharset.map((final Charset charset) =>
@@ -19,7 +19,7 @@ abstract class MediaRange implements Matcheable<MediaRange> {
     parameters =
         EMPTY_SET_MULTIMAP.putAll(
             parameters.map((final Pair<String,String> kv) {
-              checkArgument(TOKEN.parse(kv.e0).isNotEmpty);
+              checkArgument(TOKEN.parse(kv.e0).left.isNotEmpty);
               checkArgument(kv.e0.toLowerCase() != "q");
               checkArgument(kv.e0.toLowerCase() != "charset");
               checkArgument(QUOTABLE.matchesAllOf(kv.e1));

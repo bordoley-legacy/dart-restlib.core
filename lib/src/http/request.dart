@@ -416,8 +416,8 @@ class _HeadersRequestWrapper
 
   Option<URI> get referer =>
       computeIfNull(_referer, () {
-        _referer = firstWhere(_headers[REFERER], (final String uri) => true)
-            .flatMap(URI.parser.parse);
+        _referer = first(_headers[REFERER]).flatMap((final String uri) =>
+                URI.parser.parse(uri).left);
         return _referer;
       });
 
@@ -430,7 +430,7 @@ class _HeadersRequestWrapper
 
 Request requestMethodOverride(final Request request) {
   Request updateMethod(final Header header) =>
-      TOKEN.parse(request.customHeaders(header).value)
+      TOKEN.parse(request.customHeaders(header).value).left
         .map((final String token) {
           final Method method = new Method(token);
           final Dictionary<Header, dynamic> customHeaders =

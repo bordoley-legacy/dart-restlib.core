@@ -9,40 +9,40 @@ challengeMessageTests() {
       expect((message as ParametersChallengeMessage).parameters, equals(parameters));
     });
   }
-  
+
   doTestParseWithInvalid(String testCase) {
     test("parsing invalid: $testCase", () {
-      expect(!CHALLENGE_MESSAGE.parse(testCase).isEmpty, isFalse);
+      expect(!CHALLENGE_MESSAGE.parse(testCase).left.isEmpty, isFalse);
     });
   }
-    
+
   doTestParseWithParameters("Basic realm=\"foo\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo"}));
-    
+
   // Technically should fail per spec
   doTestParseWithParameters("Basic realm=foo", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo"}));
-    
+
   doTestParseWithParameters("Basic , realm=\"foo\"", "Basic", EMPTY_DICTIONARY.put("realm", "foo"));
-    
+
   doTestParseWithParameters("Basic realm = \"foo\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo"}));
   doTestParseWithParameters("Basic realm = \"\\f\\o\\o\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo"}));
   doTestParseWithParameters("Basic realm=\"\\\"foo\\\"\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "\"foo\""}));
-    
+
   doTestParseWithParameters("Basic realm=\"foo\", bar=\"xyz\",, a=b,,,c=d", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo", "bar" : "xyz", "a" : "b", "c" : "d"}));
-    
+
   doTestParseWithParameters("Basic bar=\"xyz\", realm=\"foo\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo", "bar" : "xyz"}));
 
   doTestParseWithParameters("Basic realm=\"foo-\u00E4\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo-\u00E4"}));
-  doTestParseWithParameters("Basic realm=\"foo-\u00A4\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo-\u00A4"}));       
+  doTestParseWithParameters("Basic realm=\"foo-\u00A4\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo-\u00A4"}));
   doTestParseWithParameters("Basic realm=\"=?ISO-8859-1?Q?foo-=E4?=\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "=?ISO-8859-1?Q?foo-=E4?="}));
-    
-  // Skip multichallenge tests here.  
+
+  // Skip multichallenge tests here.
   doTestParseWithParameters("Newauth realm=\"newauth\"", "Newauth", EMPTY_DICTIONARY.putAllFromMap({"realm" : "newauth"}));
   doTestParseWithParameters("Basic foo=\"realm=nottherealm\", realm=\"basic\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"foo" : "realm=nottherealm", "realm" : "basic"}));
   doTestParseWithParameters("Basic nottherealm=\"nottherealm\", realm=\"basic\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"nottherealm" : "nottherealm", "realm" : "basic"}));
 
   doTestParseWithInvalid("Basic, realm=\"foo\"");
-  doTestParseWithInvalid("Basic");   
-  
+  doTestParseWithInvalid("Basic");
+
   // Technically invalid, but we ignore bad data as much as possible
   doTestParseWithParameters("Basic realm=\"foo\", realm=\"bar\"", "Basic", EMPTY_DICTIONARY.putAllFromMap({"realm" : "foo"}));
 }

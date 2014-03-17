@@ -19,7 +19,7 @@ final Parser<MediaRange> MEDIA_RANGE =
                 // Parse the first valid charset in the parameters. Skip the rest.
                 if (key == "charset") {
                   if (charset.isEmpty) {
-                    charset = CHARSET.parse(kvp.e1);
+                    charset = CHARSET.parse(kvp.e1).left;
                     charset = (charset.isNotEmpty && (charset.value == Charset.ANY)) ?
                       Option.NONE : charset;
                   }

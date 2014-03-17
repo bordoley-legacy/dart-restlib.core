@@ -241,7 +241,8 @@ class _HeadersContentInfoImpl
 
   Option<URI> get location =>
       computeIfNull(_location, () {
-        _location = firstWhere(_headers[CONTENT_LOCATION], (final String uri) => true).flatMap(URI.parser.parse);
+        _location = first(_headers[CONTENT_LOCATION]).flatMap((final String uri) =>
+            URI.parser.parse(uri).left);
         return _location;
       });
 

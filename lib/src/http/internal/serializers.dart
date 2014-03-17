@@ -25,5 +25,5 @@ String encodeQuotedString(final String val) {
 
 
 String encodeWord(final String val) =>
-    TOKEN.parse(val).orCompute(() =>
+    TOKEN.parse(val).left.orCompute(() =>
         encodeQuotedString(val));
