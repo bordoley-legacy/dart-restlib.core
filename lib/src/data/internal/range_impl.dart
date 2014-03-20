@@ -26,7 +26,7 @@ final Parser<OtherRangesSpecifier> _OTHER_RANGES_SPECIFIER =
     .map((final Tuple3<String, int, IterableString> e) =>
         new OtherRangesSpecifierImpl(new RangeUnitImpl(e.e0), e.e2.toString()));
 
-final Parser<Range> RANGE =
+final Parser<data.Range> RANGE =
   (_BYTE_RANGES_SPECIFIER  ^ _OTHER_RANGES_SPECIFIER)
     .map((final Either<ByteRangesSpecifier, OtherRangesSpecifier> rangesSpecifier) =>
         rangesSpecifier.value);

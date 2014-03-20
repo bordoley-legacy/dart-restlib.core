@@ -23,7 +23,7 @@ RequestPreferences _requestPreferencesWith(
   final Iterable<Preference<ContentEncoding>> acceptedEncodings,
   final Iterable<Preference<Language>>  acceptedLanguages,
   final Iterable<Preference<MediaRange>> acceptedMediaRanges,
-  final Range range) {
+  final data.Range range) {
 
   if (isNull(acceptedCharsets) && isNull(acceptedEncodings) && isNull(acceptedLanguages) && isNull(acceptedMediaRanges) && isNull(range)) {
     return delegate;
@@ -65,7 +65,7 @@ abstract class RequestPreferences {
     final Iterable<Preference<ContentEncoding>> acceptedEncodings,
     final Iterable<Preference<Language>>  acceptedLanguages,
     final Iterable<Preference<MediaRange>> acceptedMediaRanges,
-    final Range range}) {
+    final data.Range range}) {
 
     if(isNull(acceptedCharsets) &&
         isNull(acceptedEncodings) &&
@@ -94,7 +94,7 @@ abstract class RequestPreferences {
 
   FiniteSet<Preference<MediaRange>> get acceptedMediaRanges;
 
-  Option<Range> get range;
+  Option<data.Range> get range;
 
   String toString();
 
@@ -103,7 +103,7 @@ abstract class RequestPreferences {
     Iterable<Preference<ContentEncoding>> acceptedEncodings,
     Iterable<Preference<Language>>  acceptedLanguages,
     Iterable<Preference<MediaRange>> acceptedMediaRanges,
-    Range range});
+    data.Range range});
 
   RequestPreferences without({
     bool acceptedCharsets : false,
@@ -118,7 +118,7 @@ class _RequestPreferencesNone implements RequestPreferences {
   final ImmutableSet<Preference<ContentEncoding>> acceptedEncodings = EMPTY_SET;
   final ImmutableSet<Preference<Language>> acceptedLanguages = EMPTY_SET;
   final ImmutableSet<Preference<MediaRange>> acceptedMediaRanges = EMPTY_SET;
-  final Option<Range> range = Option.NONE;
+  final Option<data.Range> range = Option.NONE;
 
   const _RequestPreferencesNone();
 
@@ -129,7 +129,7 @@ class _RequestPreferencesNone implements RequestPreferences {
     final Iterable<Preference<ContentEncoding>> acceptedEncodings : const [],
     final Iterable<Preference<Language>>  acceptedLanguages : const [],
     final Iterable<Preference<MediaRange>> acceptedMediaRanges : const [],
-    final Range range}) =>
+    final data.Range range}) =>
         new RequestPreferences(
             acceptedCharsets: acceptedCharsets,
             acceptedEncodings: acceptedEncodings,
@@ -155,7 +155,7 @@ abstract class _RequestPreferencesMixin implements RequestPreferences{
     final Iterable<Preference<ContentEncoding>> acceptedEncodings,
     final Iterable<Preference<Language>>  acceptedLanguages,
     final Iterable<Preference<MediaRange>> acceptedMediaRanges,
-    final Range range}) =>
+    final data.Range range}) =>
         _requestPreferencesWith(
             this,
             acceptedCharsets,
@@ -187,7 +187,7 @@ class _RequestPreferencesImpl
   final ImmutableSet<Preference<ContentEncoding>> acceptedEncodings;
   final ImmutableSet<Preference<Language>> acceptedLanguages;
   final ImmutableSet<Preference<MediaRange>> acceptedMediaRanges;
-  final Option<Range> range;
+  final Option<data.Range> range;
 
   _RequestPreferencesImpl(this.acceptedCharsets, this.acceptedEncodings, this.acceptedLanguages, this.acceptedMediaRanges, this.range);
 }
@@ -202,7 +202,7 @@ class _HeadersRequestPreferencesImpl
   ImmutableSet<Preference<ContentEncoding>> _acceptedEncodings;
   ImmutableSet<Preference<Language>> _acceptedLanguages;
   ImmutableSet<Preference<MediaRange>> _acceptedMediaRanges;
-  Option<Range> _range;
+  Option<data.Range> _range;
 
   _HeadersRequestPreferencesImpl(this._headers);
 
@@ -230,9 +230,9 @@ class _HeadersRequestPreferencesImpl
         return _acceptedMediaRanges;
       });
 
-  Option<Range> get range =>
+  Option<data.Range> get range =>
       computeIfNull(_range, () {
-        _range = _parse(Range.parser, RANGE);
+        _range = _parse(data.Range.parser, RANGE);
         return _range;
       });
 }

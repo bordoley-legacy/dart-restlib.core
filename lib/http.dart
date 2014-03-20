@@ -9,6 +9,7 @@ import "package:restlib_common/preconditions.dart";
 import "package:restlib_parsing/parsing.dart";
 
 import "data.dart";
+import "data.dart" as data;
 import "data.internal.dart" as DataInternal;
 import "http.headers.dart";
 import "http.internal.dart";
