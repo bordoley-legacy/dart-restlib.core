@@ -94,7 +94,7 @@ abstract class _IRIBase implements IRI {
             authority.userInfo).orElse(""),
         host: asUri.authority.map((final Authority authority) =>
             authority.host).orElse(""),
-        port: asUri.authority..map((final Authority authority) =>
+        port: asUri.authority.flatMap((final Authority authority) =>
             authority.port).orElse(0),
         path: asUri.path.toString(),
         query: asUri.query,
