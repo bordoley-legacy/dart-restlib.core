@@ -216,12 +216,14 @@ class _ResponseImpl<T>
 
   FiniteSet<RangeUnit> get acceptedRangeUnits =>
       computeIfNull(_acceptedRangeUnits, () {
+        // FIXME:
         _acceptedRangeUnits = EMPTY_SET;
         return _acceptedRangeUnits;
       });
 
   Option<int> get age =>
       computeIfNull(_age, () {
+        // FIXME:
         _age = Option.NONE;
         return _age;
       });
@@ -234,6 +236,7 @@ class _ResponseImpl<T>
 
   FiniteSet<ChallengeMessage> get authenticationChallenges =>
       computeIfNull(_authenticationChallenges, () {
+        // FIXME:
         _authenticationChallenges = EMPTY_SET;
         return _authenticationChallenges;
       });
@@ -264,24 +267,28 @@ class _ResponseImpl<T>
 
   Option<DateTime> get date =>
       computeIfNull(_date, () {
+        // FIXME:
         _date = Option.NONE;
         return _date;
       });
 
   Option<EntityTag> get entityTag =>
       computeIfNull(_entityTag, () {
+        // FIXME:
         _entityTag = Option.NONE;
         return _entityTag;
       });
 
   Option<DateTime> get expires =>
       computeIfNull(_expires, () {
+        // FIXME:
         _expires = Option.NONE;
         return _expires;
       });
 
   Option<DateTime> get lastModified =>
       computeIfNull(_lastModified, () {
+        // FIXME:
         _lastModified = Option.NONE;
         return _lastModified;
       });
@@ -301,6 +308,7 @@ class _ResponseImpl<T>
 
   Option<DateTime> get retryAfter =>
       computeIfNull(_retryAfter, () {
+        // FIXME:
         _retryAfter = Option.NONE;
         return _retryAfter;
       });
@@ -313,6 +321,7 @@ class _ResponseImpl<T>
 
   FiniteSet<SetCookie> get setCookies =>
       computeIfNull(_setCookies, () {
+        // FIXME:
         _setCookies = EMPTY_SET;
         return _setCookies;
       });
