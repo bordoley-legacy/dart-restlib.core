@@ -9,74 +9,16 @@ void _writeContentInfo(final ContentInfo contentInfo, void writeHeaderLine(final
   _writeHeader(CONTENT_TYPE, contentInfo.mediaRange, writeHeaderLine);
 }
 
-String _contentInfoToString(final ContentInfo contentInfo) {
-  final StringBuffer buffer = new StringBuffer();
-
-  _writeContentInfo(contentInfo, _writeHeaderToBuffer(buffer));
-
-  return buffer.toString();
-}
-
-ContentInfo _contentInfoWith(
-  final ContentInfo delegate,
-  final Iterable<ContentEncoding> encodings,
-  final Iterable<Language> languages,
-  final int length,
-  final URI location,
-  final MediaRange mediaRange,
-  final ContentRange range) {
-
-  if(isNull(encodings) &&
-      isNull(languages) &&
-      isNull(length) &&
-      isNull(length) &&
-      isNull(location) &&
-      isNull(mediaRange) &&
-      isNull(range)) {
-    return delegate;
-  }
-
-  return new _ContentInfoImpl(
-      EMPTY_SEQUENCE.addAll(firstNotNull(encodings, delegate.encodings)),
-      EMPTY_SET.addAll(firstNotNull(languages, delegate.languages)),
-      computeIfEmpty(new Option(length), () => delegate.length),
-      computeIfEmpty(new Option(location), () => delegate.location),
-      computeIfEmpty(new Option(mediaRange), () => delegate.mediaRange),
-      computeIfEmpty(new Option(range), () => delegate.range));
-}
-
-ContentInfo _contentInfoWithout(
-  final ContentInfo delegate,
-  final bool encodings,
-  final bool languages,
-  final bool length,
-  final bool location,
-  final bool mediaRange,
-  final bool range) {
-
-  if (encodings && languages && length && location && mediaRange && range) {
-    return ContentInfo.NONE;
-  }
-
-  return new _ContentInfoImpl(
-      !encodings ? EMPTY_SEQUENCE.addAll(delegate.encodings) : EMPTY_SEQUENCE,
-      !languages ? EMPTY_SET.addAll(delegate.languages) : EMPTY_SET,
-      !length ? delegate.length : Option.NONE,
-      !location ? delegate.location : Option.NONE,
-      !mediaRange ? delegate.mediaRange : Option.NONE,
-      !range ? delegate.range : Option.NONE);
-}
-
 abstract class ContentInfo {
   static const ContentInfo NONE = const _ContentInfoNone();
 
   factory ContentInfo({
-    final Iterable<ContentEncoding> encodings,
-    final Iterable<Language> languages,
-    final int length,
-    final URI location,
-    final MediaRange mediaRange,
-    final ContentRange range}) {
+      final Iterable<ContentEncoding> encodings,
+      final Iterable<Language> languages,
+      final int length,
+      final URI location,
+      final MediaRange mediaRange,
+      final ContentRange range}) {
 
     if (isNull(encodings) &&
         isNull(languages) &&
@@ -86,6 +28,7 @@ abstract class ContentInfo {
         isNull(range)) {
       return ContentInfo.NONE;
     }
+
     return new _ContentInfoImpl(
         EMPTY_SEQUENCE.addAll(firstNotNull(encodings, EMPTY_LIST)),
         EMPTY_SET.addAll(firstNotNull(languages, EMPTY_LIST)),
@@ -96,7 +39,7 @@ abstract class ContentInfo {
   }
 
   factory ContentInfo.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
-      new _HeadersContentInfoImpl(headers);
+      new _ContentInfoImpl(null, null, null, null, null, null, headers);
 
   Sequence<ContentEncoding> get encodings;
 
@@ -131,29 +74,6 @@ abstract class ContentInfo {
   });
 }
 
-abstract class _ContentInfoMixin implements ContentInfo {
-  String toString() =>
-      _contentInfoToString(this);
-
-  ContentInfo with_({
-    final Iterable<ContentEncoding> encodings,
-    final Iterable<Language> languages,
-    final int length,
-    final URI location,
-    final MediaRange mediaRange,
-    final ContentRange range}) =>
-        _contentInfoWith(this, encodings, languages, length, location, mediaRange, range);
-
-  ContentInfo without({
-    final bool encodings: false,
-    final bool languages: false,
-    final bool length: false,
-    final bool location: false,
-    final bool mediaRange:  false,
-    final bool range : false}) =>
-        _contentInfoWithout(this, encodings, languages, length, location, mediaRange, range);
-}
-
 class _ContentInfoNone implements ContentInfo {
   final ImmutableSequence<ContentEncoding> encodings = EMPTY_SEQUENCE;
   final FiniteSet<Language> languages = EMPTY_SET;
@@ -167,8 +87,8 @@ class _ContentInfoNone implements ContentInfo {
   String toString() => "";
 
   ContentInfo with_({
-    final Iterable<ContentEncoding> encodings: const [],
-    final Iterable<Language> languages : const [],
+    final Iterable<ContentEncoding> encodings,
+    final Iterable<Language> languages,
     final int length,
     final URI location,
     final MediaRange mediaRange,
@@ -191,25 +111,9 @@ class _ContentInfoNone implements ContentInfo {
         this;
 }
 
-
 class _ContentInfoImpl
     extends Object
-    with _ContentInfoMixin
-    implements ContentInfo {
-  final ImmutableSequence<ContentEncoding> encodings;
-  final ImmutableSet<Language> languages;
-  final Option<int> length;
-  final Option<URI> location;
-  final Option<MediaRange> mediaRange;
-  final Option<ContentRange> range;
-
-  _ContentInfoImpl(this.encodings, this.languages, this.length, this.location, this.mediaRange, this.range);
-}
-
-class _HeadersContentInfoImpl
-    extends Object
-    with _ContentInfoMixin,
-      _Parseable
+    with _Parseable
     implements ContentInfo {
   final Multimap<Header, String, dynamic> _headers;
   ImmutableSequence<ContentEncoding> _encodings;
@@ -219,7 +123,9 @@ class _HeadersContentInfoImpl
   Option<MediaRange> _mediaRange;
   Option<ContentRange> _range;
 
-  _HeadersContentInfoImpl(this._headers);
+  _ContentInfoImpl(
+      this._encodings, this._languages, this._length,
+          this._location, this._mediaRange, this._range, [this._headers = EMPTY_SEQUENCE_MULTIMAP]);
 
   ImmutableSequence<ContentEncoding> get encodings =>
       computeIfNull(_encodings, () {
@@ -257,4 +163,59 @@ class _HeadersContentInfoImpl
         _range = _parse(ContentRange.parser, CONTENT_RANGE);
         return _range;
       });
+
+  String toString() {
+    final StringBuffer buffer = new StringBuffer();
+    _writeContentInfo(this, _writeHeaderToBuffer(buffer));
+    return buffer.toString();
+  }
+
+  ContentInfo with_({
+      final Iterable<ContentEncoding> encodings,
+      final Iterable<Language> languages,
+      final int length,
+      final URI location,
+      final MediaRange mediaRange,
+      final ContentRange range}) {
+    if(isNull(encodings) &&
+        isNull(languages) &&
+        isNull(length) &&
+        isNull(length) &&
+        isNull(location) &&
+        isNull(mediaRange) &&
+        isNull(range)) {
+      return this;
+    }
+
+    return new _ContentInfoImpl(
+        encodings != null ? EMPTY_SEQUENCE.addAll(encodings) : _encodings,
+        languages != null ? EMPTY_SET.addAll(languages) : _languages,
+        length != null ? new Option(length) : _length,
+        location != null ? new Option(location) : _location,
+        mediaRange != null ? new Option(mediaRange) : _mediaRange,
+        range != null ? new Option(range) : _range,
+        _headers);
+  }
+
+  ContentInfo without({
+      final bool encodings: false,
+      final bool languages: false,
+      final bool length: false,
+      final bool location: false,
+      final bool mediaRange:  false,
+      final bool range : false})  {
+
+    if (encodings && languages && length && location && mediaRange && range) {
+      return ContentInfo.NONE;
+    }
+
+    return new _ContentInfoImpl(
+        encodings ? EMPTY_SEQUENCE : _encodings,
+        languages ? EMPTY_SET : _languages,
+        length ? Option.NONE : _length,
+        location ? Option.NONE : _location,
+        mediaRange ? Option.NONE : _mediaRange,
+        range ? Option.NONE : _range,
+        _headers);
+  }
 }
