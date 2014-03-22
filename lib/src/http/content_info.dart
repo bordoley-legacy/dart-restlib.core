@@ -188,12 +188,12 @@ class _ContentInfoImpl
     }
 
     return new _ContentInfoImpl(
-        encodings != null ? EMPTY_SEQUENCE.addAll(encodings) : _encodings,
-        languages != null ? EMPTY_SET.addAll(languages) : _languages,
-        length != null ? new Option(length) : _length,
-        location != null ? new Option(location) : _location,
-        mediaRange != null ? new Option(mediaRange) : _mediaRange,
-        range != null ? new Option(range) : _range,
+        isNotNull(encodings) ? EMPTY_SEQUENCE.addAll(encodings) : _encodings,
+        isNotNull(languages) ? EMPTY_SET.addAll(languages) : _languages,
+        isNotNull(length) ? new Option(length) : _length,
+        isNotNull(location) ? new Option(location) : _location,
+        isNotNull(mediaRange) ? new Option(mediaRange) : _mediaRange,
+        isNotNull(range) ? new Option(range) : _range,
         _headers);
   }
 

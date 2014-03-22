@@ -8,56 +8,6 @@ void _writeRequestPreconditions(final RequestPreconditions preconditions, void w
   _writeHeader(IF_UNMODIFIED_SINCE, preconditions.ifUnmodifiedSince, writeHeaderLine);
 }
 
-String _requestPreconditionsToString(final RequestPreconditions delegate) {
-  final StringBuffer buffer = new StringBuffer();
-  _WriteHeaderLine writeHeaderLine = _writeHeaderToBuffer(buffer);
-
-  _writeRequestPreconditions(delegate, writeHeaderLine);
-
-  return buffer.toString();
-}
-
-RequestPreconditions _requestPreconditionsWith(
-  final RequestPreconditions delegate,
-  final Iterable<EntityTag> ifMatch,
-  final DateTime ifModifiedSince,
-  final Iterable<EntityTag> ifNoneMatch,
-  final Either<EntityTag,DateTime> ifRange,
-  final DateTime ifUnmodifiedSince) {
-
-  if (isNull(ifMatch) && isNull(ifModifiedSince) && isNull(ifNoneMatch) && isNull(ifRange) && isNull(ifUnmodifiedSince)) {
-    return delegate;
-  }
-
-  return new _RequestPreconditionsImpl(
-      EMPTY_SET.addAll(firstNotNull(ifMatch, delegate.ifMatch)),
-      computeIfEmpty(new Option(ifModifiedSince), () => delegate.ifModifiedSince),
-      EMPTY_SET.addAll(firstNotNull(ifNoneMatch, delegate.ifNoneMatch)),
-      computeIfEmpty(new Option(ifRange), () => delegate.ifRange),
-      computeIfEmpty(new Option(ifUnmodifiedSince), () => delegate.ifUnmodifiedSince));
-}
-
-RequestPreconditions _requestPreconditionsWithout(
-  final RequestPreconditions delegate,
-  final bool ifMatch,
-  final bool ifModifiedSince,
-  final bool ifNoneMatch,
-  final bool ifRange,
-  final bool ifUnmodifiedSince) {
-
-  if (ifMatch && ifModifiedSince && ifNoneMatch && ifRange && ifUnmodifiedSince) {
-    return RequestPreconditions.NONE;
-  }
-
-  return new _RequestPreconditionsImpl(
-      !ifMatch ? EMPTY_SET.addAll(delegate.ifMatch) : EMPTY_SET,
-      !ifModifiedSince ? delegate.ifModifiedSince : Option.NONE,
-      !ifNoneMatch ? EMPTY_SET.addAll(delegate.ifNoneMatch) : EMPTY_SET,
-      !ifRange ? delegate.ifRange : Option.NONE,
-      !ifUnmodifiedSince ? delegate.ifModifiedSince : Option.NONE);
-}
-
-
 abstract class RequestPreconditions {
   static const RequestPreconditions NONE = const _RequestPreconditionsNone();
 
@@ -68,7 +18,11 @@ abstract class RequestPreconditions {
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) {
 
-    if (isNull(ifMatch) && isNull(ifModifiedSince) && isNull(ifNoneMatch) && isNull(ifRange) && isNull(ifUnmodifiedSince)) {
+    if (isNull(ifMatch) &&
+        isNull(ifModifiedSince) &&
+        isNull(ifNoneMatch) &&
+        isNull(ifRange) &&
+        isNull(ifUnmodifiedSince)) {
       return RequestPreconditions.NONE;
     }
 
@@ -81,7 +35,8 @@ abstract class RequestPreconditions {
   }
 
   factory RequestPreconditions.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
-      new _HeadersRequestPreconditionsImpl(headers);
+      new _RequestPreconditionsImpl(
+          null, null, null, null, null, headers);
 
   FiniteSet<EntityTag> get ifMatch;
 
@@ -122,9 +77,9 @@ class _RequestPreconditionsNone implements RequestPreconditions {
   String toString() => "";
 
   RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch : const[],
+    final Iterable<EntityTag> ifMatch,
     final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch : const[],
+    final Iterable<EntityTag> ifNoneMatch,
     final Either<EntityTag,DateTime> ifRange,
     final DateTime ifUnmodifiedSince}) =>
         new RequestPreconditions(
@@ -143,58 +98,11 @@ class _RequestPreconditionsNone implements RequestPreconditions {
         this;
 }
 
-abstract class _RequestPreconditionsMixin implements RequestPreconditions {
-  String toString() =>
-      _requestPreconditionsToString(this);
-
-  RequestPreconditions with_({
-    final Iterable<EntityTag> ifMatch,
-    final DateTime ifModifiedSince,
-    final Iterable<EntityTag> ifNoneMatch,
-    final Either<EntityTag,DateTime> ifRange,
-    final DateTime ifUnmodifiedSince}) =>
-        _requestPreconditionsWith(
-            this,
-            ifMatch,
-            ifModifiedSince,
-            ifNoneMatch,
-            ifRange,
-            ifUnmodifiedSince);
-
-  RequestPreconditions without({
-    final bool ifMatch : false,
-    final bool ifModifiedSince : false,
-    final bool ifNoneMatch : false,
-    final bool ifRange : false,
-    final bool ifUnmodifiedSince : false}) =>
-        _requestPreconditionsWithout(
-            this,
-            ifMatch,
-            ifModifiedSince,
-            ifNoneMatch,
-            ifRange,
-            ifUnmodifiedSince);
-}
+final Parser<Either<EntityTag,DateTime>> _IF_RANGE = EntityTag.parser ^ HTTP_DATE_TIME;
 
 class _RequestPreconditionsImpl
     extends Object
-    with _RequestPreconditionsMixin
-    implements RequestPreconditions {
-  final ImmutableSet<EntityTag> ifMatch;
-  final Option<DateTime> ifModifiedSince;
-  final ImmutableSet<EntityTag> ifNoneMatch;
-  final Option<Either<EntityTag,DateTime>> ifRange;
-  final Option<DateTime> ifUnmodifiedSince;
-
-  _RequestPreconditionsImpl(this.ifMatch, this.ifModifiedSince, this.ifNoneMatch, this.ifRange, this.ifUnmodifiedSince);
-}
-
-final Parser<Either<EntityTag,DateTime>> _IF_RANGE = EntityTag.parser ^ HTTP_DATE_TIME;
-
-class _HeadersRequestPreconditionsImpl
-    extends Object
-    with _RequestPreconditionsMixin,
-      _Parseable
+    with _Parseable
     implements RequestPreconditions {
   final Multimap<Header, String, dynamic> _headers;
   ImmutableSet<EntityTag> _ifMatch;
@@ -203,7 +111,9 @@ class _HeadersRequestPreconditionsImpl
   Option<Either<EntityTag,DateTime>> _ifRange;
   Option<DateTime> _ifUnmodifiedSince;
 
-  _HeadersRequestPreconditionsImpl(this._headers);
+  _RequestPreconditionsImpl(
+      this._ifMatch, this._ifModifiedSince, this._ifNoneMatch,
+        this._ifRange, this._ifUnmodifiedSince, [this._headers = EMPTY_SEQUENCE_MULTIMAP]);
 
   ImmutableSet<EntityTag> get ifMatch =>
       computeIfNull(_ifMatch, () {
@@ -234,4 +144,56 @@ class _HeadersRequestPreconditionsImpl
         _ifUnmodifiedSince = _parse(HTTP_DATE_TIME, IF_UNMODIFIED_SINCE);
         return _ifUnmodifiedSince;
       });
+
+  String toString() {
+    final StringBuffer buffer = new StringBuffer();
+    _writeRequestPreconditions(this, _writeHeaderToBuffer(buffer));
+    return buffer.toString();
+  }
+
+  RequestPreconditions with_({
+      final RequestPreconditions delegate,
+      final Iterable<EntityTag> ifMatch,
+      final DateTime ifModifiedSince,
+      final Iterable<EntityTag> ifNoneMatch,
+      final Either<EntityTag,DateTime> ifRange,
+      final DateTime ifUnmodifiedSince}) {
+
+    if (isNull(ifMatch) &&
+        isNull(ifModifiedSince) &&
+        isNull(ifNoneMatch) &&
+        isNull(ifRange) &&
+        isNull(ifUnmodifiedSince)) {
+      return this;
+    }
+
+    return new _RequestPreconditionsImpl(
+        isNotNull(ifMatch) ? EMPTY_SET.addAll(ifMatch) : _ifMatch,
+        isNotNull(ifModifiedSince) ? new Option(ifModifiedSince) : _ifModifiedSince,
+        isNotNull(ifNoneMatch) ? EMPTY_SET.addAll(ifNoneMatch) : _ifNoneMatch,
+        isNotNull(ifRange) ? new Option(ifRange) : _ifRange,
+        isNotNull(ifUnmodifiedSince) ? new Option(ifUnmodifiedSince) : _ifUnmodifiedSince,
+        _headers);
+  }
+
+  RequestPreconditions without({
+    final RequestPreconditions delegate,
+    final bool ifMatch,
+    final bool ifModifiedSince,
+    final bool ifNoneMatch,
+    final bool ifRange,
+    final bool ifUnmodifiedSince}) {
+
+    if (ifMatch && ifModifiedSince && ifNoneMatch && ifRange && ifUnmodifiedSince) {
+      return RequestPreconditions.NONE;
+    }
+
+    return new _RequestPreconditionsImpl(
+        ifMatch ?  EMPTY_SET : _ifMatch,
+        ifModifiedSince ? Option.NONE : _ifModifiedSince,
+        ifNoneMatch ? EMPTY_SET : _ifNoneMatch,
+        ifRange ? Option.NONE : _ifRange,
+        ifUnmodifiedSince ? Option.NONE : _ifUnmodifiedSince,
+        _headers);
+  }
 }
