@@ -36,7 +36,7 @@ abstract class RequestPreconditions {
 
   factory RequestPreconditions.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
       new _RequestPreconditionsImpl(
-          null, null, null, null, null, headers);
+          null, null, null, null, null, checkNotNull(headers));
 
   FiniteSet<EntityTag> get ifMatch;
 

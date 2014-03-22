@@ -17,107 +17,6 @@ void writeRequestHeaders(final Request request, void writeHeaderLine(final Strin
      _writeHeader(header.e0, header.e1, writeHeaderLine));
 }
 
-String _requestToString(final Request request) {
-  final StringBuffer buffer = new StringBuffer();
-
-  _WriteHeaderLine writeHeaderLine = _writeHeaderToBuffer(buffer);
-
-  final String requestLine = "${request.method} ${request.uri.path}${request.uri.query.isEmpty ? "" : "?${request.uri.query}"}""\r\n";
-  buffer.write(requestLine);
-
-  writeRequestHeaders(request, writeHeaderLine);
-
-  buffer.write(request.entity.map((final entity) =>
-      "\r\n\r\n${entity.toString()}\r\n").orElse(""));
-
-  return buffer.toString();
-}
-
-Request _requestWith(
-    final Request delegate,
-    final ChallengeMessage authorizationCredentials,
-    final Iterable<CacheDirective> cacheDirectives,
-    final ContentInfo contentInfo,
-    final Iterable<Cookie> cookies,
-    final Dictionary<Header, dynamic> customHeaders,
-    final entity,
-    final Iterable<Expectation> expectations,
-    final Method method,
-    final Iterable<CacheDirective> pragmaCacheDirectives,
-    final RequestPreconditions preconditions,
-    final RequestPreferences preferences,
-    final ChallengeMessage proxyAuthorizationCredentials,
-    final URI referer,
-    final URI uri,
-    final UserAgent userAgent) {
-  if (isNull(authorizationCredentials) &&
-      isNull(cacheDirectives) &&
-      isNull(contentInfo) &&
-      isNull(cookies) &&
-      isNull(customHeaders) &&
-      isNull(entity) &&
-      isNull(expectations) &&
-      isNull(method) &&
-      isNull(pragmaCacheDirectives) &&
-      isNull(preconditions) &&
-      isNull(preferences) &&
-      isNull(proxyAuthorizationCredentials) &&
-      isNull(referer) &&
-      isNull(uri) &&
-      isNull(userAgent)) {
-    return delegate;
-  }
-
-  return new _RequestImpl(
-      computeIfEmpty(new Option(authorizationCredentials), () => delegate.authorizationCredentials),
-      EMPTY_SET.addAll(firstNotNull(cacheDirectives, delegate.cacheDirectives)),
-      firstNotNull(contentInfo, delegate.contentInfo),
-      CookieMultimap.EMPTY.putAll(firstNotNull(cookies, delegate.cookies)),
-      EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, delegate.customHeaders)),
-      computeIfEmpty(new Option(entity), () => delegate.entity),
-      EMPTY_SET.addAll(firstNotNull(expectations, delegate.expectations)),
-      firstNotNull(method, delegate.method),
-      EMPTY_SET.addAll(firstNotNull(pragmaCacheDirectives, delegate.pragmaCacheDirectives)),
-      firstNotNull(preconditions, delegate.preconditions),
-      firstNotNull(preferences, delegate.preferences),
-      computeIfEmpty(new Option(proxyAuthorizationCredentials), () => delegate.proxyAuthorizationCredentials),
-      computeIfEmpty(new Option(referer), () => delegate.referer),
-      firstNotNull(uri, delegate.uri),
-      computeIfEmpty(new Option(userAgent), () => delegate.userAgent));
-}
-
-Request _requestWithout(
-  final Request delegate,
-  final bool authorizationCredentials,
-  final bool cacheDirectives,
-  final bool contentInfo,
-  final bool cookies,
-  final bool customHeaders,
-  final bool entity,
-  final bool expectations,
-  final bool pragmaCacheDirectives,
-  final bool preconditions,
-  final bool preferences,
-  final bool proxyAuthorizationCredentials,
-  final bool referer,
-  final bool userAgent) =>
-      new _RequestImpl(
-          !authorizationCredentials ? delegate.authorizationCredentials : Option.NONE,
-          !cacheDirectives ? EMPTY_SET.addAll(delegate.cacheDirectives) : EMPTY_SET,
-          !contentInfo ? delegate.contentInfo : ContentInfo.NONE,
-          !cookies ? CookieMultimap.EMPTY.putAll(delegate.cookies) : EMPTY_SET,
-          !customHeaders ? EMPTY_DICTIONARY.putAll(delegate.customHeaders) : EMPTY_DICTIONARY,
-          !entity ? delegate.entity : Option.NONE,
-          !expectations? EMPTY_SET.addAll(delegate.expectations) : EMPTY_SET,
-          delegate.method,
-          !pragmaCacheDirectives ? EMPTY_SET.addAll(delegate.pragmaCacheDirectives) : EMPTY_SET,
-          !preconditions ? delegate.preconditions : RequestPreconditions.NONE,
-          !preferences ? delegate.preferences : RequestPreferences.NONE,
-          !proxyAuthorizationCredentials ? delegate.proxyAuthorizationCredentials : Option.NONE,
-          !referer ? delegate.referer : Option.NONE,
-          delegate.uri,
-          !userAgent ? delegate.userAgent : Option.NONE);
-
 abstract class Request<T> {
   factory Request(final Method method, final uri, {
     final ChallengeMessage authorizationCredentials,
@@ -134,6 +33,7 @@ abstract class Request<T> {
     final URI referer,
     final UserAgent userAgent}) =>
         new _RequestImpl(
+            checkNotNull(method), checkNotNull(uri),
             new Option(authorizationCredentials),
             EMPTY_SET.addAll(firstNotNull(cacheDirectives, EMPTY_LIST)),
             firstNotNull(contentInfo, ContentInfo.NONE),
@@ -141,17 +41,19 @@ abstract class Request<T> {
             EMPTY_DICTIONARY.putAll(firstNotNull(customHeaders, EMPTY_DICTIONARY)),
             new Option(entity),
             EMPTY_SET.addAll(firstNotNull(expectations, EMPTY_LIST)),
-            method,
             EMPTY_SET.addAll(firstNotNull(pragmaCacheDirectives, EMPTY_LIST)),
             firstNotNull(preconditions, RequestPreconditions.NONE),
             firstNotNull(preferences, RequestPreferences.NONE),
             new Option(proxyAuthorizationCredentials),
             new Option(referer),
-            uri,
             new Option(userAgent));
 
   factory Request.wrapHeaders(final Method method, final URI uri, final Multimap<Header, String, dynamic> headers) =>
-      new _HeadersRequestWrapper(headers, method, uri);
+      new _RequestImpl(checkNotNull(method), checkNotNull(uri),
+          null, null, null, null, null,
+          Option.NONE,
+          null, null, null, null, null, null, null,
+          checkNotNull(headers));
 
   Option<ChallengeMessage> get authorizationCredentials;
 
@@ -217,124 +119,16 @@ abstract class Request<T> {
     bool userAgent : false});
 }
 
-abstract class _RequestMixin<T> implements Request<T> {
-  String toString() =>
-      _requestToString(this);
-
-  Request with_({
-    final ChallengeMessage authorizationCredentials,
-    final Iterable<CacheDirective> cacheDirectives,
-    final ContentInfo contentInfo,
-    final Iterable<Cookie> cookies,
-    final Dictionary<Header, dynamic> customHeaders,
-    final entity,
-    final Iterable<Expectation> expectations,
-    final Method method,
-    final Iterable<CacheDirective> pragmaCacheDirectives,
-    final RequestPreconditions preconditions,
-    final RequestPreferences preferences,
-    final ChallengeMessage proxyAuthorizationCredentials,
-    final URI referer,
-    final URI uri,
-    final UserAgent userAgent}) =>
-        _requestWith(
-            this,
-            authorizationCredentials,
-            cacheDirectives,
-            contentInfo,
-            cookies,
-            customHeaders,
-            entity,
-            expectations,
-            method,
-            pragmaCacheDirectives,
-            preconditions,
-            preferences,
-            proxyAuthorizationCredentials,
-            referer,
-            uri,
-            userAgent);
-
-  Request without({
-    final bool authorizationCredentials : false,
-    final bool cacheDirectives : false,
-    final bool contentInfo : false,
-    final bool cookies : false,
-    final bool customHeaders : false,
-    final bool entity : false,
-    final bool expectations : false,
-    final bool pragmaCacheDirectives : false,
-    final bool preconditions : false,
-    final bool preferences : false,
-    final bool proxyAuthorizationCredentials : false,
-    final bool referer : false,
-    final bool userAgent : false}) =>
-        _requestWithout(
-            this,
-            authorizationCredentials,
-            cacheDirectives,
-            contentInfo,
-            cookies,
-            customHeaders,
-            entity,
-            expectations,
-            pragmaCacheDirectives,
-            preconditions,
-            preferences,
-            proxyAuthorizationCredentials,
-            referer,
-            userAgent);
-}
-
 class _RequestImpl<T>
     extends Object
-    with _RequestMixin
-    implements Request {
-  final Option<ChallengeMessage> authorizationCredentials;
-  final ImmutableSet<CacheDirective> cacheDirectives;
-  final ContentInfo contentInfo;
-  final CookieMultimap cookies;
-  final ImmutableDictionary<Header, dynamic> customHeaders;
-  final Option<T> entity;
-  final ImmutableSet<Expectation> expectations;
-  final Method method;
-  final ImmutableSet<CacheDirective> pragmaCacheDirectives;
-  final RequestPreconditions preconditions;
-  final RequestPreferences preferences;
-  final Option<ChallengeMessage> proxyAuthorizationCredentials;
-  final Option<URI> referer;
-  final URI uri;
-  final Option<UserAgent> userAgent;
-
-  _RequestImpl(
-    this.authorizationCredentials,
-    this.cacheDirectives,
-    this.contentInfo,
-    this.cookies,
-    this.customHeaders,
-    this.entity,
-    this.expectations,
-    this.method,
-    this.pragmaCacheDirectives,
-    this.preconditions,
-    this.preferences,
-    this.proxyAuthorizationCredentials,
-    this.referer,
-    this.uri,
-    this.userAgent);
-}
-
-class _HeadersRequestWrapper
-    extends Object
-    with _RequestMixin,
-      _Parseable
-    implements Request {
+    with _Parseable
+    implements Request<T> {
   Option<ChallengeMessage> _authorizationCredentials;
   ImmutableSet<CacheDirective> _cacheDirectives;
   ContentInfo _contentInfo;
   CookieMultimap _cookies;
   Dictionary<Header, dynamic> _customHeaders;
-  final Option entity = Option.NONE;
+  final Option<T> entity;
   ImmutableSet<Expectation> _expectations;
   final Multimap<Header, String, dynamic> _headers;
   final Method method;
@@ -346,7 +140,21 @@ class _HeadersRequestWrapper
   final URI uri;
   Option<UserAgent> _userAgent;
 
-  _HeadersRequestWrapper(this._headers, this.method, this.uri);
+  _RequestImpl(this.method, this.uri,
+      this._authorizationCredentials,
+      this._cacheDirectives,
+      this._contentInfo,
+      this._cookies,
+      this._customHeaders,
+      this.entity,
+      this._expectations,
+      this._pragmaCacheDirectives,
+      this._preconditions,
+      this._preferences,
+      this._proxyAuthorizationCredentials,
+      this._referer,
+      this._userAgent,
+      [this._headers = EMPTY_SEQUENCE_MULTIMAP]);
 
   Option<ChallengeMessage> get authorizationCredentials =>
       computeIfNull(_authorizationCredentials, () {
@@ -426,4 +234,104 @@ class _HeadersRequestWrapper
         _userAgent = _parse(UserAgent.parser, USER_AGENT);
         return _userAgent;
       });
+
+  String toString() {
+    final StringBuffer buffer = new StringBuffer();
+
+    final String requestLine = "${method} ${uri.path}${uri.query.isEmpty ? "" : "?${uri.query}"}""\r\n";
+    buffer.write(requestLine);
+
+    writeRequestHeaders(this, _writeHeaderToBuffer(buffer));
+
+    buffer.write(entity.map((final entity) =>
+        "\r\n\r\n${entity.toString()}\r\n").orElse(""));
+
+    return buffer.toString();
+  }
+
+  Request with_({
+      final ChallengeMessage authorizationCredentials,
+      final Iterable<CacheDirective> cacheDirectives,
+      final ContentInfo contentInfo,
+      final Iterable<Cookie> cookies,
+      final Dictionary<Header, dynamic> customHeaders,
+      final entity,
+      final Iterable<Expectation> expectations,
+      final Method method,
+      final Iterable<CacheDirective> pragmaCacheDirectives,
+      final RequestPreconditions preconditions,
+      final RequestPreferences preferences,
+      final ChallengeMessage proxyAuthorizationCredentials,
+      final URI referer,
+      final URI uri,
+      final UserAgent userAgent}) {
+
+    if (isNull(authorizationCredentials) &&
+        isNull(cacheDirectives) &&
+        isNull(contentInfo) &&
+        isNull(cookies) &&
+        isNull(customHeaders) &&
+        isNull(entity) &&
+        isNull(expectations) &&
+        isNull(method) &&
+        isNull(pragmaCacheDirectives) &&
+        isNull(preconditions) &&
+        isNull(preferences) &&
+        isNull(proxyAuthorizationCredentials) &&
+        isNull(referer) &&
+        isNull(uri) &&
+        isNull(userAgent)) {
+      return this;
+    }
+
+    return new _RequestImpl(
+      firstNotNull(method, this.method),
+      firstNotNull(uri, this.uri),
+      isNotNull(authorizationCredentials) ? new Option(authorizationCredentials) : _authorizationCredentials,
+      isNotNull(cacheDirectives) ? EMPTY_SET.addAll(cacheDirectives) : _cacheDirectives,
+      isNotNull(contentInfo) ? contentInfo : _contentInfo,
+      isNotNull(cookies) ? CookieMultimap.EMPTY.putAll(cookies) : _cookies,
+      isNotNull(customHeaders) ? EMPTY_DICTIONARY.putAll(customHeaders) : _customHeaders,
+      isNotNull(entity) ? new Option(entity) : this.entity,
+      isNotNull(expectations) ? EMPTY_SET.addAll(expectations) : _expectations,
+      isNotNull(pragmaCacheDirectives) ? EMPTY_SET.addAll(pragmaCacheDirectives) : _pragmaCacheDirectives,
+      isNotNull(preconditions) ? preconditions : _preconditions,
+      isNotNull(preferences) ? preferences : _preferences,
+      isNotNull(proxyAuthorizationCredentials) ? new Option(proxyAuthorizationCredentials) : _proxyAuthorizationCredentials,
+      isNotNull(referer) ? new Option(referer) : _referer,
+      isNotNull(userAgent) ? new Option(userAgent) : _userAgent,
+      _headers);
+  }
+
+  Request without({
+    final Request delegate,
+    final bool authorizationCredentials,
+    final bool cacheDirectives,
+    final bool contentInfo,
+    final bool cookies,
+    final bool customHeaders,
+    final bool entity,
+    final bool expectations,
+    final bool pragmaCacheDirectives,
+    final bool preconditions,
+    final bool preferences,
+    final bool proxyAuthorizationCredentials,
+    final bool referer,
+    final bool userAgent}) =>
+        new _RequestImpl(
+            method, uri,
+            authorizationCredentials ? Option.NONE : _authorizationCredentials,
+            cacheDirectives ? EMPTY_SET : _cacheDirectives,
+            contentInfo ? ContentInfo.NONE : _contentInfo,
+            cookies ? CookieMultimap.EMPTY : _cookies,
+            customHeaders ? EMPTY_DICTIONARY : _customHeaders,
+            entity ? Option.NONE : this.entity,
+            expectations? EMPTY_SET : _expectations,
+            pragmaCacheDirectives ? EMPTY_SET : _pragmaCacheDirectives,
+            preconditions ? RequestPreconditions.NONE : _preconditions,
+            preferences ? RequestPreferences.NONE : _preferences,
+            proxyAuthorizationCredentials ? Option.NONE : _proxyAuthorizationCredentials,
+            referer ? Option.NONE : _referer,
+            userAgent ? Option.NONE: _userAgent,
+            _headers);
 }

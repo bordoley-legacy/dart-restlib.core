@@ -39,7 +39,7 @@ abstract class ContentInfo {
   }
 
   factory ContentInfo.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
-      new _ContentInfoImpl(null, null, null, null, null, null, headers);
+      new _ContentInfoImpl(null, null, null, null, null, null, checkNotNull(headers));
 
   Sequence<ContentEncoding> get encodings;
 

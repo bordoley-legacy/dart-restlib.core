@@ -36,7 +36,7 @@ abstract class RequestPreferences {
 
   factory RequestPreferences.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
       new _RequestPreferencesImpl(
-          null, null, null, null, null, headers);
+          null, null, null, null, null, checkNotNull(headers));
 
   FiniteSet<Preference<Charset>> get acceptedCharsets;
 
