@@ -169,7 +169,7 @@ class _RequestPreferencesImpl
         isNotNull(acceptedEncodings) ? EMPTY_SET.addAll(acceptedEncodings) : _acceptedEncodings,
         isNotNull(acceptedLanguages) ? EMPTY_SET.addAll(acceptedLanguages) : _acceptedLanguages,
         isNotNull(acceptedMediaRanges) ? EMPTY_SET.addAll(acceptedMediaRanges) : _acceptedMediaRanges,
-        isNotNull(range) ? new Option(range) : _range,
+        computeIfEmpty(new Option(range), () => _range),
         _headers);
   }
 

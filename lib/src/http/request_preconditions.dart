@@ -168,10 +168,10 @@ class _RequestPreconditionsImpl
 
     return new _RequestPreconditionsImpl(
         isNotNull(ifMatch) ? EMPTY_SET.addAll(ifMatch) : _ifMatch,
-        isNotNull(ifModifiedSince) ? new Option(ifModifiedSince) : _ifModifiedSince,
+        computeIfEmpty(new Option(ifModifiedSince), _ifModifiedSince),
         isNotNull(ifNoneMatch) ? EMPTY_SET.addAll(ifNoneMatch) : _ifNoneMatch,
-        isNotNull(ifRange) ? new Option(ifRange) : _ifRange,
-        isNotNull(ifUnmodifiedSince) ? new Option(ifUnmodifiedSince) : _ifUnmodifiedSince,
+        computeIfEmpty(new Option(ifRange), () => _ifRange),
+        computeIfEmpty(new Option(ifUnmodifiedSince), () => _ifUnmodifiedSince),
         _headers);
   }
 

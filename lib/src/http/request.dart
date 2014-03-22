@@ -287,19 +287,19 @@ class _RequestImpl<T>
     return new _RequestImpl(
       firstNotNull(method, this.method),
       firstNotNull(uri, this.uri),
-      isNotNull(authorizationCredentials) ? new Option(authorizationCredentials) : _authorizationCredentials,
+      computeIfEmpty(new Option(authorizationCredentials), () => _authorizationCredentials),
       isNotNull(cacheDirectives) ? EMPTY_SET.addAll(cacheDirectives) : _cacheDirectives,
       isNotNull(contentInfo) ? contentInfo : _contentInfo,
       isNotNull(cookies) ? CookieMultimap.EMPTY.putAll(cookies) : _cookies,
       isNotNull(customHeaders) ? EMPTY_DICTIONARY.putAll(customHeaders) : _customHeaders,
-      isNotNull(entity) ? new Option(entity) : this.entity,
+      computeIfEmpty(new Option(entity), () => this.entity),
       isNotNull(expectations) ? EMPTY_SET.addAll(expectations) : _expectations,
       isNotNull(pragmaCacheDirectives) ? EMPTY_SET.addAll(pragmaCacheDirectives) : _pragmaCacheDirectives,
       isNotNull(preconditions) ? preconditions : _preconditions,
       isNotNull(preferences) ? preferences : _preferences,
-      isNotNull(proxyAuthorizationCredentials) ? new Option(proxyAuthorizationCredentials) : _proxyAuthorizationCredentials,
-      isNotNull(referer) ? new Option(referer) : _referer,
-      isNotNull(userAgent) ? new Option(userAgent) : _userAgent,
+      computeIfEmpty(new Option(proxyAuthorizationCredentials), () => _proxyAuthorizationCredentials),
+      computeIfEmpty(new Option(referer), () => _referer),
+      computeIfEmpty(new Option(userAgent), () => _userAgent),
       _headers);
   }
 

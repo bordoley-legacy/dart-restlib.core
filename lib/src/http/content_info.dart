@@ -190,10 +190,10 @@ class _ContentInfoImpl
     return new _ContentInfoImpl(
         isNotNull(encodings) ? EMPTY_SEQUENCE.addAll(encodings) : _encodings,
         isNotNull(languages) ? EMPTY_SET.addAll(languages) : _languages,
-        isNotNull(length) ? new Option(length) : _length,
-        isNotNull(location) ? new Option(location) : _location,
-        isNotNull(mediaRange) ? new Option(mediaRange) : _mediaRange,
-        isNotNull(range) ? new Option(range) : _range,
+        computeIfEmpty(new Option(length), () => _length),
+        computeIfEmpty(new Option(location), () => _location),
+        computeIfEmpty(new Option(mediaRange), () => _mediaRange),
+        computeIfEmpty(new Option(range), () => _range),
         _headers);
   }
 
