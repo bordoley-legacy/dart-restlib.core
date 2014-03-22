@@ -3,10 +3,10 @@ part of http.internal;
 const int _DQUOTE_CHAR = 34;
 const int _ESCAPE_CHAR = 92;
 
-class _QuotedStringParser extends AbstractParser<String> {
+class _QuotedStringParser extends ParserBase<String> {
   const _QuotedStringParser();
 
-  Option<String> doParse(final CodePointIterator itr) {
+  Either<String, ParseException> parseFrom(final CodePointIterator itr) {
     int startIndex = itr.index;
     int endIndex = startIndex;
 
@@ -34,27 +34,27 @@ class _QuotedStringParser extends AbstractParser<String> {
         }
 
         if (!itr.moveNext()) {
-          return Option.NONE;
+          return new Either.rightValue(new ParseException(itr.index));
         }
 
         if (QUOTED_PAIR_CHAR.matches(itr.current)) {
           buffer.writeCharCode(itr.current);
         } else {
-          return Option.NONE;
+          return new Either.rightValue(new ParseException(itr.index));
         }
       } else if (c == _DQUOTE_CHAR) {
         if (buffer != null) {
-          return new Option(buffer.toString());
+          return new Either.leftValue(buffer.toString());
         } else {
           endIndex++;
-          return new Option(itr.iterable.substring(startIndex + 2, endIndex + 1).toString());
+          return new Either.leftValue(itr.iterable.substring(startIndex + 2, endIndex + 1).toString());
         }
       } else {
-        return Option.NONE;
+        return new Either.rightValue(new ParseException(itr.index));
       }
     }
 
-    return Option.NONE;
+    return new Either.rightValue(new ParseException(itr.index));
   }
 
   String toString() => "QuotedStringParser";

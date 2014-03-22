@@ -83,7 +83,7 @@ class _UriDecoder extends Converter<String, List<int>> {
   }
 }
 
-class _PercentEncodedStringParser extends AbstractParser<String> {
+class _PercentEncodedStringParser extends ParserBase<String> {
   static const _PERCENT = 37;
 
   final Predicate safeCodePoints;
@@ -130,7 +130,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
     return true;
   }
 
-  Option<String> doParse(final CodePointIterator itr) {
+  Either<String, ParseException> parseFrom(final CodePointIterator itr) {
     final int startIndex = itr.index + 1;
     int endIndex = startIndex;
 
@@ -138,7 +138,7 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
       if (itr.current == _PERCENT) {
         itr.index = itr.index - 1;
         if (!parsePercentEncoded(itr)) {
-          return Option.NONE;
+          return new Either.rightValue(new ParseException(itr.index));
         }
       } else if (!safeCodePoints(itr.current)) {
         break;
@@ -150,8 +150,8 @@ class _PercentEncodedStringParser extends AbstractParser<String> {
     itr.index = endIndex - 1;
     final String retval = itr.iterable.substring(startIndex, endIndex).toString();
     if (retval.isEmpty) {
-      return Option.NONE;
+      return new Either.rightValue(new ParseException(itr.index));
     }
-    return new Option(retval);
+    return new Either.leftValue(retval);
   }
 }

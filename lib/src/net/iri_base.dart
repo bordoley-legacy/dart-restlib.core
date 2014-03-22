@@ -212,18 +212,18 @@ IRI _relativeReference(final IRI base, final IRI relative, _IRIBuilder builder, 
 }
 
 final Parser<String> _SCHEME = new _SchemeParser();
-class _SchemeParser extends AbstractParser<String> {
+class _SchemeParser extends ParserBase<String> {
   static final RuneMatcher _schemeChars = ALPHA_NUMERIC | anyOf("+-.");
 
   _SchemeParser();
 
-  Option<String> doParse(final CodePointIterator itr) {
+  Either<String, ParseException> parseFrom(final CodePointIterator itr) {
     final int startIndex = itr.index + 1;
 
     if (!itr.moveNext()) {
-      return Option.NONE;
+      return new Either.rightValue(new ParseException(itr.index));
     } else if (!ALPHA.matches(itr.current)) {
-      return Option.NONE;
+      return new Either.rightValue(new ParseException(itr.index));
     }
 
     while(itr.moveNext()) {
@@ -235,6 +235,6 @@ class _SchemeParser extends AbstractParser<String> {
     int endIndex = itr.index;
     itr.movePrevious();
 
-    return new Option(itr.iterable.substring(startIndex, endIndex).toString());
+    return new Either.leftValue(itr.iterable.substring(startIndex, endIndex).toString());
   }
 }
