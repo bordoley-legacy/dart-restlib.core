@@ -168,7 +168,7 @@ class _RequestPreconditionsImpl
 
     return new _RequestPreconditionsImpl(
         isNotNull(ifMatch) ? EMPTY_SET.addAll(ifMatch) : _ifMatch,
-        computeIfEmpty(new Option(ifModifiedSince), _ifModifiedSince),
+        computeIfEmpty(new Option(ifModifiedSince), () => _ifModifiedSince),
         isNotNull(ifNoneMatch) ? EMPTY_SET.addAll(ifNoneMatch) : _ifNoneMatch,
         computeIfEmpty(new Option(ifRange), () => _ifRange),
         computeIfEmpty(new Option(ifUnmodifiedSince), () => _ifUnmodifiedSince),

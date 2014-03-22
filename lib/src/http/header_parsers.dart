@@ -18,6 +18,8 @@ final Parser<Iterable<Preference/*<Language>*/>> _ACCEPT_LANGUAGE = _LANGUAGE_PR
 
 final Parser<Iterable<RangeUnit>> _ACCEPT_RANGES = RangeUnit.parser.sepBy1(OWS_COMMA_OWS);
 
+final Parser<Iterable<Method>> _ALLOW = Method.parser.sepBy1(OWS_COMMA_OWS);
+
 final Parser<Iterable<CacheDirective>> _CACHE_CONTROL = CacheDirective.parser.sepBy(OWS_COMMA_OWS);
 
 final Parser<Iterable<ContentEncoding>> _CONTENT_ENCODING_HEADER = ContentEncoding.parser.sepBy(OWS_COMMA_OWS);

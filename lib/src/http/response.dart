@@ -228,7 +228,7 @@ class _ResponseImpl<T>
 
   FiniteSet<Method> get allowedMethods =>
       computeIfNull(_allowedMethods, () {
-        _allowedMethods = EMPTY_SET;
+        _allowedMethods = _parse(_ALLOW, ALLOW).map(EMPTY_SET.addAll).orElse(EMPTY_SET);
         return _allowedMethods;
       });
 
@@ -334,9 +334,9 @@ class _ResponseImpl<T>
 
     buffer.write("${status}\r\n");
 
-    writeResponseHeaders(response, _writeHeaderToBuffer(buffer));
+    writeResponseHeaders(this, _writeHeaderToBuffer(buffer));
 
-    buffer.write(response.entity.map((final entity) =>
+    buffer.write(entity.map((final entity) =>
         "\r\n\r\n${entity.toString()}\r\n").orElse(""));
 
     return buffer.toString();
@@ -411,7 +411,7 @@ class _ResponseImpl<T>
         _headers);
   }
 
-  Response _responseWithout(
+  Response without({
       final Response delegate,
       final bool acceptedRangeUnits,
       final bool age,
@@ -431,7 +431,7 @@ class _ResponseImpl<T>
       final bool server,
       final bool setCookies,
       final bool vary,
-      final bool warnings) =>
+      final bool warnings}) =>
         new _ResponseImpl(
           acceptedRangeUnits ? EMPTY_SET : _acceptedRangeUnits,
           age ? Option.NONE : _age,
