@@ -152,7 +152,6 @@ class _RequestPreconditionsImpl
   }
 
   RequestPreconditions with_({
-      final RequestPreconditions delegate,
       final Iterable<EntityTag> ifMatch,
       final DateTime ifModifiedSince,
       final Iterable<EntityTag> ifNoneMatch,
@@ -177,7 +176,6 @@ class _RequestPreconditionsImpl
   }
 
   RequestPreconditions without({
-    final RequestPreconditions delegate,
     final bool ifMatch,
     final bool ifModifiedSince,
     final bool ifNoneMatch,

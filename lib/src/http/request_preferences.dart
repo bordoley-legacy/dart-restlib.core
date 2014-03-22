@@ -8,55 +8,6 @@ void _writeRequestPreferences(final RequestPreferences preferences, void writeHe
   _writeHeader(RANGE, preferences.range, writeHeaderLine);
 }
 
-String _requestPreferencesToString(final RequestPreferences preferences) {
-  final StringBuffer buffer = new StringBuffer();
-  _WriteHeaderLine writeHeaderLine = _writeHeaderToBuffer(buffer);
-
-  _writeRequestPreferences(preferences, writeHeaderLine);
-
-  return buffer.toString();
-}
-
-RequestPreferences _requestPreferencesWith(
-  final RequestPreferences delegate,
-  final Iterable<Preference<Charset>> acceptedCharsets,
-  final Iterable<Preference<ContentEncoding>> acceptedEncodings,
-  final Iterable<Preference<Language>>  acceptedLanguages,
-  final Iterable<Preference<MediaRange>> acceptedMediaRanges,
-  final data.Range range) {
-
-  if (isNull(acceptedCharsets) && isNull(acceptedEncodings) && isNull(acceptedLanguages) && isNull(acceptedMediaRanges) && isNull(range)) {
-    return delegate;
-  }
-
-  return new _RequestPreferencesImpl(
-      EMPTY_SET.addAll(firstNotNull(acceptedCharsets, delegate.acceptedCharsets)),
-      EMPTY_SET.addAll(firstNotNull(acceptedEncodings, delegate.acceptedEncodings)),
-      EMPTY_SET.addAll(firstNotNull(acceptedLanguages, delegate.acceptedLanguages)),
-      EMPTY_SET.addAll(firstNotNull(acceptedMediaRanges, delegate.acceptedMediaRanges)),
-      computeIfEmpty(new Option(range), () => delegate.range));
-}
-
-RequestPreferences _requestPreferencesWithout(
-  final RequestPreferences delegate,
-  final bool acceptedCharsets,
-  final bool acceptedEncodings,
-  final bool acceptedLanguages,
-  final bool acceptedMediaRanges,
-  final bool range) {
-
-  if (acceptedCharsets && acceptedEncodings && acceptedLanguages && acceptedMediaRanges && range) {
-    return RequestPreferences.NONE;
-  }
-
-  return new _RequestPreferencesImpl(
-      !acceptedCharsets ? EMPTY_SET.addAll(delegate.acceptedCharsets) : EMPTY_SET,
-      !acceptedEncodings ? EMPTY_SET.addAll(delegate.acceptedEncodings) : EMPTY_SET,
-      !acceptedLanguages ? EMPTY_SET.addAll(delegate.acceptedLanguages) : EMPTY_SET,
-      !acceptedMediaRanges ? EMPTY_SET.addAll(delegate.acceptedMediaRanges) : EMPTY_SET,
-      !range ? delegate.range : Option.NONE);
-}
-
 abstract class RequestPreferences {
   static const RequestPreferences NONE = const _RequestPreferencesNone();
 
@@ -84,7 +35,8 @@ abstract class RequestPreferences {
   }
 
   factory RequestPreferences.wrapHeaders(final Multimap<Header, String, dynamic> headers) =>
-      new _HeadersRequestPreferencesImpl(headers);
+      new _RequestPreferencesImpl(
+          null, null, null, null, null, headers);
 
   FiniteSet<Preference<Charset>> get acceptedCharsets;
 
@@ -125,10 +77,10 @@ class _RequestPreferencesNone implements RequestPreferences {
   String toString() => "";
 
   RequestPreferences with_({
-    final Iterable<Preference<Charset>> acceptedCharsets : const [],
-    final Iterable<Preference<ContentEncoding>> acceptedEncodings : const [],
-    final Iterable<Preference<Language>>  acceptedLanguages : const [],
-    final Iterable<Preference<MediaRange>> acceptedMediaRanges : const [],
+    final Iterable<Preference<Charset>> acceptedCharsets,
+    final Iterable<Preference<ContentEncoding>> acceptedEncodings,
+    final Iterable<Preference<Language>>  acceptedLanguages,
+    final Iterable<Preference<MediaRange>> acceptedMediaRanges,
     final data.Range range}) =>
         new RequestPreferences(
             acceptedCharsets: acceptedCharsets,
@@ -146,56 +98,9 @@ class _RequestPreferencesNone implements RequestPreferences {
         this;
 }
 
-abstract class _RequestPreferencesMixin implements RequestPreferences{
-  String toString() =>
-      _requestPreferencesToString(this);
-
-  RequestPreferences with_({
-    final Iterable<Preference<Charset>> acceptedCharsets,
-    final Iterable<Preference<ContentEncoding>> acceptedEncodings,
-    final Iterable<Preference<Language>>  acceptedLanguages,
-    final Iterable<Preference<MediaRange>> acceptedMediaRanges,
-    final data.Range range}) =>
-        _requestPreferencesWith(
-            this,
-            acceptedCharsets,
-            acceptedEncodings,
-            acceptedLanguages,
-            acceptedMediaRanges,
-            range);
-
-  RequestPreferences without({
-    final bool acceptedCharsets : false,
-    final bool acceptedEncodings : false,
-    final bool acceptedLanguages : false,
-    final bool acceptedMediaRanges : false,
-    final bool range : false}) =>
-        _requestPreferencesWithout(
-            this,
-            acceptedCharsets,
-            acceptedEncodings,
-            acceptedLanguages,
-            acceptedMediaRanges,
-            range);
-}
-
 class _RequestPreferencesImpl
     extends Object
-    with _RequestPreferencesMixin
-    implements RequestPreferences{
-  final ImmutableSet<Preference<Charset>> acceptedCharsets;
-  final ImmutableSet<Preference<ContentEncoding>> acceptedEncodings;
-  final ImmutableSet<Preference<Language>> acceptedLanguages;
-  final ImmutableSet<Preference<MediaRange>> acceptedMediaRanges;
-  final Option<data.Range> range;
-
-  _RequestPreferencesImpl(this.acceptedCharsets, this.acceptedEncodings, this.acceptedLanguages, this.acceptedMediaRanges, this.range);
-}
-
-class _HeadersRequestPreferencesImpl
-    extends Object
-    with _RequestPreferencesMixin,
-      _Parseable
+    with  _Parseable
     implements RequestPreferences {
   final Multimap<Header, String, dynamic> _headers;
   ImmutableSet<Preference<Charset>> _acceptedCharsets;
@@ -204,7 +109,9 @@ class _HeadersRequestPreferencesImpl
   ImmutableSet<Preference<MediaRange>> _acceptedMediaRanges;
   Option<data.Range> _range;
 
-  _HeadersRequestPreferencesImpl(this._headers);
+  _RequestPreferencesImpl(
+      this._acceptedCharsets, this._acceptedEncodings, this._acceptedLanguages,
+        this._acceptedMediaRanges, this._range, [this._headers = EMPTY_SEQUENCE_MULTIMAP]);
 
   ImmutableSet<Preference<Charset>> get acceptedCharsets =>
       computeIfNull(_acceptedCharsets, () {
@@ -235,4 +142,54 @@ class _HeadersRequestPreferencesImpl
         _range = _parse(data.Range.parser, RANGE);
         return _range;
       });
+
+  String toString() {
+    final StringBuffer buffer = new StringBuffer();
+    _writeRequestPreferences(preferences, _writeHeaderToBuffer(buffer));
+    return buffer.toString();
+  }
+
+  RequestPreferences with_({
+      final Iterable<Preference<Charset>> acceptedCharsets,
+      final Iterable<Preference<ContentEncoding>> acceptedEncodings,
+      final Iterable<Preference<Language>>  acceptedLanguages,
+      final Iterable<Preference<MediaRange>> acceptedMediaRanges,
+      final data.Range range}) {
+
+    if (isNull(acceptedCharsets) &&
+        isNull(acceptedEncodings) &&
+        isNull(acceptedLanguages) &&
+        isNull(acceptedMediaRanges) &&
+        isNull(range)) {
+      return this;
+    }
+
+    return new _RequestPreferencesImpl(
+        isNotNull(acceptedCharsets) ? EMPTY_SET.addAll(acceptedCharsets) : _acceptedCharsets,
+        isNotNull(acceptedEncodings) ? EMPTY_SET.addAll(acceptedEncodings) : _acceptedEncodings,
+        isNotNull(acceptedLanguages) ? EMPTY_SET.addAll(acceptedLanguages) : _acceptedLanguages,
+        isNotNull(acceptedMediaRanges) ? EMPTY_SET.addAll(acceptedMediaRanges) : _acceptedMediaRanges,
+        isNotNull(range) ? new Option(range) : _range,
+        _headers);
+  }
+
+  RequestPreferences without({
+    final bool acceptedCharsets,
+    final bool acceptedEncodings,
+    final bool acceptedLanguages,
+    final bool acceptedMediaRanges,
+    final bool range}) {
+
+    if (acceptedCharsets && acceptedEncodings && acceptedLanguages && acceptedMediaRanges && range) {
+      return RequestPreferences.NONE;
+    }
+
+    return new _RequestPreferencesImpl(
+        acceptedCharsets ? EMPTY_SET : _acceptedCharsets,
+        acceptedEncodings ? EMPTY_SET : _acceptedEncodings,
+        acceptedLanguages ? EMPTY_SET : _acceptedLanguages,
+        acceptedMediaRanges ? EMPTY_SET : _acceptedMediaRanges,
+        range ? Option.NONE : _range,
+        _headers);
+  }
 }
