@@ -19,10 +19,10 @@ final Parser<Either<String, Comment>> _COMMENT_SEGMENT =
 
 const Parser<String> _COMMENT_TEXT = const _CommentTextParser();
 
-class _CommentTextParser extends AbstractParser<String> {
+class _CommentTextParser extends ParserBase<String> {
   const _CommentTextParser();
 
-  Option<String> doParse(final CodePointIterator itr) {
+  Either<String, ParseException> parseFrom(final CodePointIterator itr) {
     StringBuffer sb = null;
     final int startIndex = itr.index;
 
@@ -41,7 +41,7 @@ class _CommentTextParser extends AbstractParser<String> {
     while (itr.moveNext()) {
       if (itr.current == _ESCAPE_CHAR_CODE) {
         if (!itr.moveNext() || !QUOTED_CPAIR_CHAR.matches(itr.current)) {
-          return Option.NONE;
+          return new Either.rightValue(new ParseException(itr.index));
         }
 
         createBuffer();
@@ -55,11 +55,11 @@ class _CommentTextParser extends AbstractParser<String> {
     final int endIndex = itr.index + 1;
 
     if (sb != null) {
-      return new Option(sb.toString());
+      return new Either.leftValue(sb.toString());
     } else if (startIndex + 1 < endIndex){
-      return new Option(itr.iterable.substring(startIndex +1, endIndex).toString());
+      return new Either.leftValue(itr.iterable.substring(startIndex +1, endIndex).toString());
     } else {
-      return Option.NONE;
+      return new Either.rightValue(new ParseException(itr.index));
     }
   }
 }
