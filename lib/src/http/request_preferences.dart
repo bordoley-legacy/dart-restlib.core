@@ -145,7 +145,7 @@ class _RequestPreferencesImpl
 
   String toString() {
     final StringBuffer buffer = new StringBuffer();
-    _writeRequestPreferences(preferences, _writeHeaderToBuffer(buffer));
+    _writeRequestPreferences(this, _writeHeaderToBuffer(buffer));
     return buffer.toString();
   }
 
