@@ -215,16 +215,28 @@ class _ResponseImpl<T>
       this._warnings, [this._headers = EMPTY_SEQUENCE_MULTIMAP]);
 
   FiniteSet<RangeUnit> get acceptedRangeUnits =>
-      EMPTY_SET;
+      computeIfNull(_acceptedRangeUnits, () {
+        _acceptedRangeUnits = EMPTY_SET;
+        return _acceptedRangeUnits;
+      });
 
   Option<int> get age =>
-      Option.NONE; // FIXME
+      computeIfNull(_age, () {
+        _age = Option.NONE;
+        return _age;
+      });
 
   FiniteSet<Method> get allowedMethods =>
-      EMPTY_SET;
+      computeIfNull(_allowedMethods, () {
+        _allowedMethods = EMPTY_SET;
+        return _allowedMethods;
+      });
 
   FiniteSet<ChallengeMessage> get authenticationChallenges =>
-      EMPTY_SET;
+      computeIfNull(_authenticationChallenges, () {
+        _authenticationChallenges = EMPTY_SET;
+        return _authenticationChallenges;
+      });
 
   FiniteSet<CacheDirective> get cacheDirectives =>
       computeIfNull(_cacheDirectives, () {
@@ -251,16 +263,28 @@ class _ResponseImpl<T>
       });
 
   Option<DateTime> get date =>
-      Option.NONE; // FIXME
+      computeIfNull(_date, () {
+        _date = Option.NONE;
+        return _date;
+      });
 
   Option<EntityTag> get entityTag =>
-      Option.NONE; // FIXME
+      computeIfNull(_entityTag, () {
+        _entityTag = Option.NONE;
+        return _entityTag;
+      });
 
   Option<DateTime> get expires =>
-      Option.NONE; // FIXME
+      computeIfNull(_expires, () {
+        _expires = Option.NONE;
+        return _expires;
+      });
 
   Option<DateTime> get lastModified =>
-      Option.NONE; // FIXME
+      computeIfNull(_lastModified, () {
+        _lastModified = Option.NONE;
+        return _lastModified;
+      });
 
   Option<URI> get location =>
       computeIfNull(_location, () {
@@ -270,10 +294,16 @@ class _ResponseImpl<T>
       });
 
   FiniteSet<ChallengeMessage> get proxyAuthenticationChallenges =>
-      EMPTY_SET;
+      computeIfNull(_proxyAuthenticationChallenges, () {
+        _proxyAuthenticationChallenges = EMPTY_SET;
+        return _proxyAuthenticationChallenges;
+      });
 
   Option<DateTime> get retryAfter =>
-      Option.NONE; // FIXME
+      computeIfNull(_retryAfter, () {
+        _retryAfter = Option.NONE;
+        return _retryAfter;
+      });
 
   Option<UserAgent> get server =>
       computeIfNull(_server, () {
@@ -282,7 +312,10 @@ class _ResponseImpl<T>
       });
 
   FiniteSet<SetCookie> get setCookies =>
-      EMPTY_SET;
+      computeIfNull(_setCookies, () {
+        _setCookies = EMPTY_SET;
+        return _setCookies;
+      });
 
   FiniteSet<Header> get vary =>
       computeIfNull(_vary, () {
