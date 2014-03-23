@@ -132,7 +132,6 @@ class _PercentEncodedStringParser extends ParserBase<String> {
 
   ParseResult<String> parseFrom(final IterableString str) {
     final CodePointIterator itr = str.iterator;
-    int endIndex = 0;
 
     while (itr.moveNext()) {
       if (itr.current == _PERCENT) {
@@ -143,12 +142,9 @@ class _PercentEncodedStringParser extends ParserBase<String> {
       } else if (!safeCodePoints(itr.current)) {
         break;
       }
-
-      endIndex = itr.index + 1;
     }
 
-    itr.index = endIndex - 1;
-    final String retval = str.substring(0, endIndex).toString();
+    final String retval = str.substring(0, itr.index).toString();
     if (retval.isEmpty) {
       return new ParseResult.failure(str);
     }

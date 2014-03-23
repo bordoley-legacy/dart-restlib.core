@@ -7,7 +7,7 @@ void uriTests() {
           ["http://www.example.org/red%09ros\u00E9#red",
            "http://r\u00E9sum\u00E9.example.org"];
       tests.forEach((final String test) {
-        expect(URI.parser.parse(test), isEmpty);
+        expect(URI.parser.parse(test).left, isEmpty);
       });
     });
 
