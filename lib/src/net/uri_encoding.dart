@@ -90,7 +90,7 @@ class _PercentEncodedStringParser extends ParserBase<String> {
 
   const _PercentEncodedStringParser(this.safeCodePoints);
 
-  bool parsePercentEncoded(final IterableString str, final CodePointIterator itr) {
+  ParseResult<String> parsePercentEncoded(final IterableString str, final CodePointIterator itr) {
     final int startIndex = itr.index;
     int endIndex = startIndex;
 
@@ -101,19 +101,19 @@ class _PercentEncodedStringParser extends ParserBase<String> {
       }
 
       if (!itr.moveNext()) {
-        return false;
+        return new ParseResult.eof(str);
       }
 
       if (!HEXDIG.matches(itr.current)) {
-        return false;
+        return new ParseResult.failure(str);
       }
 
       if (!itr.moveNext()) {
-        return false;
+        return new ParseResult.eof(str);
       }
 
       if (!HEXDIG.matches(itr.current)) {
-        return false;
+        return new ParseResult.failure(str);
       }
 
       endIndex = itr.index + 1;
@@ -124,10 +124,10 @@ class _PercentEncodedStringParser extends ParserBase<String> {
     try {
       _URI_DECODER.convert(result);
     } catch(e) {
-      return false;
+      return new ParseResult.failure(str);
     }
 
-    return true;
+    return new ParseResult.success(result, str.substring(startIndex, endIndex));
   }
 
   ParseResult<String> parseFrom(final IterableString str) {
@@ -136,8 +136,11 @@ class _PercentEncodedStringParser extends ParserBase<String> {
     while (itr.moveNext()) {
       if (itr.current == _PERCENT) {
         itr.index = itr.index - 1;
-        if (!parsePercentEncoded(str, itr)) {
-          return new ParseResult.failure(str);
+
+        final ParseResult percentParserResult = parsePercentEncoded(str, itr);
+
+        if (percentParserResult is ParseFailure) {
+          return percentParserResult;
         }
       } else if (!safeCodePoints(itr.current)) {
         break;

@@ -220,7 +220,7 @@ class _SchemeParser extends ParserBase<String> {
   ParseResult<String> parseFrom(final IterableString str) {
     final CodePointIterator itr = str.iterator;
     if (!itr.moveNext()) {
-      return new ParseResult.failure(str);
+      return new ParseResult.eof(str);
     } else if (!ALPHA.matches(itr.current)) {
       return new ParseResult.failure(str);
     }

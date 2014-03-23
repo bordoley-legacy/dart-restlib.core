@@ -34,7 +34,7 @@ class _QuotedStringParser extends ParserBase<String> {
         }
 
         if (!itr.moveNext()) {
-          return new ParseResult.failure(str);
+          return new ParseResult.eof(str);
         }
 
         if (QUOTED_PAIR_CHAR.matches(itr.current)) {
@@ -55,7 +55,7 @@ class _QuotedStringParser extends ParserBase<String> {
       }
     }
 
-    return new ParseResult.failure(str);
+    return new ParseResult.eof(str);
   }
 
   String toString() => "QuotedStringParser";

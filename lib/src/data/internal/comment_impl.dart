@@ -40,7 +40,11 @@ class _CommentTextParser extends ParserBase<String> {
 
     while (itr.moveNext()) {
       if (itr.current == _ESCAPE_CHAR_CODE) {
-        if (!itr.moveNext() || !QUOTED_CPAIR_CHAR.matches(itr.current)) {
+        if (!itr.moveNext()) {
+          return new ParseResult.eof(str);
+        }
+
+        if (!QUOTED_CPAIR_CHAR.matches(itr.current)) {
           return new ParseResult.failure(str);
         }
 
@@ -59,7 +63,7 @@ class _CommentTextParser extends ParserBase<String> {
     } else if (1 < endIndex){
       return new ParseResult.success(str.substring(0, endIndex).toString(), str.substring(endIndex));
     } else {
-      return new ParseResult.failure(str);
+      return new ParseResult.eof(str);
     }
   }
 }
