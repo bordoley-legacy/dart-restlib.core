@@ -30,7 +30,7 @@ class _QuotedStringParser extends ParserBase<String> {
         // Create a new buffer if needed and copy all of the already parsed string
         // into the buffer.
         if (buffer == null) {
-          buffer = new StringBuffer(itr.iterable.substring(0, endIndex).toString());
+          buffer = new StringBuffer(str.substring(0, endIndex).toString());
         }
 
         if (!itr.moveNext()) {

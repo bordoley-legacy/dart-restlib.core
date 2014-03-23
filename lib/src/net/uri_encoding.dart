@@ -90,7 +90,7 @@ class _PercentEncodedStringParser extends ParserBase<String> {
 
   const _PercentEncodedStringParser(this.safeCodePoints);
 
-  bool parsePercentEncoded(final CodePointIterator itr) {
+  bool parsePercentEncoded(final IterableString str, final CodePointIterator itr) {
     final int startIndex = itr.index;
     int endIndex = startIndex;
 
@@ -119,7 +119,7 @@ class _PercentEncodedStringParser extends ParserBase<String> {
       endIndex = itr.index + 1;
     }
 
-    final String result = itr.iterable.substring(startIndex, endIndex).toString();
+    final String result = str.substring(startIndex, endIndex).toString();
 
     try {
       _URI_DECODER.convert(result);
