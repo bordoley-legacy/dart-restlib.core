@@ -130,15 +130,15 @@ class _PercentEncodedStringParser extends ParserBase<String> {
     return true;
   }
 
-  Either<String, ParseException> parseFrom(final CodePointIterator itr) {
-    final int startIndex = itr.index + 1;
-    int endIndex = startIndex;
+  ParseResult<String> parseFrom(final IterableString str) {
+    final CodePointIterator itr = str.iterator;
+    int endIndex = 0;
 
     while (itr.moveNext()) {
       if (itr.current == _PERCENT) {
         itr.index = itr.index - 1;
         if (!parsePercentEncoded(itr)) {
-          return new Either.rightValue(new ParseException(itr.index));
+          return new ParseResult.failure(str);
         }
       } else if (!safeCodePoints(itr.current)) {
         break;
@@ -148,10 +148,11 @@ class _PercentEncodedStringParser extends ParserBase<String> {
     }
 
     itr.index = endIndex - 1;
-    final String retval = itr.iterable.substring(startIndex, endIndex).toString();
+    final String retval = str.substring(0, endIndex).toString();
     if (retval.isEmpty) {
-      return new Either.rightValue(new ParseException(itr.index));
+      return new ParseResult.failure(str);
     }
-    return new Either.leftValue(retval);
+
+    return new ParseResult.success(retval, str.substring(itr.index));
   }
 }

@@ -22,13 +22,13 @@ const Parser<String> _COMMENT_TEXT = const _CommentTextParser();
 class _CommentTextParser extends ParserBase<String> {
   const _CommentTextParser();
 
-  Either<String, ParseException> parseFrom(final CodePointIterator itr) {
+  ParseResult<String> parseFrom(final IterableString str) {
+    final CodePointIterator itr = str.iterator;
     StringBuffer sb = null;
-    final int startIndex = itr.index;
 
     createBuffer() {
       if (sb == null) {
-        sb = new StringBuffer(itr.iterable.substring(startIndex +1, itr.index - 1).toString());
+        sb = new StringBuffer(str.substring(0, itr.index - 1).toString());
       }
     }
 
@@ -41,7 +41,7 @@ class _CommentTextParser extends ParserBase<String> {
     while (itr.moveNext()) {
       if (itr.current == _ESCAPE_CHAR_CODE) {
         if (!itr.moveNext() || !QUOTED_CPAIR_CHAR.matches(itr.current)) {
-          return new Either.rightValue(new ParseException(itr.index));
+          return new ParseResult.failure(str);
         }
 
         createBuffer();
@@ -55,11 +55,11 @@ class _CommentTextParser extends ParserBase<String> {
     final int endIndex = itr.index + 1;
 
     if (sb != null) {
-      return new Either.leftValue(sb.toString());
-    } else if (startIndex + 1 < endIndex){
-      return new Either.leftValue(itr.iterable.substring(startIndex +1, endIndex).toString());
+      return new ParseResult.success(sb.toString(), str.substring(endIndex));
+    } else if (1 < endIndex){
+      return new ParseResult.success(str.substring(0, endIndex).toString(), str.substring(endIndex));
     } else {
-      return new Either.rightValue(new ParseException(itr.index));
+      return new ParseResult.failure(str);
     }
   }
 }

@@ -217,13 +217,12 @@ class _SchemeParser extends ParserBase<String> {
 
   _SchemeParser();
 
-  Either<String, ParseException> parseFrom(final CodePointIterator itr) {
-    final int startIndex = itr.index + 1;
-
+  ParseResult<String> parseFrom(final IterableString str) {
+    final CodePointIterator itr = str.iterator;
     if (!itr.moveNext()) {
-      return new Either.rightValue(new ParseException(itr.index));
+      return new ParseResult.failure(str);
     } else if (!ALPHA.matches(itr.current)) {
-      return new Either.rightValue(new ParseException(itr.index));
+      return new ParseResult.failure(str);
     }
 
     while(itr.moveNext()) {
@@ -235,6 +234,6 @@ class _SchemeParser extends ParserBase<String> {
     int endIndex = itr.index;
     itr.movePrevious();
 
-    return new Either.leftValue(itr.iterable.substring(startIndex, endIndex).toString());
+    return new ParseResult.success(str.substring(0, endIndex).toString(), str.substring(endIndex));
   }
 }
