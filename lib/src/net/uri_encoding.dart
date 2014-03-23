@@ -137,7 +137,7 @@ class _PercentEncodedStringParser extends ParserBase<String> {
     while (itr.moveNext()) {
       if (itr.current == _PERCENT) {
         itr.index = itr.index - 1;
-        if (!parsePercentEncoded(itr)) {
+        if (!parsePercentEncoded(str, itr)) {
           return new ParseResult.failure(str);
         }
       } else if (!safeCodePoints(itr.current)) {
