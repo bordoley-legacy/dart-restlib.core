@@ -29,6 +29,7 @@ part "src/http/request_preconditions.dart";
 part "src/http/request_preferences.dart";
 part "src/http/response.dart";
 part "src/http/status.dart";
+part "src/http/version.dart";
 
 abstract class _Parseable {
   SequenceMultimap<Header, String> get _headers;
