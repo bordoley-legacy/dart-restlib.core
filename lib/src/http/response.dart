@@ -353,8 +353,9 @@ class _ResponseImpl<T>
 
     writeResponseHeaders(this, _writeHeaderToBuffer(buffer));
 
-    buffer.write(entity.map((final entity) =>
-        "\r\n\r\n${entity.toString()}\r\n").orElse(""));
+    buffer.write("\r\n");
+
+    buffer.write(entity.orElse(""));
 
     return buffer.toString();
   }
