@@ -47,6 +47,7 @@ abstract class Response<T> {
     final UserAgent server,
     final Iterable<SetCookie> setCookies,
     final Iterable<Header> vary,
+    final HttpVersion version : HttpVersion.v1_1,
     final Iterable<Warning> warnings}) =>
         new _ResponseImpl(
             EMPTY_SET.addAll(firstNotNull(acceptedRangeUnits, EMPTY_LIST)),
@@ -68,15 +69,17 @@ abstract class Response<T> {
             EMPTY_SET.addAll(firstNotNull(setCookies, EMPTY_LIST)),
             status,
             EMPTY_SET.addAll(firstNotNull(vary, EMPTY_LIST)),
+            checkNotNull(version),
             EMPTY_SEQUENCE.addAll(firstNotNull(warnings, EMPTY_LIST)));
 
-  factory Response.wrapHeaders(final Status status, final Multimap<Header, String, dynamic> headers, [final T entity = null]) =>
+  factory Response.wrapHeaders(final Status status, final Multimap<Header, String, dynamic> headers,
+        [final T entity = null, final HttpVersion version = HttpVersion.v1_1]) =>
        new _ResponseImpl(
            null, null, null, null, null, null, null, null,
            new Option(entity),
            null, null, null, null, null, null, null, null,
            checkNotNull(status),
-           null, null,
+           null, checkNotNull(version), null,
            headers);
 
   FiniteSet<RangeUnit> get acceptedRangeUnits;
@@ -117,6 +120,8 @@ abstract class Response<T> {
 
   FiniteSet<Header> get vary;
 
+  HttpVersion get version;
+
   Sequence<Warning> get warnings;
 
   String toString();
@@ -141,6 +146,7 @@ abstract class Response<T> {
     Iterable<SetCookie> setCookies,
     Status status,
     Iterable<Header> vary,
+    HttpVersion version,
     Iterable<Warning> warnings});
 
   Response without({
@@ -171,6 +177,7 @@ class _ResponseImpl<T>
     implements Response<T> {
   final Option<T> entity;
   final Status status;
+  final HttpVersion version;
   final Multimap<Header, String, dynamic> _headers;
 
   ImmutableSet<RangeUnit> _acceptedRangeUnits;
@@ -212,6 +219,7 @@ class _ResponseImpl<T>
       this._setCookies,
       this.status,
       this._vary,
+      this.version,
       this._warnings, [this._headers = EMPTY_SEQUENCE_MULTIMAP]);
 
   FiniteSet<RangeUnit> get acceptedRangeUnits =>
@@ -341,7 +349,7 @@ class _ResponseImpl<T>
   String toString() {
     final StringBuffer buffer = new StringBuffer();
 
-    buffer.write("${status}\r\n");
+    buffer.write("$version $status\r\n");
 
     writeResponseHeaders(this, _writeHeaderToBuffer(buffer));
 
@@ -371,6 +379,7 @@ class _ResponseImpl<T>
       final Iterable<SetCookie> setCookies,
       final Status status,
       final Iterable<Header> vary,
+      final HttpVersion version,
       final Iterable<Warning> warnings}) {
 
     if(isNull(acceptedRangeUnits) &&
@@ -392,6 +401,7 @@ class _ResponseImpl<T>
         isNull(setCookies) &&
         isNull(status) &&
         isNull(vary) &&
+        isNull(version) &&
         isNull(warnings)) {
       return this;
     }
@@ -416,6 +426,7 @@ class _ResponseImpl<T>
         isNotNull(setCookies) ? EMPTY_SET.addAll(setCookies) : _setCookies,
         firstNotNull(status, this.status),
         isNotNull(vary) ? EMPTY_SET.addAll(vary) : _vary,
+        firstNotNull(version, this.version),
         isNotNull(warnings) ? EMPTY_SEQUENCE.addAll(warnings) : _warnings,
         _headers);
   }
@@ -461,6 +472,7 @@ class _ResponseImpl<T>
           setCookies ? EMPTY_SET : _setCookies,
           delegate.status,
           vary ? EMPTY_SET : _vary,
+          this.version,
           warnings ? EMPTY_SEQUENCE : _warnings,
           _headers);
 }
