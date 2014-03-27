@@ -31,7 +31,8 @@ abstract class Request<T> {
     final RequestPreferences preferences,
     final ChallengeMessage proxyAuthorizationCredentials,
     final URI referer,
-    final UserAgent userAgent}) =>
+    final UserAgent userAgent,
+    final HttpVersion version: HttpVersion.v1_1}) =>
         new _RequestImpl(
             checkNotNull(method), checkNotNull(uri),
             new Option(authorizationCredentials),
@@ -46,13 +47,17 @@ abstract class Request<T> {
             firstNotNull(preferences, RequestPreferences.NONE),
             new Option(proxyAuthorizationCredentials),
             new Option(referer),
-            new Option(userAgent));
+            new Option(userAgent),
+            checkNotNull(version));
 
-  factory Request.wrapHeaders(final Method method, final URI uri, final Multimap<Header, String, dynamic> headers) =>
+  factory Request.wrapHeaders(
+        final Method method, final URI uri,
+        final Multimap<Header, String, dynamic> headers, {final HttpVersion version: HttpVersion.v1_1}) =>
       new _RequestImpl(checkNotNull(method), checkNotNull(uri),
           null, null, null, null, null,
           Option.NONE,
           null, null, null, null, null, null, null,
+          checkNotNull(version),
           checkNotNull(headers));
 
   Option<ChallengeMessage> get authorizationCredentials;
@@ -85,6 +90,8 @@ abstract class Request<T> {
 
   Option<UserAgent> get userAgent;
 
+  HttpVersion get version;
+
   String toString();
 
   Request with_({
@@ -102,7 +109,8 @@ abstract class Request<T> {
     ChallengeMessage proxyAuthorizationCredentials,
     URI referer,
     URI uri,
-    UserAgent userAgent});
+    UserAgent userAgent,
+    HttpVersion version});
 
   Request without({
     bool authorizationCredentials : false,
@@ -139,6 +147,7 @@ class _RequestImpl<T>
   Option<URI> _referer;
   final URI uri;
   Option<UserAgent> _userAgent;
+  HttpVersion version;
 
   _RequestImpl(this.method, this.uri,
       this._authorizationCredentials,
@@ -154,6 +163,7 @@ class _RequestImpl<T>
       this._proxyAuthorizationCredentials,
       this._referer,
       this._userAgent,
+      this.version,
       [this._headers = EMPTY_SEQUENCE_MULTIMAP]);
 
   Option<ChallengeMessage> get authorizationCredentials =>
@@ -238,7 +248,7 @@ class _RequestImpl<T>
   String toString() {
     final StringBuffer buffer = new StringBuffer();
 
-    final String requestLine = "${method} ${uri.path}${uri.query.isEmpty ? "" : "?${uri.query}"}""\r\n";
+    final String requestLine = "${method} ${uri.path}${uri.query.isEmpty ? "" : "?${uri.query}"} $version\r\n";
     buffer.write(requestLine);
 
     writeRequestHeaders(this, _writeHeaderToBuffer(buffer));
@@ -264,7 +274,8 @@ class _RequestImpl<T>
       final ChallengeMessage proxyAuthorizationCredentials,
       final URI referer,
       final URI uri,
-      final UserAgent userAgent}) {
+      final UserAgent userAgent,
+      HttpVersion version}) {
 
     if (isNull(authorizationCredentials) &&
         isNull(cacheDirectives) &&
@@ -280,7 +291,8 @@ class _RequestImpl<T>
         isNull(proxyAuthorizationCredentials) &&
         isNull(referer) &&
         isNull(uri) &&
-        isNull(userAgent)) {
+        isNull(userAgent) &&
+        isNull(version)) {
       return this;
     }
 
@@ -300,6 +312,7 @@ class _RequestImpl<T>
       computeIfEmpty(new Option(proxyAuthorizationCredentials), () => _proxyAuthorizationCredentials),
       computeIfEmpty(new Option(referer), () => _referer),
       computeIfEmpty(new Option(userAgent), () => _userAgent),
+      firstNotNull(version, this.version),
       _headers);
   }
 
@@ -333,5 +346,6 @@ class _RequestImpl<T>
             proxyAuthorizationCredentials ? Option.NONE : _proxyAuthorizationCredentials,
             referer ? Option.NONE : _referer,
             userAgent ? Option.NONE: _userAgent,
+            this.version,
             _headers);
 }

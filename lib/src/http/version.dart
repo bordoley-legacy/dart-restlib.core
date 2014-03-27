@@ -21,5 +21,5 @@ class _HttpVersion implements HttpVersion {
   final String _value;
   const _HttpVersion(this._value);
 
-  String toString();
+  String toString() => _value;
 }
