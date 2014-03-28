@@ -1,6 +1,7 @@
 part of http;
 
 void writeRequestHeaders(final Request request, void writeHeaderLine(final String header, final String value)) {
+  _writeHeader(HOST, request.uri.authority.value.host.value.toString(), writeHeaderLine);
   _writeHeader(AUTHORIZATION, request.authorizationCredentials, writeHeaderLine);
   _writeHeader(CACHE_CONTROL, request.cacheDirectives, writeHeaderLine);
   _writeContentInfo(request.contentInfo, writeHeaderLine);
