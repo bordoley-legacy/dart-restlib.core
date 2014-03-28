@@ -176,11 +176,11 @@ class _RequestPreconditionsImpl
   }
 
   RequestPreconditions without({
-    final bool ifMatch,
-    final bool ifModifiedSince,
-    final bool ifNoneMatch,
-    final bool ifRange,
-    final bool ifUnmodifiedSince}) {
+    final bool ifMatch : false,
+    final bool ifModifiedSince : false,
+    final bool ifNoneMatch : false,
+    final bool ifRange : false,
+    final bool ifUnmodifiedSince : false}) {
 
     if (ifMatch && ifModifiedSince && ifNoneMatch && ifRange && ifUnmodifiedSince) {
       return RequestPreconditions.NONE;

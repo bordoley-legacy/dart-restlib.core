@@ -174,11 +174,11 @@ class _RequestPreferencesImpl
   }
 
   RequestPreferences without({
-    final bool acceptedCharsets,
-    final bool acceptedEncodings,
-    final bool acceptedLanguages,
-    final bool acceptedMediaRanges,
-    final bool range}) {
+    final bool acceptedCharsets : false,
+    final bool acceptedEncodings : false,
+    final bool acceptedLanguages : false,
+    final bool acceptedMediaRanges : false,
+    final bool range : false}) {
 
     if (acceptedCharsets && acceptedEncodings && acceptedLanguages && acceptedMediaRanges && range) {
       return RequestPreferences.NONE;

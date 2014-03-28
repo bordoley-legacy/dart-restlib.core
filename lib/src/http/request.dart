@@ -116,6 +116,7 @@ abstract class Request<T> {
     bool authorizationCredentials : false,
     bool cacheDirectives : false,
     bool contentInfo : false,
+    bool cookies : false,
     bool customHeaders : false,
     bool entity : false,
     bool expectations : false,
@@ -317,20 +318,19 @@ class _RequestImpl<T>
   }
 
   Request without({
-    final Request delegate,
-    final bool authorizationCredentials,
-    final bool cacheDirectives,
-    final bool contentInfo,
-    final bool cookies,
-    final bool customHeaders,
-    final bool entity,
-    final bool expectations,
-    final bool pragmaCacheDirectives,
-    final bool preconditions,
-    final bool preferences,
-    final bool proxyAuthorizationCredentials,
-    final bool referer,
-    final bool userAgent}) =>
+    bool authorizationCredentials : false,
+    bool cacheDirectives : false,
+    bool contentInfo : false,
+    bool cookies : false,
+    bool customHeaders : false,
+    bool entity : false,
+    bool expectations : false,
+    bool pragmaCacheDirectives : false,
+    bool preconditions : false,
+    bool preferences : false,
+    bool proxyAuthorizationCredentials : false,
+    bool referer : false,
+    bool userAgent : false}) =>
         new _RequestImpl(
             method, uri,
             authorizationCredentials ? Option.NONE : _authorizationCredentials,
